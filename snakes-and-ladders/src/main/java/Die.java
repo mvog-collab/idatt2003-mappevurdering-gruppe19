@@ -7,7 +7,7 @@ public class Die {
 
   public Die() {}
 
-  public int roll() {
+  public int rollDie() {
     int roll = random.nextInt(1, 7);
     setLastRolledValue(roll);
     return roll;
