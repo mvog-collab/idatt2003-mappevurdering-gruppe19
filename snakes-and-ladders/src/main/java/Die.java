@@ -18,7 +18,7 @@ public class Die {
   }
 
   public void setLastRolledValue(int lastRolledValue) {
-    if (lastRolledValue < 0 || lastRolledValue > 6) {
+    if (lastRolledValue < 1 || lastRolledValue > 6) {
       throw new IllegalArgumentException("Invalid roll of die.");
     }
     this.lastRolledValue = lastRolledValue;

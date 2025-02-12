@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Dice {
 
-  private final ArrayList<Die> dice;
+  private final List<Die> dice;
 
   public Dice() {
     this.dice = new ArrayList<>();
@@ -27,7 +28,7 @@ public class Dice {
     return dice.getFirst().getLastRolledValue() == 6 || dice.get(1).getLastRolledValue() == 6;
   }
 
-  public ArrayList<Die> getDice() {
+  public List<Die> getDice() {
     return dice;
   }
 }
