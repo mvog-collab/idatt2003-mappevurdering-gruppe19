@@ -17,7 +17,11 @@ public class Player {
 
     public void move(int steps) {
         Tile targetTile = currentTile;
-        for (int i = 0; i < steps && targetTile.getNextTile() != null; i++) {
+        for (int i = 0; i < steps; i++) {
+            if (targetTile.getNextTile() == null) {
+                placeOnTile(targetTile);
+                return;
+            }
             targetTile = targetTile.getNextTile();
         }
         placeOnTile(targetTile);
