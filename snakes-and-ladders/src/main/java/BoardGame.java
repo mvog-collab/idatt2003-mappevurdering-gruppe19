@@ -22,6 +22,12 @@ public class BoardGame {
     for (int i = 0; i < size; i++) {
       board.addTile(new Tile(i));
     }
+
+    for (int i = 0; i < size - 1; i++) {
+      Tile currentTile = board.getTile(i);
+      Tile nextTile = board.getTile(i + 1);
+      currentTile.setNextTile(nextTile);
+    }
   }
 
   public void play() {
@@ -32,10 +38,25 @@ public class BoardGame {
 
   }
 
+  public void setCurrentPlayer(Player player) {
+    this.currentPlayer = player;
+    Tile startTile = board.getTile(0);
+    if (startTile != null) {
+      player.placeOnTile(startTile);
+    } else {
+      throw new IllegalStateException("Board has no tiles!");
+    }
+  }
+
   public Player getWinner() {
     if (currentPlayer.getCurrentTile().getNextTile() == null ) {
+      System.out.println("The winner is " + currentPlayer.getName());
       return currentPlayer;
     }
     return null;
+  }
+
+  public Board getBoard() {
+    return board;
   }
 }
