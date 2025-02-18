@@ -19,6 +19,9 @@ public class BoardGame {
   }
 
   public void createBoard(int size) {
+    if (100 < size || size < 0) {
+      throw new IllegalArgumentException("Invalid board size.");
+    }
     for (int i = 0; i < size; i++) {
       board.addTile(new Tile(i));
     }

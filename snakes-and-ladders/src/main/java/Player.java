@@ -4,6 +4,9 @@ public class Player {
     private Tile currentTile;
 
     public Player(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Invalid name input. Name cannot be null or empty.");
+        }
         this.name = name;
     }
 
@@ -11,11 +14,14 @@ public class Player {
         if (currentTile != null) {
             currentTile.removePlayerFromTile(this);
         }
-        currentTile = tile;
+        setCurrentTile(tile);
         currentTile.landPlayer(this);
     }
 
     public void move(int steps) {
+        if (steps < 2) {
+            throw new IllegalArgumentException("Steps cannot be less than 2.");
+        }
         Tile targetTile = currentTile;
         for (int i = 0; i < steps; i++) {
             if (targetTile.getNextTile() == null) {
@@ -33,5 +39,12 @@ public class Player {
 
     public Tile getCurrentTile() {
         return currentTile;
+    }
+
+    public void setCurrentTile(Tile tile) {
+        if (tile == null) {
+            throw new IllegalArgumentException("Tile cannot be null.");
+        }
+        this.currentTile = tile;
     }
 }
