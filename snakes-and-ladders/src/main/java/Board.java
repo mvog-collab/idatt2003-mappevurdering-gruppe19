@@ -11,7 +11,7 @@ public class Board {
 
   public void addTile(Tile tile) {
     if (tile == null) {
-      throw new IllegalArgumentException("Tile cannot be null");
+      throw new IllegalArgumentException("Tile cannot be null.");
     }
     tiles.put(tile.getTileId(), tile);
 
