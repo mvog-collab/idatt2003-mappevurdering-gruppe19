@@ -35,6 +35,7 @@ public class Player {
                 placeOnTile(targetTile);
                 return;
             }
+            System.out.println(targetTile.getTileId() + " is the tile id");
             targetTile = targetTile.getNextTile();
         }
         placeOnTile(targetTile);

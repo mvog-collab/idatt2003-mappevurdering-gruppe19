@@ -5,13 +5,16 @@ public class Main {
     public static void initialize() {
         BoardGame game = new BoardGame();
         Player Player = new Player("Martha", LocalDate.of(2004, 01, 19));
+        Player player = new Player("Edvard", LocalDate.of(2003, 03, 27));
 
         game.addPlayer(Player);
+        game.addPlayer(player);
         game.createBoard(91);
-        game.setCurrentPlayer(Player);
+        game.setStartPosition(Player);
+        game.setStartPosition(player);
 
         for (int i = 0; i < 100; i++) {
-            game.currentPlayerPlaysTurn();
+            game.playATurn();
             if (game.getWinner() != null) {
                 return;
             }

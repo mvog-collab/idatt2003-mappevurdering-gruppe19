@@ -1,12 +1,14 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class BoardGame {
 
-  Board board;
-  Player currentPlayer;
-  List<Player> players;
-  Dice dice;
+  private Board board;
+  private Player currentPlayer;
+  private List<Player> players;
+  private Dice dice;
+  Scanner sc = new Scanner(System.in);
 
   public BoardGame() {
     this.board = new Board();
@@ -35,18 +37,23 @@ public class BoardGame {
 
   public void currentPlayerPlaysTurn() {
     int roll = dice.rollDice();
-
     currentPlayer.move(roll);
   }
 
-  public void setCurrentPlayer(Player player) {
-    this.currentPlayer = player;
+  public void setStartPosition(Player player) {
     Tile startTile = board.getTile(0);
     if (startTile != null) {
       player.placeOnTile(startTile);
     } else {
       throw new IllegalStateException("Board has no tiles!");
     }
+  }
+
+  public void setCurrentPlayer(Player player) {
+    if (player == null || currentPlayer == player) {
+      throw new IllegalArgumentException("New player cannot be null.");
+    }
+    this.currentPlayer = player;
   }
 
   public Player getWinner() {
@@ -58,9 +65,16 @@ public class BoardGame {
   }
 
   public void playATurn() {
-    for (Player player : players) {
-      setCurrentPlayer(player);
-      currentPlayerPlaysTurn();
+    while (true) {
+      
+      for (Player player : players) {
+        String wantToThrow = sc.nextLine();
+          if (!wantToThrow.isBlank()) {
+
+            setCurrentPlayer(player);
+            currentPlayerPlaysTurn();
+          }
+      }
     }
   }
 
