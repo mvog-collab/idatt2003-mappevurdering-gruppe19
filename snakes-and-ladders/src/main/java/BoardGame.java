@@ -66,14 +66,15 @@ public class BoardGame {
 
   public void playATurn() {
     while (true) {
-      
       for (Player player : players) {
         String wantToThrow = sc.nextLine();
           if (!wantToThrow.isBlank()) {
-
             setCurrentPlayer(player);
             currentPlayerPlaysTurn();
           }
+      }
+      if (getWinner() != null) {
+        break;
       }
     }
   }
