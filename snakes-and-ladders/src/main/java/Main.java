@@ -1,8 +1,10 @@
+import java.time.LocalDate;
+
 public class Main {
 
     public static void initialize() {
         BoardGame game = new BoardGame();
-        Player Player = new Player("Martha");
+        Player Player = new Player("Martha", LocalDate.of(2004, 01, 19));
 
         game.addPlayer(Player);
         game.createBoard(91);

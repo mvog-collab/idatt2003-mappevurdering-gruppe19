@@ -37,8 +37,6 @@ public class BoardGame {
     int roll = dice.rollDice();
 
     currentPlayer.move(roll);
-
-
   }
 
   public void setCurrentPlayer(Player player) {
