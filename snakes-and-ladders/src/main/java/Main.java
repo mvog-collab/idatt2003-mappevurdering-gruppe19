@@ -11,7 +11,7 @@ public class Main {
         game.setCurrentPlayer(Player);
 
         for (int i = 0; i < 100; i++) {
-            game.play();
+            game.currentPlayerPlaysTurn();
             if (game.getWinner() != null) {
                 return;
             }

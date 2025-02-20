@@ -33,7 +33,7 @@ public class BoardGame {
     }
   }
 
-  public void play() {
+  public void currentPlayerPlaysTurn() {
     int roll = dice.rollDice();
 
     currentPlayer.move(roll);
@@ -55,6 +55,13 @@ public class BoardGame {
       return currentPlayer;
     }
     return null;
+  }
+
+  public void playATurn() {
+    for (Player player : players) {
+      setCurrentPlayer(player);
+      currentPlayerPlaysTurn();
+    }
   }
 
   public Board getBoard() {
