@@ -53,6 +53,7 @@ public class Player {
         return currentTile;
     }
 
+    // TODO this method should not be in this file
     public void setCurrentTile(Tile tile) {
         if (tile == null) {
             throw new IllegalArgumentException("Tile cannot be null.");
