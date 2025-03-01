@@ -16,6 +16,7 @@ public class BoardMaker {
           Tile nextTile = board.getTile(i + 1);
           currentTile.setNextTile(nextTile);
         }
+        SnakeAndLadderConfigurator.generateSnakesAndLadders(board);
         return board;
     }
 }
