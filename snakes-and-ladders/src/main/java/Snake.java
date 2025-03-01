@@ -13,12 +13,14 @@ public class Snake implements TileAction {
     @Override
     public void applyAction(Player player) {
         if (startTileId == player.getCurrentTile().getTileId()) {
-            player.setCurrentTile(board.getTile(endTileId));
+            Tile tileToLand = board.getTile(endTileId);
+            System.out.println(player.getName() + " moved from " + startTileId + " to " + endTileId);
+            player.placeOnTile(tileToLand);
         }
     }
 
     @Override
-    public int getTargetPosition() {
-        return endTileId;
+    public int getActionPosition() {
+        return startTileId;
     }
 }

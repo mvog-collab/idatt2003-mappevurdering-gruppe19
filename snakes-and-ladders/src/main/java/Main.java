@@ -9,7 +9,6 @@ public class Main {
 
         game.addPlayer(Player);
         game.addPlayer(player);
-        game.createBoard(91);
         game.setStartPosition(Player);
         game.setStartPosition(player);
 

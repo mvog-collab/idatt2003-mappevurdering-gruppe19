@@ -15,11 +15,12 @@ public class Ladder implements TileAction {
   public void applyAction(Player player) {
     if (startTileId == player.getCurrentTile().getTileId()) {
       player.setCurrentTile(board.getTile(endTileId));
+      System.out.println(player.getName() + " moved from " + startTileId + " to " + endTileId);
     }
   }
 
   @Override
-  public int getTargetPosition() {
-    return endTileId;
+  public int getActionPosition() {
+    return startTileId;
   }
 }

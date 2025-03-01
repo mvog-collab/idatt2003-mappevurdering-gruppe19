@@ -1,11 +1,15 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Board {
 
   private final Map<Integer, Tile> tiles;
+  private final int size;
 
-  public Board() {
+  public Board(int size) {
+    this.size = size;
     this.tiles = new HashMap<>();
   }
 
@@ -25,5 +29,9 @@ public class Board {
 
   public Tile getTile(int tileId) {
     return tiles.get(tileId);
+  }
+
+  public int getSize() {
+    return size;
   }
 }

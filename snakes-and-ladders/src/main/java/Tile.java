@@ -6,6 +6,7 @@ public class Tile {
     private final int tileId;
     private Tile nextTile;
     private final Set<Player> playersOnTile;
+    private TileAction action;
 
     public Tile(int tileId) {
         if (tileId < 0) {
@@ -44,5 +45,13 @@ public class Tile {
 
     public int getTileId() {
         return tileId;
+    }
+
+    public TileAction getAction() {
+        return action;
+    }
+
+    public void setAction(TileAction action) {
+        this.action = action;
     }
 }

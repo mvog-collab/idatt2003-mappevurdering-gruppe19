@@ -39,6 +39,14 @@ public class Player {
             targetTile = targetTile.getNextTile();
         }
         placeOnTile(targetTile);
+
+        if (hasTileAction(targetTile)) {
+            targetTile.getAction().applyAction(this);
+        }
+    }
+
+    private boolean hasTileAction(Tile tile) {
+        return tile.getAction() != null;
     }
 
     public String getName() {
