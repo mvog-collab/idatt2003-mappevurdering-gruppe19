@@ -3,11 +3,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class JavaFXApp extends Application {
+public class BoardPage extends Application {
     private final int tileSize = 50;
     private final int width = 10;
     private final int height = 10;
@@ -31,9 +30,6 @@ public class JavaFXApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-
-
 
 
     public static void main(String[] args) {
