@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 public class StartPage extends Application {
 
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(Stage primaryStage) throws Exception {
     Label title = new Label("Snakes & Ladders");
     VBox titleBox = new VBox(title);
     Button startButton = new Button("Start game");
@@ -18,12 +18,17 @@ public class StartPage extends Application {
     Button chooseBoardButton = new Button("Choose board");
     VBox menu = new VBox(startButton, choosePlayerButton, chooseBoardButton);
 
+    startButton.setOnAction(e -> {
+      BoardPage gameBoard = new BoardPage();
+      gameBoard.start(primaryStage);
+    });
+
     HBox mainStartPage = new HBox(titleBox, menu);
 
     Scene scene = new Scene(mainStartPage, 1000, 700);
-    stage.setTitle("Snakes and ladders");
-    stage.setScene(scene);
-    stage.show();
+    primaryStage.setTitle("Snakes and ladders");
+    primaryStage.setScene(scene);
+    primaryStage.show();
   }
 
 
