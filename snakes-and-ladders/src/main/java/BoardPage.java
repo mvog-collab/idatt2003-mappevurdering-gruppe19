@@ -45,13 +45,7 @@ public class BoardPage extends Application {
 
 
         playersBox.setSpacing(10);
-        mainBox.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
-        gameControl.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
         gameControl.setPrefSize(400, 700);
-        playersBox.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
-        playersLabel.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
-        buttonBox.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
-        diceBox.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
         gameControl.setAlignment(Pos.TOP_CENTER);
         playersBox.setAlignment(Pos.CENTER);
         diceBox.setAlignment(Pos.CENTER);
