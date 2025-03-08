@@ -30,7 +30,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>StartPage</mainClass>
+          <mainClass>ui.BoardPage</mainClass>
           <modules>
             <module>javafx-controls</module>
             <module>javafx-graphics</module>

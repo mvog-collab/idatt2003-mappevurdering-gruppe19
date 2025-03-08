@@ -1,5 +1,6 @@
 package application;
-import StartPage;
+
+import ui.StartPage;
 
 public class Main  {
 

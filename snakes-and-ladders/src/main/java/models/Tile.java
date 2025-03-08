@@ -2,7 +2,7 @@ package models;
 import java.util.HashSet;
 import java.util.Set;
 
-import TileAction;
+import game_logic.TileAction;
 
 public class Tile {
 
