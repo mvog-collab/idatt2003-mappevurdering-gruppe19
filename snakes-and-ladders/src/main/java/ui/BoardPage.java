@@ -17,12 +17,22 @@ public class BoardPage extends Application {
     @Override
     public void start(Stage primaryStage) {
         GridPane board = new GridPane();
+        board.getStyleClass().add("grid-pane");
+
         Label playersLabel = new Label("Players");
         HBox playersBox = new HBox();
+
         HBox diceBox = new HBox();
+        diceBox.getStyleClass().add("dice-box");
+
         Button rollDice = new Button("Roll Dice");
+        rollDice.getStyleClass().add("rollButton");
+
         HBox buttonBox = new HBox(rollDice);
+        buttonBox.getStyleClass().add("button-box");
         VBox gameControl = new VBox(playersLabel, playersBox, diceBox, buttonBox);
+        gameControl.getStyleClass().add("game-control");
+
         HBox mainBox = new HBox(board, gameControl);
 
 
@@ -30,9 +40,12 @@ public class BoardPage extends Application {
             for (int col = 0; col < width; col++) {
                 StackPane tile = new StackPane();
                 tile.setPrefSize(tileSize, tileSize);
-                tile.setStyle(
-                    ((row + col) % 2 == 0 ? "-fx-background-color: black; " : "-fx-background-color: white; ") +
-                    "-fx-border-color: black; -fx-border-width: 1px;");
+
+                if ((row + col) % 2 == 0) {
+                    tile.getStyleClass().add("tile-black");
+                } else {
+                    tile.getStyleClass().add("tile-white");
+                }
 
                 board.add(tile, col, height - row -1);
             }
@@ -40,22 +53,15 @@ public class BoardPage extends Application {
 
 
         for (int i = 0; i < 5; i++){
-            Rectangle playersRectangle = new Rectangle(50, 50, Color.BLUEVIOLET);
+            Rectangle playersRectangle = new Rectangle(50, 50);
+            playersRectangle.getStyleClass().add("player-figure");
             playersBox.getChildren().add(playersRectangle);
         }
 
 
-        playersBox.setSpacing(10);
-        gameControl.setPrefSize(400, 700);
-        gameControl.setAlignment(Pos.TOP_CENTER);
-        playersBox.setAlignment(Pos.CENTER);
-        diceBox.setAlignment(Pos.CENTER);
-        buttonBox.setAlignment(Pos.CENTER);
-
-        gameControl.setSpacing(150);
-
-
         Scene scene = new Scene(mainBox, 1000, 700);
+        scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+
         primaryStage.setTitle("Snakes and ladders");
         primaryStage.setScene(scene);
         primaryStage.show();
