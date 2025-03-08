@@ -1,3 +1,10 @@
+package game_logic;
+
+import game_logic.TileAction;
+import models.Board;
+import models.Player;
+import models.Tile;
+
 public class Snake implements TileAction {
 
     private final int startTileId;

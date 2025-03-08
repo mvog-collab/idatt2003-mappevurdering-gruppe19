@@ -1,4 +1,10 @@
+package game_logic;
+
 import java.awt.desktop.AboutEvent;
+
+import game_logic.TileAction;
+import models.Board;
+import models.Player;
 
 public class Ladder implements TileAction {
   int startTileId;

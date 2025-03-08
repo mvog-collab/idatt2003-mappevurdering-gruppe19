@@ -1,13 +1,20 @@
+package application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import game_logic.BoardMaker;
+import models.Board;
+import models.Dice;
+import models.Player;
+import models.Tile;
+
 public class BoardGame {
 
-  private Board board;
+  private final Board board;
   private Player currentPlayer;
-  private List<Player> players;
-  private Dice dice;
+  private final List<Player> players;
+  private final Dice dice;
   Scanner sc = new Scanner(System.in);
 
   public BoardGame() {
@@ -50,18 +57,15 @@ public class BoardGame {
   }
 
   public void playATurn() {
-    while (true) {
-      for (Player player : players) {
-        String wantToThrow = sc.nextLine();
-          if (!wantToThrow.isBlank()) {
-            setCurrentPlayer(player);
-            currentPlayerPlaysTurn();
+      do {
+          for (Player player : players) {
+              String wantToThrow = sc.nextLine();
+              if (!wantToThrow.isBlank()) {
+                  setCurrentPlayer(player);
+                  currentPlayerPlaysTurn();
+              }
           }
-      }
-      if (getWinner() != null) {
-        break;
-      }
-    }
+      } while (getWinner() == null);
   }
 
   public Board getBoard() {

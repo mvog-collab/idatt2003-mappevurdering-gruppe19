@@ -1,5 +1,10 @@
+package game_logic;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import models.Board;
+import models.Tile;
 
 public class SnakeAndLadderConfigurator {
 

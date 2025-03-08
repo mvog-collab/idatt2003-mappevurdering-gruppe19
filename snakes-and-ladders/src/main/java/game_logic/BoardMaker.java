@@ -1,3 +1,8 @@
+package game_logic;
+
+import models.Board;
+import models.Tile;
+
 public class BoardMaker {
 
     private BoardMaker() {}

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import models.Die;
+
 @DisplayName("Test class for the Die class")
 public class DieTest {
 
