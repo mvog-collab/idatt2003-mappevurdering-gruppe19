@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 public class BoardPage extends Application {
     private final int tileSize = 50;
     private final int width = 10;
-    private final int height = 10;
+    private final int height = 9;
 
     @Override
     public void start(Stage primaryStage) {
@@ -36,21 +36,7 @@ public class BoardPage extends Application {
 
         HBox mainBox = new HBox(board, gameControl);
 
-
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-                StackPane tile = new StackPane();
-                tile.setPrefSize(tileSize, tileSize);
-
-                if ((row + col) % 2 == 0) {
-                    tile.getStyleClass().add("tile-black");
-                } else {
-                    tile.getStyleClass().add("tile-white");
-                }
-
-                board.add(tile, col, height - row -1);
-            }
-        }
+        BoardSetup(board);
 
 
         for (int i = 0; i < 5; i++){
@@ -66,6 +52,42 @@ public class BoardPage extends Application {
         primaryStage.setTitle("Snakes and ladders");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void BoardSetup(GridPane board) {
+        int tileId = 1;
+        boolean leftToRight = true;
+
+        for (int row = height - 1; row >= 0; row--) {
+            if (leftToRight) {
+                for (int col = 0; col < width; col++) {
+                    addTile(board, row, col, tileId++);
+                }
+            } else {
+                for (int col = width -1; col >= 0; col--) {
+                    addTile(board, row, col, tileId++);
+                }
+            }
+            leftToRight = !leftToRight;
+        }
+    }
+
+    private void addTile(GridPane board, int row, int col, int tileId) {
+        StackPane tile = new StackPane();
+        tile.setPrefSize(tileSize, tileSize);
+
+        Label tileLabel = new Label(String.valueOf(tileId));
+
+        if ((row + col) % 2 == 0) {
+            tile.getStyleClass().add("tile-white");
+            tileLabel.getStyleClass().add("tile-label-black");
+        } else {
+            tile.getStyleClass().add("tile-black");
+            tileLabel.getStyleClass().add("tile-label-white");
+        }
+
+        tile.getChildren().add(tileLabel);
+        board.add(tile, col, row);
     }
 
 
