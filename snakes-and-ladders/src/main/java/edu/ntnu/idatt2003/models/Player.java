@@ -1,3 +1,4 @@
+package edu.ntnu.idatt2003.models;
 import java.time.LocalDate;
 
 public class Player {

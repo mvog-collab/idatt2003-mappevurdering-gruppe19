@@ -1,3 +1,10 @@
+package edu.ntnu.idatt2003.game_logic;
+
+import edu.ntnu.idatt2003.game_logic.TileAction;
+import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.models.Player;
+import edu.ntnu.idatt2003.models.Tile;
+
 public class Snake implements TileAction {
 
     private final int startTileId;

@@ -1,3 +1,4 @@
+package edu.ntnu.idatt2003.models;
 import java.util.Random;
 
 public class Die {

@@ -1,5 +1,10 @@
+package edu.ntnu.idatt2003.game_logic;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.models.Tile;
 
 public class SnakeAndLadderConfigurator {
 

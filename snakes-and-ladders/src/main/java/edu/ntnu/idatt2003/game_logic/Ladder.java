@@ -1,4 +1,10 @@
+package edu.ntnu.idatt2003.game_logic;
+
 import java.awt.desktop.AboutEvent;
+
+import edu.ntnu.idatt2003.game_logic.TileAction;
+import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.models.Player;
 
 public class Ladder implements TileAction {
   int startTileId;
