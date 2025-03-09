@@ -21,6 +21,7 @@ public class BoardPage extends Application {
 
         Label playersLabel = new Label("Players");
         HBox playersBox = new HBox();
+        playersBox.getStyleClass().add("players-box");
 
         HBox diceBox = new HBox();
         diceBox.getStyleClass().add("dice-box");
