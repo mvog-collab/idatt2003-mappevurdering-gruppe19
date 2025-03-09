@@ -1,4 +1,8 @@
 package edu.ntnu.idatt2003.ui;
+import edu.ntnu.idatt2003.game_logic.BoardMaker;
+import edu.ntnu.idatt2003.models.Board;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -14,8 +18,14 @@ public class BoardPage extends Application {
     private final int width = 10;
     private final int height = 9;
 
+    private Map<Integer, StackPane> tileUIMap;
+    private Board gameBoard;
+
     @Override
     public void start(Stage primaryStage) {
+        gameBoard = new Board(width * height);
+        tileUIMap = new HashMap<>();
+
         GridPane board = new GridPane();
         board.getStyleClass().add("grid-pane");
 
@@ -55,8 +65,9 @@ public class BoardPage extends Application {
     }
 
     private void BoardSetup(GridPane board) {
-        int tileId = 1;
+
         boolean leftToRight = true;
+        int tileId = 1;
 
         for (int row = height - 1; row >= 0; row--) {
             if (leftToRight) {
@@ -88,8 +99,9 @@ public class BoardPage extends Application {
 
         tile.getChildren().add(tileLabel);
         board.add(tile, col, row);
-    }
 
+        tileUIMap.put(tileId, tile);
+    }
 
     public static void main(String[] args) {
         launch(args);
