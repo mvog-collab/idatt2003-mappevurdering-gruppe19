@@ -1,4 +1,6 @@
 package edu.ntnu.idatt2003.application;
+import edu.ntnu.idatt2003.ui.BoardPage;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,16 +17,20 @@ public class BoardGame {
   private Player currentPlayer;
   private final List<Player> players;
   private final Dice dice;
+  private BoardPage boardPage;
   Scanner sc = new Scanner(System.in);
 
-  public BoardGame() {
+  public BoardGame(BoardPage boardPage) {
     this.board = BoardMaker.createBoard(100);
     this.players = new ArrayList<Player>();
     this.dice = new Dice();
+    this.boardPage = boardPage;
   }
 
-  public void addPlayer(Player player) {
+  public void addPlayer(String name, LocalDate birthday, BoardPage boardPage) {
+    Player player = new Player(name, birthday, boardPage);
     players.add(player);
+    setStartPosition(player);
   }
 
   public void currentPlayerPlaysTurn() {
