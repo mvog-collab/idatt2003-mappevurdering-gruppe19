@@ -1,13 +1,13 @@
-package application;
+package edu.ntnu.idatt2003.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import game_logic.BoardMaker;
-import models.Board;
-import models.Dice;
-import models.Player;
-import models.Tile;
+import edu.ntnu.idatt2003.game_logic.BoardMaker;
+import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.models.Dice;
+import edu.ntnu.idatt2003.models.Player;
+import edu.ntnu.idatt2003.models.Tile;
 
 public class BoardGame {
 

@@ -1,6 +1,6 @@
-package game_logic;
+package edu.ntnu.idatt2003.game_logic;
 
-import models.Player;
+import edu.ntnu.idatt2003.models.Player;
 
 public interface TileAction {
 

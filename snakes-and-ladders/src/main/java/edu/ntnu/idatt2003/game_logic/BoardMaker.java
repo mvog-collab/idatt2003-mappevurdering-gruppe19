@@ -1,7 +1,7 @@
-package game_logic;
+package edu.ntnu.idatt2003.game_logic;
 
-import models.Board;
-import models.Tile;
+import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.models.Tile;
 
 public class BoardMaker {
 

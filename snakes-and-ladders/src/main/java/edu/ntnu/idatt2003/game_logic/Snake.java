@@ -1,9 +1,9 @@
-package game_logic;
+package edu.ntnu.idatt2003.game_logic;
 
-import game_logic.TileAction;
-import models.Board;
-import models.Player;
-import models.Tile;
+import edu.ntnu.idatt2003.game_logic.TileAction;
+import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.models.Player;
+import edu.ntnu.idatt2003.models.Tile;
 
 public class Snake implements TileAction {
 

@@ -1,6 +1,6 @@
-package application;
+package edu.ntnu.idatt2003.application;
 
-import ui.StartPage;
+import edu.ntnu.idatt2003.ui.StartPage;
 
 public class Main  {
 

@@ -1,8 +1,8 @@
-package models;
+package edu.ntnu.idatt2003.models;
 import java.util.HashSet;
 import java.util.Set;
 
-import game_logic.TileAction;
+import edu.ntnu.idatt2003.game_logic.TileAction;
 
 public class Tile {
 

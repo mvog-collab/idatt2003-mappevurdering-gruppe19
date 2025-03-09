@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import models.Die;
+import edu.ntnu.idatt2003.models.Die;
 
 @DisplayName("Test class for the Die class")
 public class DieTest {
