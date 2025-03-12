@@ -70,3 +70,13 @@
 .player-figure {
     -fx-fill: blueviolet;
 }
+
+/* Tile Number White */
+.tile-label-white {
+    -fx-text-fill: white ;
+}
+
+/* Tile Number Black */
+.tile-label-black {
+    -fx-text-fill: black ;
+}
