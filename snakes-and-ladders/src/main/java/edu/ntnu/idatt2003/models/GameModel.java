@@ -1,11 +1,6 @@
-package edu.ntnu.idatt2003.application;
+package edu.ntnu.idatt2003.models;
 import java.time.LocalDate;
 import java.util.List;
-
-import edu.ntnu.idatt2003.models.Board;
-import edu.ntnu.idatt2003.models.Dice;
-import edu.ntnu.idatt2003.models.Player;
-import edu.ntnu.idatt2003.models.Tile;
 
 public class GameModel {
 

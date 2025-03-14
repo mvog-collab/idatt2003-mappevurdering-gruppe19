@@ -1,8 +1,16 @@
 package edu.ntnu.idatt2003.ui;
+import edu.ntnu.idatt2003.controllers.BoardController;
 import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.models.Dice;
+import edu.ntnu.idatt2003.models.GameModel;
+import edu.ntnu.idatt2003.models.Player;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,12 +24,17 @@ public class BoardView extends Application {
     private final int height = 10;
 
     private Map<Integer, StackPane> tileUIMap;
+    private Map<Player, Node> playerTokens;
     private Board gameBoard;
+    private BoardController boardController;
 
     @Override
     public void start(Stage primaryStage) {
         gameBoard = new Board(width * height);
         tileUIMap = new HashMap<>();
+        playerTokens = new HashMap<>();
+        GameModel gameModel = new GameModel(gameBoard, new ArrayList<>(), new Dice());
+        boardController = new BoardController(this, gameBoard, gameModel);
 
         GridPane board = new GridPane();
         board.getStyleClass().add("grid-pane");
@@ -35,6 +48,8 @@ public class BoardView extends Application {
 
         Button rollDice = new Button("Roll Dice");
         rollDice.getStyleClass().add("rollButton");
+
+        rollDice.setOnAction(e -> boardController.rollDiceButtonPressed());
 
         HBox buttonBox = new HBox(rollDice);
         buttonBox.getStyleClass().add("button-box");
@@ -52,6 +67,11 @@ public class BoardView extends Application {
             playersBox.getChildren().add(playersRectangle);
         }
 
+        for (Player player : gameModel.getPlayers()){
+            Rectangle playersRectangle = new Rectangle(15, 15);
+            playersRectangle.getStyleClass().add("player-figure");
+            playerTokens.put(player, playersRectangle);
+        }
 
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
@@ -98,6 +118,12 @@ public class BoardView extends Application {
         board.add(tile, col, row);
 
         tileUIMap.put(tileId, tile);
+    }
+
+    public void updatePlayerPosition(int tileId, Player player) {
+        Node playerToken = playerTokens.get(player);
+        StackPane tile = tileUIMap.get(tileId);
+        tile.getChildren().add(playerToken);
     }
 
     public static void main(String[] args) {

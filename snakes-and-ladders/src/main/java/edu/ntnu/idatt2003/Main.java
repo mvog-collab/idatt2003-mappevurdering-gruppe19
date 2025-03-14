@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2003.application;
+package edu.ntnu.idatt2003;
 
 import edu.ntnu.idatt2003.ui.StartPage;
 
