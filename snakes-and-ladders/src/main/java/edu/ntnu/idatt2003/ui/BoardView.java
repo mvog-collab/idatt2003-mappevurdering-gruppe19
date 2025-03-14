@@ -1,19 +1,16 @@
 package edu.ntnu.idatt2003.ui;
-import edu.ntnu.idatt2003.game_logic.BoardMaker;
 import edu.ntnu.idatt2003.models.Board;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class BoardPage extends Application {
+public class BoardView extends Application {
     private final int tileSize = 50;
     private final int width = 9;
     private final int height = 10;
