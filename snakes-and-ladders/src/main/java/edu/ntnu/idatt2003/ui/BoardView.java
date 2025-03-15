@@ -7,7 +7,6 @@ import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +50,7 @@ public class BoardView extends Application {
         Button rollDice = new Button("Roll Dice");
         rollDice.getStyleClass().add("rollButton");
 
-        rollDice.setOnAction(e -> boardController.rollDiceButtonPressed());
+        rollDice.setOnAction(e -> boardController.playATurn());
 
         HBox buttonBox = new HBox(rollDice);
         buttonBox.getStyleClass().add("button-box");
