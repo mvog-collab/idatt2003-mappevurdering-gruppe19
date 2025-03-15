@@ -12,27 +12,37 @@ public class BoardController {
     private final Board board;
     private final GameModel gameModel;
     
+    
     public BoardController(BoardView boardView, GameModel gameModel) {
         this.boardView = boardView;
         this.board = BoardMaker.createBoard(boardView.getHeight() * boardView.getWidth());
         this.gameModel = gameModel;
     }
-
-    public void rollDiceButtonPressed() {
+    
+    public void rollDiceForCurrentPlayer() {
         gameModel.moveCurrentPlayer();
         int newTile = gameModel.getCurrentPlayer().getCurrentTile().getTileId();
         boardView.updatePlayerPosition(newTile, gameModel.getCurrentPlayer());
     }
-
+    
     public void addPlayer(String name, LocalDate birthday) {
         gameModel.addPlayer(name, birthday);
     }
 
+    public void playATurn() {
+        rollDiceForCurrentPlayer();
+        gameModel.nextPlayersTurn();
+    }
+    
     public BoardView getBoardView() {
         return boardView;
     }
-
+    
     public Board getBoard() {
         return board;
+    }
+    
+    public GameModel getGameModel() {
+        return gameModel;
     }
 }
