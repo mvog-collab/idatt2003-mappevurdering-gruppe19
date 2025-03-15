@@ -2,6 +2,7 @@ package edu.ntnu.idatt2003.models;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GameModel {
 
@@ -25,15 +26,17 @@ public class GameModel {
     setStartPosition(player);
   }
 
-  public void moveCurrentPlayer() {
+  public Optional<Tile> moveCurrentPlayer() {
     int roll = dice.rollDice();
     currentPlayer.move(roll);
+    return Optional.ofNullable(currentPlayer.getCurrentTile());
   }
 
-  public void nextPlayersTurn() {
+  public Player nextPlayersTurn() {
     int currentIndex = players.indexOf(currentPlayer);
     int nextIndex = (currentIndex + 1) % players.size();
     setCurrentPlayer(players.get(nextIndex));
+    return currentPlayer;
   }
 
   public void setStartPosition(Player player) {
