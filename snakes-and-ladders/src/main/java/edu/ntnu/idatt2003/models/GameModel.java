@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.models;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameModel {
@@ -9,15 +10,18 @@ public class GameModel {
   private final List<Player> players;
   private final Dice dice;
 
-  public GameModel(Board board, List<Player> players, Dice dice) {
+  public GameModel(Board board, Dice dice) {
     this.board = board;
-    this.players = players;
+    this.players = new ArrayList<>();
     this.dice = dice;
   }
 
   public void addPlayer(String name, LocalDate birthday) {
     Player player = new Player(name, birthday);
     players.add(player);
+    if (players.size() == 1) {
+      setCurrentPlayer(player);
+    }
     setStartPosition(player);
   }
 
@@ -27,14 +31,9 @@ public class GameModel {
   }
 
   public void nextPlayersTurn() {
-    int indexCurrentPlayer = 0;
-    for (Player player : players) {
-      if (currentPlayer == player){
-        indexCurrentPlayer = players.indexOf(currentPlayer);
-        setCurrentPlayer(players.get(indexCurrentPlayer + 1));
-        return; // Return statement to not update for all players
-      }
-    }
+    int currentIndex = players.indexOf(currentPlayer);
+    int nextIndex = (currentIndex + 1) % players.size();
+    setCurrentPlayer(players.get(nextIndex));
   }
 
   public void setStartPosition(Player player) {

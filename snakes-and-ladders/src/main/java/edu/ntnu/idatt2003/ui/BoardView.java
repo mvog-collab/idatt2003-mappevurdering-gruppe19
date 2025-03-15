@@ -1,10 +1,12 @@
 package edu.ntnu.idatt2003.ui;
 import edu.ntnu.idatt2003.controllers.BoardController;
+import edu.ntnu.idatt2003.game_logic.BoardMaker;
 import edu.ntnu.idatt2003.models.Board;
 import edu.ntnu.idatt2003.models.Dice;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +32,11 @@ public class BoardView extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        gameBoard = new Board(width * height);
+        gameBoard = BoardMaker.createBoard(width * height);
         tileUIMap = new HashMap<>();
         playerTokens = new HashMap<>();
-        GameModel gameModel = new GameModel(gameBoard, new ArrayList<>(), new Dice());
-        boardController = new BoardController(this, gameBoard, gameModel);
+        GameModel gameModel = new GameModel(gameBoard, new Dice());
+        boardController = new BoardController(this, gameModel);
 
         GridPane board = new GridPane();
         board.getStyleClass().add("grid-pane");
@@ -60,6 +62,8 @@ public class BoardView extends Application {
 
         BoardSetup(board);
 
+        boardController.addPlayer("Edvard", LocalDate.of(2003, 03, 27));
+        boardController.addPlayer("Martha", LocalDate.of(2004, 01, 19));
 
         for (int i = 0; i < 5; i++){
             Rectangle playersRectangle = new Rectangle(50, 50);
@@ -124,6 +128,14 @@ public class BoardView extends Application {
         Node playerToken = playerTokens.get(player);
         StackPane tile = tileUIMap.get(tileId);
         tile.getChildren().add(playerToken);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public static void main(String[] args) {
