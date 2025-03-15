@@ -35,9 +35,16 @@ public class BoardController {
 
     public void playATurn() {
         rollDiceForCurrentPlayer();
+
+        if (gameModel.hasPlayerWon(gameModel.getCurrentPlayer())) {
+            boardView.announceWinner(gameModel.getCurrentPlayer());
+        }
+
         gameModel.nextPlayersTurn();
         //TODO: Add more to happen in a turn. Updating UI, checking winner, logging, etc
     }
+
+    
     
     public BoardView getBoardView() {
         return boardView;

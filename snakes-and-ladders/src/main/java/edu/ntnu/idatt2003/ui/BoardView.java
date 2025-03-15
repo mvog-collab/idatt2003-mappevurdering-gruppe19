@@ -13,8 +13,10 @@ import java.util.Map;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -28,10 +30,11 @@ public class BoardView extends Application {
     private Map<Player, Node> playerTokens;
     private Board gameBoard;
     private BoardController boardController;
+    private Button rollDiceButton;
 
     @Override
     public void start(Stage primaryStage) {
-        gameBoard = BoardMaker.createBoard(width * height);
+        gameBoard = BoardMaker.createBoard(width * height + 1);
         tileUIMap = new HashMap<>();
         playerTokens = new HashMap<>();
         GameModel gameModel = new GameModel(gameBoard, new Dice());
@@ -47,12 +50,12 @@ public class BoardView extends Application {
         HBox diceBox = new HBox();
         diceBox.getStyleClass().add("dice-box");
 
-        Button rollDice = new Button("Roll Dice");
-        rollDice.getStyleClass().add("rollButton");
+        rollDiceButton = new Button("Roll Dice");
+        rollDiceButton.getStyleClass().add("rollButton");
 
-        rollDice.setOnAction(e -> boardController.playATurn());
+        rollDiceButton.setOnAction(e -> boardController.playATurn());
 
-        HBox buttonBox = new HBox(rollDice);
+        HBox buttonBox = new HBox(rollDiceButton);
         buttonBox.getStyleClass().add("button-box");
         VBox gameControl = new VBox(playersLabel, playersBox, diceBox, buttonBox);
         gameControl.getStyleClass().add("game-control");
@@ -127,6 +130,23 @@ public class BoardView extends Application {
         Node playerToken = playerTokens.get(player);
         StackPane tile = tileUIMap.get(tileId);
         tile.getChildren().add(playerToken);
+    }
+
+    private void disableRollButton() {
+        rollDiceButton.setDisable(true);
+    }
+
+    private void enableRollButton() {
+        rollDiceButton.setDisable(false);
+    }
+
+    public void announceWinner(Player winner) {
+        disableRollButton();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("The game is over!");
+        alert.setHeaderText("Winner");
+        alert.setContentText("Congratulations, " + winner.getName() + "! You've won the game!");
+        alert.showAndWait();
     }
 
     public int getWidth() {
