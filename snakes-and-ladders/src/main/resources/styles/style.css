@@ -87,9 +87,9 @@
     -fx-background-radius: 100;
     -fx-font-family: "Brush Script MT";
     -fx-font-size: 40px;
-    -fx-background-size: 150;
+    -fx-background-size: 180;
     -fx-background-color: #E4A55D;
-
+    -fx-text-fill: black;
 }
 
 /* Start Page Title*/
@@ -97,10 +97,19 @@
     -fx-font-family: "Brush Script MT";
     -fx-padding: 80;
     -fx-font-size: 50;
+    -fx-text-fill: white;
 }
 
 
 /*Menu of Start Buttons*/
 .menu-start-buttons {
     -fx-padding: 80;
+}
+
+/* Start Page Background */
+.start-page {
+    -fx-background-image: url("/images/Background.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
 }

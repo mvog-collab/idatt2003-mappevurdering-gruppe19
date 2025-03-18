@@ -36,15 +36,21 @@ public class StartPage extends Application {
     chooseBoardButton.getStyleClass().add("start-page-button");
     startButton.getStyleClass().add("start-page-button");
     choosePlayerButton.getStyleClass().add("start-page-button");
+
+    /* Main Start page */
     HBox mainStartPage = new HBox(titleBox, menu);
+    mainStartPage.getStyleClass().add("start-page");
+
 
     /* Label title styling */
     title.getStyleClass().add("start-page-title");
     title.setAlignment(Pos.CENTER_LEFT);
 
 
+
     /* Scene */
     Scene scene = new Scene(mainStartPage, 1000, 700);
+
     scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     primaryStage.setTitle("Snakes and ladders");
     primaryStage.setScene(scene);
