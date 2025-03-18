@@ -80,3 +80,28 @@
 .tile-label-black {
     -fx-text-fill: black ;
 }
+
+/* Button Menu */
+.start-page-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 40px;
+    -fx-background-size: 150;
+    -fx-background-color: #E4A55D;
+
+}
+
+/* Start Page Title*/
+.start-page-title {
+    -fx-font-family: "Brush Script MT";
+    -fx-padding: 80;
+    -fx-font-size: 50;
+    -fx-wi;
+}
+
+
+/*Menu of Start Buttons*/
+.menu-start-buttons {
+    -fx-padding: 80;
+}

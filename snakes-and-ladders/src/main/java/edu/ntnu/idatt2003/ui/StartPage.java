@@ -2,6 +2,7 @@ package edu.ntnu.idatt2003.ui;
 
 import edu.ntnu.idatt2003.ui.BoardPage;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,16 +27,29 @@ public class StartPage extends Application {
       gameBoard.start(primaryStage);
     });
 
+    /* Button menu styling */
+    menu.setSpacing(50);
+    menu.getStyleClass().add("menu-start-buttons");
+    menu.setAlignment(Pos.CENTER_RIGHT);
+
+
+    chooseBoardButton.getStyleClass().add("start-page-button");
+    startButton.getStyleClass().add("start-page-button");
+    choosePlayerButton.getStyleClass().add("start-page-button");
     HBox mainStartPage = new HBox(titleBox, menu);
 
+    /* Label title styling */
+    title.getStyleClass().add("start-page-title");
+    title.setAlignment(Pos.CENTER_LEFT);
+
+
+    /* Scene */
     Scene scene = new Scene(mainStartPage, 1000, 700);
+    scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     primaryStage.setTitle("Snakes and ladders");
     primaryStage.setScene(scene);
     primaryStage.show();
   }
-
-
-
 
   public static void main(String[] args) {launch(args);}
 }
