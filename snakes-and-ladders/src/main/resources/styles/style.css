@@ -92,6 +92,10 @@
     -fx-text-fill: black;
 }
 
+.start-page-button:hover {
+    -fx-background-color: #C98F4B;
+}
+
 /* Start Page Title*/
 .start-page-title {
     -fx-font-family: "Brush Script MT";
