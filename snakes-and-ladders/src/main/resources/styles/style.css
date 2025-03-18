@@ -98,6 +98,7 @@
     -fx-padding: 80;
     -fx-font-size: 50;
     -fx-text-fill: white;
+    -fx-underline: true;
 }
 
 
@@ -112,4 +113,6 @@
     -fx-background-size: cover;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
+
 }
+
