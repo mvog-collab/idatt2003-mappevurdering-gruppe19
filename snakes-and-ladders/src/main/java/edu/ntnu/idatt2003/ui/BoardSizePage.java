@@ -31,16 +31,16 @@ public class BoardSizePage extends Application {
     VBox popup = new VBox(background);
 
     /* Title Styling */
-    title.getStyleClass().add("board-size-title");
+    title.getStyleClass().add("popup-title");
     title.setAlignment(Pos.CENTER);
     titleBox.setAlignment(Pos.CENTER);
 
     /* Button Styling */
-    sixtyTiles.getStyleClass().add("board-size-button");
-    ninetyTiles.getStyleClass().add("board-size-button");
-    oneTwentyTiles.getStyleClass().add("board-size-button");
-    cancelButton.getStyleClass().add("board-size-button");
-    continueButton.getStyleClass().add("board-size-button");
+    sixtyTiles.getStyleClass().add("popup-button");
+    ninetyTiles.getStyleClass().add("popup-button");
+    oneTwentyTiles.getStyleClass().add("popup-button");
+    cancelButton.getStyleClass().add("popup-button");
+    continueButton.getStyleClass().add("popup-button");
 
     buttonBox.setAlignment(Pos.CENTER);
     buttonBox.setSpacing(10);
@@ -49,7 +49,7 @@ public class BoardSizePage extends Application {
     popup.setAlignment(Pos.CENTER);
     popup.setSpacing(70);
 
-    popup.getStyleClass().add("board-size-popup");
+    popup.getStyleClass().add("popup-background");
 
 
     Scene scene = new Scene(popup, 500, 350);
