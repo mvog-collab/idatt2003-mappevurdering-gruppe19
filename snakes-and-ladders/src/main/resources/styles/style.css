@@ -117,6 +117,38 @@
     -fx-background-size: cover;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
+}
 
+/* Board Size Page  */
+
+/* Title */
+.board-size-title {
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 30;
+    -fx-text-fill: black;
+    -fx-underline: true;
+    -fx-padding: 15;
+}
+
+/* Buttons */
+.board-size-button {
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 15px;
+    -fx-background-size: 30;
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: black;
+    -fx-padding: 10;
+}
+
+.board-size-button:hover {
+    -fx-background-color: #E0E0E0;
+
+}
+
+/* Popup Background */
+.board-size-popup {
+    -fx-background: "transparent";
 }
 

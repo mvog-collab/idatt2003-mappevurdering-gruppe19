@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2003.ui;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,13 +22,35 @@ public class BoardSizePage extends Application {
     Button cancelButton = new Button("Cancel");
     Button continueButton = new Button("Continue");
 
-    HBox buttonBox = new HBox(sixtyTiles, ninetyTiles, oneTwentyTiles);
+    VBox buttonBox = new VBox(sixtyTiles, ninetyTiles, oneTwentyTiles);
 
-    VBox statusBox = new VBox(cancelButton, continueButton);
+    HBox statusBox = new HBox(cancelButton, continueButton);
 
-    HBox background = new HBox(titleBox, buttonBox, statusBox);
+    VBox background = new VBox(titleBox, buttonBox, statusBox);
 
     VBox popup = new VBox(background);
+
+    /* Title Styling */
+    title.getStyleClass().add("board-size-title");
+    title.setAlignment(Pos.CENTER);
+    titleBox.setAlignment(Pos.CENTER);
+
+    /* Button Styling */
+    sixtyTiles.getStyleClass().add("board-size-button");
+    ninetyTiles.getStyleClass().add("board-size-button");
+    oneTwentyTiles.getStyleClass().add("board-size-button");
+    cancelButton.getStyleClass().add("board-size-button");
+    continueButton.getStyleClass().add("board-size-button");
+
+    buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.setSpacing(10);
+    statusBox.setAlignment(Pos.CENTER);
+    statusBox.setSpacing(70);
+    popup.setAlignment(Pos.CENTER);
+    popup.setSpacing(70);
+
+    popup.getStyleClass().add("board-size-popup");
+
 
     Scene scene = new Scene(popup, 500, 350);
 
