@@ -1,3 +1,5 @@
+package edu.ntnu.idatt2003.models;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import edu.ntnu.idatt2003.models.Die;
 
 @DisplayName("Test class for the Die class")
 public class DieTest {
