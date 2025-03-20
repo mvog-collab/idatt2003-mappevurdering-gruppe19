@@ -1,11 +1,9 @@
 package edu.ntnu.idatt2003.ui;
 
-import edu.ntnu.idatt2003.ui.BoardPage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -22,7 +20,7 @@ public class StartPage extends Application {
     VBox menu = new VBox(startButton, choosePlayerButton, chooseBoardButton);
 
     startButton.setOnAction(e -> {
-      BoardPage gameBoard = new BoardPage();
+      BoardView gameBoard = new BoardView();
       gameBoard.start(primaryStage);
     });
 
