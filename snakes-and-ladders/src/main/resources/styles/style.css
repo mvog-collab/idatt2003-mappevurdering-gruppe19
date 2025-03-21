@@ -149,7 +149,15 @@
 
 /* Popup Background */
 .popup-background {
-    -fx-background: "transparent";
+    -fx-background-color: #D9D9D9;
+}
+
+/* Labels */
+.popup-label {
+        -fx-font-family: "Brush Script MT";
+        -fx-font-size: 30;
+        -fx-text-fill: black;
+        -fx-padding: 15;
 }
 
 

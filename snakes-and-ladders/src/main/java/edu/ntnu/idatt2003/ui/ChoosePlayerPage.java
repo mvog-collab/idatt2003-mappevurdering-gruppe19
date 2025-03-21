@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2003.ui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -36,30 +37,47 @@ public class ChoosePlayerPage extends Application {
 
       HBox statusBox = new HBox(cancelButton, addPlayerButton, continueButton);
 
-      VBox background = new VBox(titleBox, nameBox, birthdayBox, statusBox);
+      VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, statusBox);
 
-      VBox popup = new VBox(background);
+      VBox background = new VBox(playerPopup);
 
       /* Title Styling */
       title.getStyleClass().add("popup-title");
       title.setAlignment(Pos.CENTER);
       titleBox.setAlignment(Pos.CENTER);
 
+      /* Player-Info Styling */
+
+      nameBox.setAlignment(Pos.CENTER_LEFT);
+      nameBox.setSpacing(30);
+      playerName.getStyleClass().add("popup-label");
+
+      birthdayBox.setAlignment(Pos.CENTER_LEFT);
+      playerBirthday.getStyleClass().add("popup-label");
+
+
+
       /* Button Styling */
 
       addPlayerButton.getStyleClass().add("popup-button");
-      cancelButton.getStyleClass().add("board-size-button");
-      continueButton.getStyleClass().add("board-size-button");
+      cancelButton.getStyleClass().add("popup-button");
+      continueButton.getStyleClass().add("popup-button");
 
       statusBox.setAlignment(Pos.CENTER);
       statusBox.setSpacing(70);
-      popup.setAlignment(Pos.CENTER);
-      popup.setSpacing(70);
+      statusBox.setPadding(new Insets(40));
+      background.setAlignment(Pos.CENTER);
+      background.setSpacing(70);
 
-      popup.getStyleClass().add("board-size-popup");
+      playerPopup.setSpacing(20);
 
 
-      Scene scene = new Scene(popup, 500, 350);
+      /* Background Styling */
+
+      background.getStyleClass().add("popup-background");
+
+
+      Scene scene = new Scene(background, 500, 350);
 
       scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
       primaryStage.setScene(scene);
