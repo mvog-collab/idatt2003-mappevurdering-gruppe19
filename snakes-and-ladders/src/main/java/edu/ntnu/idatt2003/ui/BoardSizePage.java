@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2003.ui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -26,9 +27,9 @@ public class BoardSizePage extends Application {
 
     HBox statusBox = new HBox(cancelButton, continueButton);
 
-    VBox background = new VBox(titleBox, buttonBox, statusBox);
+    VBox BoardPopup = new VBox(titleBox, buttonBox, statusBox);
 
-    VBox popup = new VBox(background);
+    VBox background = new VBox(BoardPopup);
 
     /* Title Styling */
     title.getStyleClass().add("popup-title");
@@ -46,13 +47,15 @@ public class BoardSizePage extends Application {
     buttonBox.setSpacing(10);
     statusBox.setAlignment(Pos.CENTER);
     statusBox.setSpacing(70);
-    popup.setAlignment(Pos.CENTER);
-    popup.setSpacing(70);
+    statusBox.setPadding(new Insets(40));
 
-    popup.getStyleClass().add("popup-background");
+    background.setAlignment(Pos.CENTER);
+    background.setSpacing(70);
+
+    background.getStyleClass().add("popup-background");
 
 
-    Scene scene = new Scene(popup, 500, 350);
+    Scene scene = new Scene(background, 500, 350);
 
     scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     primaryStage.setScene(scene);
