@@ -10,18 +10,25 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class StartPage extends Application {
+
+  private Button startButton;
+  private Button choosePlayerButton;
+  private Button chooseBoardButton;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
     Label title = new Label("Snakes & Ladders");
     VBox titleBox = new VBox(title);
 
-    Button startButton = new Button("Start game");
-    Button choosePlayerButton = new Button("Choose players");
-    Button chooseBoardButton = new Button("Choose board");
+    startButton = new Button("Start game");
+    disableStartButton();
+    chooseBoardButton = new Button("Choose board");
+    disableChooseBoardButton();
+    choosePlayerButton = new Button("Choose players");
     VBox menu = new VBox(choosePlayerButton, chooseBoardButton, startButton);
 
     Image snakeAndLadderImage = new Image(getClass().getResource("/images/snakeAndLadder.png").toExternalForm());
@@ -37,6 +44,32 @@ public class StartPage extends Application {
     startButton.setOnAction(e -> {
       BoardView gameBoard = new BoardView();
       gameBoard.start(primaryStage);
+    });
+
+    choosePlayerButton.setOnAction(e -> {
+      Stage choosePlayerPopup = new Stage();
+      choosePlayerPopup.initModality(Modality.APPLICATION_MODAL);
+      choosePlayerPopup.setTitle("Choose players");
+
+      ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
+
+      Scene scene = new Scene(choosePlayerPage.getView(), 500, 350);
+      choosePlayerPopup.setScene(scene);
+      choosePlayerPopup.showAndWait();
+      enableChooseBoardButton();
+    });
+
+    chooseBoardButton.setOnAction(e -> {
+      Stage chooseBoardPopup = new Stage();
+      chooseBoardPopup.initModality(Modality.APPLICATION_MODAL);
+      chooseBoardPopup.setTitle("Choose board size");
+
+      BoardSizePage boardSizePage = new BoardSizePage();
+
+      Scene scene = new Scene(boardSizePage.getBoardSizeView(), 500, 350);
+      chooseBoardPopup.setScene(scene);
+      chooseBoardPopup.showAndWait();
+      enableStartButton();
     });
 
     /* Button menu styling */
@@ -67,6 +100,30 @@ public class StartPage extends Application {
     primaryStage.setTitle("Snakes and ladders");
     primaryStage.setScene(scene);
     primaryStage.show();
+  }
+
+  private void disableStartButton() {
+    startButton.setDisable(true);
+  }
+
+  private void enableStartButton() {
+      startButton.setDisable(false);
+  }
+
+  private void disableChoosePlayerButton() {
+    choosePlayerButton.setDisable(true);
+  }
+
+  private void enableChoosePlayerButton() {
+      choosePlayerButton.setDisable(false);
+  }
+
+  private void disableChooseBoardButton() {
+    chooseBoardButton.setDisable(true);
+  }
+
+  private void enableChooseBoardButton() {
+    chooseBoardButton.setDisable(false);
   }
 
   public static void main(String[] args) {launch(args);}
