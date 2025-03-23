@@ -1,5 +1,4 @@
 package edu.ntnu.idatt2003.models;
-import edu.ntnu.idatt2003.ui.BoardPage;
 import java.time.LocalDate;
 
 public class Player {
@@ -7,9 +6,8 @@ public class Player {
     private final String name;
     private Tile currentTile;
     private final LocalDate birthday;
-    private BoardPage uiBoardPage;
 
-    public Player(String name, LocalDate birthday, BoardPage uiBoardPage) {
+    public Player(String name, LocalDate birthday) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Invalid name input. Name cannot be null or empty.");
         }
@@ -18,7 +16,6 @@ public class Player {
         }
         this.birthday = birthday;
         this.name = name;
-        this.uiBoardPage =  uiBoardPage;
     }
 
     public void placeOnTile(Tile tile) {
