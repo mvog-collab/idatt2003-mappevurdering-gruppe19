@@ -10,13 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
-public class ChoosePlayerPage extends Application {
+public class ChoosePlayerPage {
 
 
-    @Override
-    public void start(Stage primaryStage){
+    public VBox getView(){
       Label title = new Label("Add Players");
       VBox titleBox = new VBox(title);
 
@@ -76,12 +74,8 @@ public class ChoosePlayerPage extends Application {
 
       background.getStyleClass().add("popup-background");
 
-
-      Scene scene = new Scene(background, 500, 350);
-
-      scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-      primaryStage.setScene(scene);
-      primaryStage.show();
+      background.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+      return background;
     }
   }
 
