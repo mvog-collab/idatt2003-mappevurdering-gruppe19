@@ -83,7 +83,7 @@ public class StartPage extends Application {
 
     /* Main Start page */
     HBox mainStartPage = new HBox(leftSide, menu);
-    mainStartPage.getStyleClass().add("start-page");
+    mainStartPage.getStyleClass().add("page-background");
 
 
     /* Label title styling */
