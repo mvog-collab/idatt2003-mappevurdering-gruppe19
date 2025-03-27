@@ -90,9 +90,6 @@ public class StartPage extends Application {
     title.getStyleClass().add("start-page-title");
     title.setAlignment(Pos.CENTER_LEFT);
 
-    /* Image SnakeAndLadder */
-    image.getStyleClass().add("start-page-image");
-
     /* Scene */
     Scene scene = new Scene(mainStartPage, 1000, 700);
 
