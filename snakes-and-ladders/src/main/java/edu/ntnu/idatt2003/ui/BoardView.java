@@ -152,6 +152,8 @@ public class BoardView extends Application {
 
     public void updatePlayerPosition(int tileId, Player player) {
         Node playerToken = playerTokens.get(player);
+        //TODO: check that going from one tile, to the same tile (with a snake) works 
+        // tileUIMap.get(player.getCurrentTile().getTileId()).getChildren().remove(playerToken);
         StackPane tile = tileUIMap.get(tileId);
         tile.getChildren().add(playerToken);
     }
