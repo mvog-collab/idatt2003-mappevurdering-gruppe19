@@ -3,10 +3,11 @@
     -fx-background-color: #f4f4f4;
 }
 
-/* Board Grid Styling */
-.grid-pane {
-    -fx-border-color: black;
-    -fx-border-width: 2px;
+/* Board Styling */
+.board-container {
+    -fx-border-color: #6D6C6A;
+    -fx-border-width: 12px;
+    -fx-border-radius: 5px;
 }
 
 /* Tile Styling */
@@ -51,6 +52,20 @@
 /* Dice Box */
 .dice-box {
     -fx-alignment: center;
+    -fx-background-color: #AD0000;
+    -fx-background-radius: 40;
+    -fx-border-color: #000000;
+    -fx-border-radius: 30;
+    -fx-border-width: 20;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.2), 20, 2, 10, 10);
+}
+
+.dice-box-container {
+    -fx-alignment: center;
+}
+
+.main-box {
+    -fx-spacing: 30;
 }
 
 /* Button Box */
@@ -63,7 +78,7 @@
     -fx-pref-width: 400px;
     -fx-pref-height: 700px;
     -fx-alignment: top-center;
-    -fx-spacing: 150px;
+    -fx-spacing: 50;
 }
 
 /* Player Token */
@@ -111,8 +126,8 @@
     -fx-padding: 80;
 }
 
-/* Start Page Background */
-.start-page {
+/* Page Background */
+.page-background {
     -fx-background-image: url("/images/Background.png");
     -fx-background-size: cover;
     -fx-background-position: center;
@@ -154,11 +169,25 @@
 
 /* Labels */
 .popup-label {
-        -fx-font-family: "Brush Script MT";
-        -fx-font-size: 30;
-        -fx-text-fill: black;
-        -fx-padding: 15;
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 30;
+    -fx-text-fill: black;
+    -fx-padding: 15;
 }
 
+/* Button Menu */
+.roll-dice-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 40px;
+    -fx-background-size: 180;
+    -fx-background-color: #E4A55D;
+    -fx-text-fill: black;
+}
+
+.roll-dice-button:hover {
+    -fx-background-color: #C98F4B;
+}
 
 

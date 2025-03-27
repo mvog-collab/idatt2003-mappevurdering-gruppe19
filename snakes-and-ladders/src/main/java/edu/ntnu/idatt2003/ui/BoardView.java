@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -41,26 +43,44 @@ public class BoardView extends Application {
         boardController = new BoardController(this, gameModel);
 
         GridPane board = new GridPane();
-        board.getStyleClass().add("grid-pane");
+        board.setPrefSize(tileSize * width, tileSize * height);
+        board.setMaxSize(tileSize * width, tileSize * height);
+
+
+        StackPane boardContainer = new StackPane(board);
+        boardContainer.setMaxSize(tileSize * width, tileSize * height);
+        boardContainer.getStyleClass().add("board-container");
+        boardContainer.setAlignment(Pos.CENTER);
+
 
         Label playersLabel = new Label("Players");
         HBox playersBox = new HBox();
         playersBox.getStyleClass().add("players-box");
 
-        HBox diceBox = new HBox();
+        StackPane diceBox = new StackPane();
+        diceBox.setPrefSize(280,285);
         diceBox.getStyleClass().add("dice-box");
 
+        HBox diceBoxContainer = new HBox(diceBox);
+        diceBoxContainer.getStyleClass().add("dice-box-container");
+
+
+
+
         rollDiceButton = new Button("Roll Dice");
-        rollDiceButton.getStyleClass().add("rollButton");
+        rollDiceButton.getStyleClass().add("roll-dice-button");
 
         rollDiceButton.setOnAction(e -> boardController.playATurn());
 
         HBox buttonBox = new HBox(rollDiceButton);
         buttonBox.getStyleClass().add("button-box");
-        VBox gameControl = new VBox(playersLabel, playersBox, diceBox, buttonBox);
+        VBox gameControl = new VBox(playersLabel, playersBox, diceBoxContainer, buttonBox);
         gameControl.getStyleClass().add("game-control");
 
-        HBox mainBox = new HBox(board, gameControl);
+
+        HBox mainBox = new HBox(boardContainer, gameControl);
+        mainBox.setAlignment(Pos.CENTER);
+        mainBox.getStyleClass().add("main-box");
 
         BoardSetup(board);
 
@@ -78,6 +98,10 @@ public class BoardView extends Application {
             playersRectangle.getStyleClass().add("player-figure");
             playerTokens.put(player, playersRectangle);
         }
+
+        /* Background */
+        mainBox.getStyleClass().add("page-background");
+
 
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
