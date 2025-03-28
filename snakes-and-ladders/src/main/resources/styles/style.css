@@ -45,7 +45,7 @@
 
 /* Players Box */
 .players-box {
-    -fx-spacing: 10px;
+    -fx-spacing: 5px;
     -fx-alignment: center;
     -fx-background-color: transparent;
 }
