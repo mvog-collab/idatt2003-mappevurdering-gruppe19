@@ -19,6 +19,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -65,8 +67,6 @@ public class BoardView extends Application {
         diceBoxContainer.getStyleClass().add("dice-box-container");
 
 
-
-
         rollDiceButton = new Button("Roll Dice");
         rollDiceButton.getStyleClass().add("roll-dice-button");
 
@@ -87,16 +87,39 @@ public class BoardView extends Application {
         boardController.addPlayer("Edvard", LocalDate.of(2003, 03, 27));
         boardController.addPlayer("Martha", LocalDate.of(2004, 01, 19));
 
-        for (int i = 0; i < 5; i++){
-            Rectangle playersRectangle = new Rectangle(50, 50);
-            playersRectangle.getStyleClass().add("player-figure");
-            playersBox.getChildren().add(playersRectangle);
+        String[] imageFiles = {
+            "QueenChessBlack.png",
+            "QueenChessGold.png",
+            "QueenChessSilver.png",
+            "QueenChessWhite.png",
+            "QueenChessWood.png"
+        };
+
+        for (int i = 0; i < 5; i++) {
+            String selectedImageFile = imageFiles[i % imageFiles.length];
+            Image playerImage = new Image(getClass().getResourceAsStream("/Images/" + selectedImageFile));
+            ImageView playerImageView = new ImageView(playerImage);
+
+            playerImageView.setFitWidth(100);
+            playerImageView.setFitHeight(100);
+            playerImageView.getStyleClass().add("player-figure");
+
+            playersBox.getChildren().add(playerImageView);
         }
 
-        for (Player player : gameModel.getPlayers()){
-            Rectangle playersRectangle = new Rectangle(15, 15);
-            playersRectangle.getStyleClass().add("player-figure");
-            playerTokens.put(player, playersRectangle);
+        int i = 0;
+        for (Player player : gameModel.getPlayers()) {
+            String selectedImageFile = imageFiles[i % imageFiles.length];
+            Image playerImage = new Image(getClass().getResourceAsStream("/Images/" + selectedImageFile));
+            ImageView playerImageView = new ImageView(playerImage);
+
+            playerImageView.setFitWidth(40);
+            playerImageView.setFitHeight(40);
+            playerImageView.getStyleClass().add("player-figure");
+
+            playerTokens.put(player, playerImageView);
+
+            i++;
         }
 
         /* Background */

@@ -47,6 +47,7 @@
 .players-box {
     -fx-spacing: 10px;
     -fx-alignment: center;
+    -fx-background-color: transparent;
 }
 
 /* Dice Box */
@@ -83,7 +84,9 @@
 
 /* Player Token */
 .player-figure {
-    -fx-fill: blueviolet;
+    -fx-background-color: #35654d;
+    -fx-background-radius: 100;
+
 }
 
 /* Tile Number White */
