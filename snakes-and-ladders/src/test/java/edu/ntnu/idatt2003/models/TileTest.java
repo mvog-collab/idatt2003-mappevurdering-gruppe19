@@ -47,7 +47,7 @@ public class TileTest {
 
         @BeforeEach
         void initPlayer() {
-            player = new Player("TestPlayer", java.time.LocalDate.of(2000, 1, 1));
+            player = new Player("TestPlayer", "Token", java.time.LocalDate.of(2000, 1, 1));
         }
 
         @Test
