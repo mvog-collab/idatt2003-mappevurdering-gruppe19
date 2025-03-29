@@ -1,8 +1,14 @@
 package edu.ntnu.idatt2003.ui;
 
+import java.time.LocalDate;
+
+import edu.ntnu.idatt2003.controllers.ChoosePlayerController;
+import edu.ntnu.idatt2003.controllers.StartPageController;
+import edu.ntnu.idatt2003.models.GameModel;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -18,6 +24,8 @@ public class StartPage extends Application {
   private Button startButton;
   private Button choosePlayerButton;
   private Button chooseBoardButton;
+  private ChoosePlayerPage choosePlayerPage;
+  private BoardSizePage boardSizePage;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -31,6 +39,8 @@ public class StartPage extends Application {
     choosePlayerButton = new Button("Choose players");
     VBox menu = new VBox(choosePlayerButton, chooseBoardButton, startButton);
 
+    StartPageController startPageController = new StartPageController(this);
+
     Image snakeAndLadderImage = new Image(getClass().getResource("/images/snakeAndLadder.png").toExternalForm());
     ImageView imageView = new ImageView(snakeAndLadderImage);
     imageView.setFitWidth(400);
@@ -40,37 +50,6 @@ public class StartPage extends Application {
     StackPane image = new StackPane(imageView);
 
     VBox leftSide = new VBox(titleBox, image);
-
-    startButton.setOnAction(e -> {
-      BoardView gameBoard = new BoardView();
-      gameBoard.start(primaryStage);
-    });
-
-    choosePlayerButton.setOnAction(e -> {
-      Stage choosePlayerPopup = new Stage();
-      choosePlayerPopup.initModality(Modality.APPLICATION_MODAL);
-      choosePlayerPopup.setTitle("Choose players");
-
-      ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
-
-      Scene scene = new Scene(choosePlayerPage.getView(), 500, 350);
-      choosePlayerPopup.setScene(scene);
-      choosePlayerPopup.showAndWait();
-      enableChooseBoardButton();
-    });
-
-    chooseBoardButton.setOnAction(e -> {
-      Stage chooseBoardPopup = new Stage();
-      chooseBoardPopup.initModality(Modality.APPLICATION_MODAL);
-      chooseBoardPopup.setTitle("Choose board size");
-
-      BoardSizePage boardSizePage = new BoardSizePage();
-
-      Scene scene = new Scene(boardSizePage.getBoardSizeView(), 500, 350);
-      chooseBoardPopup.setScene(scene);
-      chooseBoardPopup.showAndWait();
-      enableStartButton();
-    });
 
     /* Button menu styling */
     menu.setSpacing(50);
@@ -99,29 +78,49 @@ public class StartPage extends Application {
     primaryStage.show();
   }
 
-  private void disableStartButton() {
+  public void disableStartButton() {
     startButton.setDisable(true);
   }
 
-  private void enableStartButton() {
+  public void enableStartButton() {
       startButton.setDisable(false);
   }
 
-  private void disableChoosePlayerButton() {
+  public void disableChoosePlayerButton() {
     choosePlayerButton.setDisable(true);
   }
 
-  private void enableChoosePlayerButton() {
+  public void enableChoosePlayerButton() {
       choosePlayerButton.setDisable(false);
   }
 
-  private void disableChooseBoardButton() {
+  public void disableChooseBoardButton() {
     chooseBoardButton.setDisable(true);
   }
 
-  private void enableChooseBoardButton() {
+  public void enableChooseBoardButton() {
     chooseBoardButton.setDisable(false);
   }
 
+  public Button getStartButton() {
+    return startButton;
+  }
+  
+  public Button getChoosePlayerButton() {
+    return choosePlayerButton;
+  }
+  
+  public Button getChooseBoardButton() {
+    return chooseBoardButton;
+  }
+  
+  public ChoosePlayerPage getChoosePlayerPage() {
+    return choosePlayerPage;
+  }
+  
+  public BoardSizePage getBoardSizePage() {
+    return boardSizePage;
+  }
+  
   public static void main(String[] args) {launch(args);}
 }
