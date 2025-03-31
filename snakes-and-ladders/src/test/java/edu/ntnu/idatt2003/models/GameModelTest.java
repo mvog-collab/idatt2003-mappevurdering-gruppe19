@@ -44,7 +44,7 @@ public class GameModelTest {
         @Test
         @DisplayName("addPlayer should add a new player and set the start position")
         void testAddPlayer() {
-            gameModel.addPlayer("TestUser", LocalDate.of(2000, 1, 1));
+            gameModel.addPlayer("TestUser", "Token", LocalDate.of(2000, 1, 1));
             assertEquals(1, gameModel.getPlayers().size());
             // The player should be placed on tile 0.
             Player player = gameModel.getPlayers().get(0);
@@ -59,7 +59,7 @@ public class GameModelTest {
         @Test
         @DisplayName("moveCurrentPlayer should move the current player based on the dice roll")
         void testMoveCurrentPlayer() {
-            gameModel.addPlayer("Martha", LocalDate.of(2004, 1, 19));
+            gameModel.addPlayer("Martha", "Token", LocalDate.of(2004, 1, 19));
             // With a fixed dice roll of 3, the player should move from tile 0 to tile 3.
             Optional<Tile> newTile = gameModel.moveCurrentPlayer();
             assertTrue(newTile.isPresent());
@@ -74,8 +74,8 @@ public class GameModelTest {
         @Test
         @DisplayName("nextPlayersTurn should cycle through the players")
         void testNextPlayersTurn() {
-            gameModel.addPlayer("Martha", LocalDate.of(2004, 1, 19));
-            gameModel.addPlayer("Edvard", LocalDate.of(2003, 3, 27));
+            gameModel.addPlayer("Martha", "Token", LocalDate.of(2004, 1, 19));
+            gameModel.addPlayer("Edvard", "Token", LocalDate.of(2003, 3, 27));
             Player currentPlayer = gameModel.getCurrentPlayer();
             Player nextPlayer = gameModel.nextPlayersTurn();
             assertNotEquals(currentPlayer, nextPlayer);
@@ -95,7 +95,7 @@ public class GameModelTest {
                 newBoard.addTile(new Tile(i));
             }
             GameModel gm = new GameModel(newBoard, dice);
-            assertThrows(IllegalStateException.class, () -> gm.addPlayer("TestUser", LocalDate.of(2000, 1, 1)));
+            assertThrows(IllegalStateException.class, () -> gm.addPlayer("TestUser", "Token", LocalDate.of(2000, 1, 1)));
         }
     }
 
@@ -106,7 +106,7 @@ public class GameModelTest {
         @Test
         @DisplayName("hasPlayerWon should return true if the player's current tile has no next tile")
         void testHasPlayerWonTrue() {
-            gameModel.addPlayer("Martha", LocalDate.of(2004, 1, 27));
+            gameModel.addPlayer("Martha", "Token", LocalDate.of(2004, 1, 27));
             Player player = gameModel.getPlayers().get(0);
             // Manually place the player on the last tile (tile 9, which has no next tile).
             player.setCurrentTile(board.getTile(9));
@@ -116,7 +116,7 @@ public class GameModelTest {
         @Test
         @DisplayName("hasPlayerWon should return false if the player's current tile has a next tile")
         void testHasPlayerWonFalse() {
-            gameModel.addPlayer("Edvard", LocalDate.of(2004, 3, 27));
+            gameModel.addPlayer("Edvard", "Token", LocalDate.of(2004, 3, 27));
             Player player = gameModel.getPlayers().get(0);
             // Starting at tile 0, which has a next tile.
             assertFalse(gameModel.hasPlayerWon(player));
@@ -130,7 +130,7 @@ public class GameModelTest {
         @Test
         @DisplayName("setCurrentPlayer should throw exception when setting a null or the same player")
         void testSetCurrentPlayerInvalid() {
-            gameModel.addPlayer("TestUser", LocalDate.of(2000, 1, 1));
+            gameModel.addPlayer("TestUser", "Token", LocalDate.of(2000, 1, 1));
             Player current = gameModel.getCurrentPlayer();
             assertThrows(IllegalArgumentException.class, () -> gameModel.setCurrentPlayer(null));
             assertThrows(IllegalArgumentException.class, () -> gameModel.setCurrentPlayer(current));

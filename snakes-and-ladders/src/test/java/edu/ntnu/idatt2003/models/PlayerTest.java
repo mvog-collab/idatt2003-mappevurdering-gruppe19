@@ -19,7 +19,7 @@ public class PlayerTest {
 
     @BeforeEach
     void setUp() {
-        player = new Player("Martha", LocalDate.of(2004, 1, 19));
+        player = new Player("Martha", "Token", LocalDate.of(2004, 1, 19));
         tile1 = new Tile(0);
         tile2 = new Tile(1);
         dummyAction = new DummyTileAction();
@@ -32,7 +32,7 @@ public class PlayerTest {
         @Test
         @DisplayName("Player constructor should create a valid player")
         void testValidConstructor() {
-            Player p = new Player("Edvard", LocalDate.of(2003, 3, 27));
+            Player p = new Player("Edvard", "Token", LocalDate.of(2003, 3, 27));
             assertNotNull(p);
             assertEquals("Edvard", p.getName());
             assertEquals(LocalDate.of(2003, 3, 27), p.getBirthday());
@@ -41,15 +41,15 @@ public class PlayerTest {
         @Test
         @DisplayName("Player constructor should throw exception for null or empty name")
         void testConstructorInvalidName() {
-            assertThrows(IllegalArgumentException.class, () -> new Player(null, LocalDate.of(2000, 1, 1)));
-            assertThrows(IllegalArgumentException.class, () -> new Player("", LocalDate.of(2000, 1, 1)));
+            assertThrows(IllegalArgumentException.class, () -> new Player(null, "Token", LocalDate.of(2000, 1, 1)));
+            assertThrows(IllegalArgumentException.class, () -> new Player("", "Token", LocalDate.of(2000, 1, 1)));
         }
 
         @Test
         @DisplayName("Player constructor should throw exception for birthday in the future")
         void testConstructorFutureBirthday() {
             LocalDate futureDate = LocalDate.now().plusDays(1);
-            assertThrows(IllegalArgumentException.class, () -> new Player("TestUser", futureDate));
+            assertThrows(IllegalArgumentException.class, () -> new Player("TestUser", "Token", futureDate));
         }
     }
 

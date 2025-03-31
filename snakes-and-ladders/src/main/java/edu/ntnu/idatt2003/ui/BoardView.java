@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -28,23 +27,25 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class BoardView extends Application {
+public class BoardView {
     private final int tileSize = 50;
     private final int width = 9;
     private final int height = 10;
 
     private Map<Integer, StackPane> tileUIMap;
     private Map<Player, Node> playerTokens;
-    private Board gameBoard;
     private BoardController boardController;
     private Button rollDiceButton;
 
-    @Override
-    public void start(Stage primaryStage) {
-        gameBoard = BoardMaker.createBoard(width * height + 1);
+    private GameModel gameModel;
+
+    public BoardView(GameModel gameModel) {
+        this.gameModel = gameModel;
+    }
+
+    public Scene start() {
         tileUIMap = new HashMap<>();
         playerTokens = new HashMap<>();
-        GameModel gameModel = new GameModel(gameBoard, new Dice());
         boardController = new BoardController(this, gameModel);
 
         GridPane board = new GridPane();
@@ -114,6 +115,10 @@ public class BoardView extends Application {
 
         BoardSetup(board);
 
+        for (int i = 0; i < 5; i++) {
+            Rectangle playersRectangle = new Rectangle(50, 50);
+            playersRectangle.getStyleClass().add("player-figure");
+            playersBox.getChildren().add(playersRectangle);
         boardController.addPlayer("Edvard", LocalDate.of(2003, 03, 27));
         boardController.addPlayer("Martha", LocalDate.of(2004, 01, 19));
 
@@ -137,6 +142,10 @@ public class BoardView extends Application {
             playersBox.getChildren().add(playerImageView);
         }
 
+        for (Player player : gameModel.getPlayers()) {
+            Rectangle playersRectangle = new Rectangle(15, 15);
+            playersRectangle.getStyleClass().add("player-figure");
+            playerTokens.put(player, playersRectangle);
         int i = 0;
         for (Player player : gameModel.getPlayers()) {
             String selectedImageFile = imageFiles[i % imageFiles.length];
@@ -159,9 +168,7 @@ public class BoardView extends Application {
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
 
-        primaryStage.setTitle("Snakes and ladders");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return scene;
     }
 
     private void BoardSetup(GridPane board) {
@@ -234,9 +241,5 @@ public class BoardView extends Application {
 
     public int getHeight() {
         return height;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

@@ -12,15 +12,22 @@ import javafx.stage.Stage;
 
 public class BoardSizePage {
 
+  //TODO: Choose what to be final and fix setters
+  private Button sixtyTiles;
+  private Button ninetyTiles;
+  private Button oneTwentyTiles;
+  private Button cancelButton;
+  private Button continueButton;
+  
   public VBox getBoardSizeView(){
     Label title = new Label("Choose Board");
     VBox titleBox = new VBox(title);
 
-    Button sixtyTiles = new Button("60 tiles");
-    Button ninetyTiles = new Button("90 tiles");
-    Button oneTwentyTiles = new Button("120 tiles");
-    Button cancelButton = new Button("Cancel");
-    Button continueButton = new Button("Continue");
+    sixtyTiles = new Button("60 tiles");
+    ninetyTiles = new Button("90 tiles");
+    oneTwentyTiles = new Button("120 tiles");
+    cancelButton = new Button("Cancel");
+    continueButton = new Button("Continue");
 
     VBox buttonBox = new VBox(sixtyTiles, ninetyTiles, oneTwentyTiles);
 
@@ -56,5 +63,45 @@ public class BoardSizePage {
     background.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     
     return background;
+  }
+
+  public Button getSixtyTiles() {
+    return sixtyTiles;
+  }
+
+  public void setSixtyTiles(Button sixtyTiles) {
+    this.sixtyTiles = sixtyTiles;
+  }
+
+  public Button getNinetyTiles() {
+    return ninetyTiles;
+  }
+
+  public void setNinetyTiles(Button ninetyTiles) {
+    this.ninetyTiles = ninetyTiles;
+  }
+
+  public Button getOneTwentyTiles() {
+    return oneTwentyTiles;
+  }
+
+  public void setOneTwentyTiles(Button oneTwentyTiles) {
+    this.oneTwentyTiles = oneTwentyTiles;
+  }
+
+  public Button getCancelButton() {
+    return cancelButton;
+  }
+
+  public void setCancelButton(Button cancelButton) {
+    this.cancelButton = cancelButton;
+  }
+
+  public Button getContinueButton() {
+    return continueButton;
+  }
+
+  public void setContinueButton(Button continueButton) {
+    this.continueButton = continueButton;
   }
 }

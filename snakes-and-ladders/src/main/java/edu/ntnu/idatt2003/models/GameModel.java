@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class GameModel {
 
-  private final Board board;
+  private Board board;
   private Player currentPlayer;
   private final List<Player> players;
   private final Dice dice;
@@ -17,8 +17,8 @@ public class GameModel {
     this.dice = dice;
   }
 
-  public void addPlayer(String name, LocalDate birthday) {
-    Player player = new Player(name, birthday);
+  public void addPlayer(String name, String token, LocalDate birthday) {
+    Player player = new Player(name, token, birthday);
     players.add(player);
     if (players.size() == 1) {
       setCurrentPlayer(player);
@@ -66,6 +66,10 @@ public class GameModel {
 
   public Player getCurrentPlayer() {
     return currentPlayer;
+  }
+
+  public void setBoard(Board newBoard) {
+    this.board = newBoard;
   }
 
   public void setCurrentPlayer(Player player) {

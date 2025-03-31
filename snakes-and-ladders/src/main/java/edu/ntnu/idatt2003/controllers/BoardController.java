@@ -28,9 +28,9 @@ public class BoardController {
         
         //TODO: add something else to do if tile is not present
     }
-    
-    public void addPlayer(String name, LocalDate birthday) {
-        gameModel.addPlayer(name, birthday);
+
+    public void addPlayer(String name, String token, LocalDate birthday) {
+        gameModel.addPlayer(name, token, birthday);
     }
 
     public void playATurn() {
