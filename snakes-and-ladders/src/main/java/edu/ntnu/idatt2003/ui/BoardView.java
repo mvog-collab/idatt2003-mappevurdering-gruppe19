@@ -1,13 +1,16 @@
 package edu.ntnu.idatt2003.ui;
+import com.sun.javafx.UnmodifiableArrayList;
 import edu.ntnu.idatt2003.controllers.BoardController;
 import edu.ntnu.idatt2003.game_logic.BoardMaker;
 import edu.ntnu.idatt2003.models.Board;
 import edu.ntnu.idatt2003.models.Dice;
+import edu.ntnu.idatt2003.models.Die;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.application.Application;
@@ -19,6 +22,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -57,20 +62,45 @@ public class BoardView extends Application {
         HBox playersBox = new HBox();
         playersBox.getStyleClass().add("players-box");
 
-        StackPane diceBox = new StackPane();
+        HBox diceBox = new HBox();
         diceBox.setPrefSize(280,285);
         diceBox.getStyleClass().add("dice-box");
 
         HBox diceBoxContainer = new HBox(diceBox);
         diceBoxContainer.getStyleClass().add("dice-box-container");
 
+        /* ImageView diceImages*/
+        ImageView diceImageView1 = new ImageView("Images/1.png");
+        ImageView diceImageView2 = new ImageView("Images/5.png");
+        diceImageView1.setFitWidth(50);
+        diceImageView1.setFitHeight(50);
+        diceImageView2.setFitWidth(50);
+        diceImageView2.setFitHeight(50);
+        diceImageView1.getStyleClass().add("dice-image1");
+        diceImageView2.getStyleClass().add("dice-image2");
 
+
+        diceBox.getChildren().addAll(diceImageView1, diceImageView2);
 
 
         rollDiceButton = new Button("Roll Dice");
         rollDiceButton.getStyleClass().add("roll-dice-button");
 
-        rollDiceButton.setOnAction(e -> boardController.playATurn());
+        rollDiceButton.setOnAction(e -> {
+            boardController.playATurn();
+            /*
+            int firstDieValue = Die.getLastRolledValue();
+            int secondDieValue = Die.getLastRolledValue();
+
+            String diceImageFile1 = "/Images/" + firstDieValue + ".png";
+            String diceImageFile2 = "/Images/" + secondDieValue + ".png";
+
+            diceImageView1.setImage(new Image(getClass().getResourceAsStream(diceImageFile1)));
+            diceImageView2.setImage(new Image(getClass().getResourceAsStream(diceImageFile2)));
+            */
+
+        });
+
 
         HBox buttonBox = new HBox(rollDiceButton);
         buttonBox.getStyleClass().add("button-box");
@@ -87,16 +117,39 @@ public class BoardView extends Application {
         boardController.addPlayer("Edvard", LocalDate.of(2003, 03, 27));
         boardController.addPlayer("Martha", LocalDate.of(2004, 01, 19));
 
-        for (int i = 0; i < 5; i++){
-            Rectangle playersRectangle = new Rectangle(50, 50);
-            playersRectangle.getStyleClass().add("player-figure");
-            playersBox.getChildren().add(playersRectangle);
+        String[] imageFiles = {
+            "QueenChessBlack.png",
+            "QueenChessGold.png",
+            "QueenChessSilver.png",
+            "QueenChessWhite.png",
+            "QueenChessWood.png"
+        };
+
+        for (int i = 0; i < 5; i++) {
+            String selectedImageFile = imageFiles[i % imageFiles.length];
+            Image playerImage = new Image(getClass().getResourceAsStream("/Images/" + selectedImageFile));
+            ImageView playerImageView = new ImageView(playerImage);
+
+            playerImageView.setFitWidth(100);
+            playerImageView.setFitHeight(100);
+            playerImageView.getStyleClass().add("player-figure");
+
+            playersBox.getChildren().add(playerImageView);
         }
 
-        for (Player player : gameModel.getPlayers()){
-            Rectangle playersRectangle = new Rectangle(15, 15);
-            playersRectangle.getStyleClass().add("player-figure");
-            playerTokens.put(player, playersRectangle);
+        int i = 0;
+        for (Player player : gameModel.getPlayers()) {
+            String selectedImageFile = imageFiles[i % imageFiles.length];
+            Image playerImage = new Image(getClass().getResourceAsStream("/Images/" + selectedImageFile));
+            ImageView playerImageView = new ImageView(playerImage);
+
+            playerImageView.setFitWidth(40);
+            playerImageView.setFitHeight(40);
+            playerImageView.getStyleClass().add("player-figure");
+
+            playerTokens.put(player, playerImageView);
+
+            i++;
         }
 
         /* Background */

@@ -8,7 +8,7 @@ public class BoardMaker {
     private BoardMaker() {}
 
     public  static Board createBoard(int size) {
-        if (100 < size || size < 0) {
+        if (121 < size || size < 0) {
           throw new IllegalArgumentException("Invalid board size.");
         }
         Board board = new Board(size);
