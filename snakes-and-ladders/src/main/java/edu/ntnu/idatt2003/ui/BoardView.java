@@ -30,8 +30,8 @@ import javafx.stage.Stage;
 
 public class BoardView extends Application {
     private final int tileSize = 50;
-    private final int width = 10;
-    private final int height = 12;
+    private final int width = 9;
+    private final int height = 10;
 
     private Map<Integer, StackPane> tileUIMap;
     private Map<Player, Node> playerTokens;
