@@ -52,19 +52,17 @@ public class BoardView {
         board.setPrefSize(tileSize * width, tileSize * height);
         board.setMaxSize(tileSize * width, tileSize * height);
 
-
         StackPane boardContainer = new StackPane(board);
         boardContainer.setMaxSize(tileSize * width, tileSize * height);
         boardContainer.getStyleClass().add("board-container");
         boardContainer.setAlignment(Pos.CENTER);
-
 
         Label playersLabel = new Label("Players");
         HBox playersBox = new HBox();
         playersBox.getStyleClass().add("players-box");
 
         HBox diceBox = new HBox();
-        diceBox.setPrefSize(280,285);
+        diceBox.setPrefSize(280, 285);
         diceBox.getStyleClass().add("dice-box");
 
         HBox diceBoxContainer = new HBox(diceBox);
@@ -80,9 +78,7 @@ public class BoardView {
         diceImageView1.getStyleClass().add("dice-image1");
         diceImageView2.getStyleClass().add("dice-image2");
 
-
         diceBox.getChildren().addAll(diceImageView1, diceImageView2);
-
 
         rollDiceButton = new Button("Roll Dice");
         rollDiceButton.getStyleClass().add("roll-dice-button");
@@ -102,25 +98,16 @@ public class BoardView {
 
         });
 
-
         HBox buttonBox = new HBox(rollDiceButton);
         buttonBox.getStyleClass().add("button-box");
         VBox gameControl = new VBox(playersLabel, playersBox, diceBoxContainer, buttonBox);
         gameControl.getStyleClass().add("game-control");
-
 
         HBox mainBox = new HBox(boardContainer, gameControl);
         mainBox.setAlignment(Pos.CENTER);
         mainBox.getStyleClass().add("main-box");
 
         BoardSetup(board);
-
-        for (int i = 0; i < 5; i++) {
-            Rectangle playersRectangle = new Rectangle(50, 50);
-            playersRectangle.getStyleClass().add("player-figure");
-            playersBox.getChildren().add(playersRectangle);
-        boardController.addPlayer("Edvard", LocalDate.of(2003, 03, 27));
-        boardController.addPlayer("Martha", LocalDate.of(2004, 01, 19));
 
         String[] imageFiles = {
             "QueenChessBlack.png",
@@ -132,7 +119,8 @@ public class BoardView {
 
         for (int i = 0; i < 5; i++) {
             String selectedImageFile = imageFiles[i % imageFiles.length];
-            Image playerImage = new Image(getClass().getResourceAsStream("/Images/" + selectedImageFile));
+            Image playerImage = new Image(
+                getClass().getResourceAsStream("/Images/" + selectedImageFile));
             ImageView playerImageView = new ImageView(playerImage);
 
             playerImageView.setFitWidth(100);
@@ -142,14 +130,11 @@ public class BoardView {
             playersBox.getChildren().add(playerImageView);
         }
 
-        for (Player player : gameModel.getPlayers()) {
-            Rectangle playersRectangle = new Rectangle(15, 15);
-            playersRectangle.getStyleClass().add("player-figure");
-            playerTokens.put(player, playersRectangle);
         int i = 0;
         for (Player player : gameModel.getPlayers()) {
             String selectedImageFile = imageFiles[i % imageFiles.length];
-            Image playerImage = new Image(getClass().getResourceAsStream("/Images/" + selectedImageFile));
+            Image playerImage = new Image(
+                getClass().getResourceAsStream("/Images/" + selectedImageFile));
             ImageView playerImageView = new ImageView(playerImage);
 
             playerImageView.setFitWidth(40);
@@ -161,85 +146,86 @@ public class BoardView {
             i++;
         }
 
-        /* Background */
-        mainBox.getStyleClass().add("page-background");
+            /* Background */
+            mainBox.getStyleClass().add("page-background");
 
+            Scene scene = new Scene(mainBox, 1000, 700);
+            scene.getStylesheets()
+                .add(getClass().getResource("/styles/style.css").toExternalForm());
 
-        Scene scene = new Scene(mainBox, 1000, 700);
-        scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            return scene;
+        }
 
-        return scene;
-    }
+        private void BoardSetup (GridPane board){
 
-    private void BoardSetup(GridPane board) {
+            boolean leftToRight = true;
+            int tileId = 1;
 
-        boolean leftToRight = true;
-        int tileId = 1;
-
-        for (int row = height - 1; row >= 0; row--) {
-            if (leftToRight) {
-                for (int col = 0; col < width; col++) {
-                    addTile(board, row, col, tileId++);
+            for (int row = height - 1; row >= 0; row--) {
+                if (leftToRight) {
+                    for (int col = 0; col < width; col++) {
+                        addTile(board, row, col, tileId++);
+                    }
+                } else {
+                    for (int col = width - 1; col >= 0; col--) {
+                        addTile(board, row, col, tileId++);
+                    }
                 }
-            } else {
-                for (int col = width -1; col >= 0; col--) {
-                    addTile(board, row, col, tileId++);
-                }
+                leftToRight = !leftToRight;
             }
-            leftToRight = !leftToRight;
+        }
+
+        private void addTile (GridPane board,int row, int col, int tileId){
+            StackPane tile = new StackPane();
+            tile.setPrefSize(tileSize, tileSize);
+
+            Label tileLabel = new Label(String.valueOf(tileId));
+
+            if ((row + col) % 2 == 0) {
+                tile.getStyleClass().add("tile-white");
+                tileLabel.getStyleClass().add("tile-label-black");
+            } else {
+                tile.getStyleClass().add("tile-black");
+                tileLabel.getStyleClass().add("tile-label-white");
+            }
+
+            tile.getChildren().add(tileLabel);
+            board.add(tile, col, row);
+
+            tileUIMap.put(tileId, tile);
+        }
+
+        public void updatePlayerPosition ( int tileId, Player player){
+            Node playerToken = playerTokens.get(player);
+            //TODO: check that going from one tile, to the same tile (with a snake) works
+            // tileUIMap.get(player.getCurrentTile().getTileId()).getChildren().remove(playerToken);
+            StackPane tile = tileUIMap.get(tileId);
+            tile.getChildren().add(playerToken);
+        }
+
+        private void disableRollButton () {
+            rollDiceButton.setDisable(true);
+        }
+
+        private void enableRollButton () {
+            rollDiceButton.setDisable(false);
+        }
+
+        public void announceWinner (Player winner){
+            disableRollButton();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("The game is over!");
+            alert.setHeaderText("Winner");
+            alert.setContentText("Congratulations, " + winner.getName() + "! You've won the game!");
+            alert.showAndWait();
+        }
+
+        public int getWidth () {
+            return width;
+        }
+
+        public int getHeight () {
+            return height;
         }
     }
 
-    private void addTile(GridPane board, int row, int col, int tileId) {
-        StackPane tile = new StackPane();
-        tile.setPrefSize(tileSize, tileSize);
-
-        Label tileLabel = new Label(String.valueOf(tileId));
-
-        if ((row + col) % 2 == 0) {
-            tile.getStyleClass().add("tile-white");
-            tileLabel.getStyleClass().add("tile-label-black");
-        } else {
-            tile.getStyleClass().add("tile-black");
-            tileLabel.getStyleClass().add("tile-label-white");
-        }
-
-        tile.getChildren().add(tileLabel);
-        board.add(tile, col, row);
-
-        tileUIMap.put(tileId, tile);
-    }
-
-    public void updatePlayerPosition(int tileId, Player player) {
-        Node playerToken = playerTokens.get(player);
-        //TODO: check that going from one tile, to the same tile (with a snake) works 
-        // tileUIMap.get(player.getCurrentTile().getTileId()).getChildren().remove(playerToken);
-        StackPane tile = tileUIMap.get(tileId);
-        tile.getChildren().add(playerToken);
-    }
-
-    private void disableRollButton() {
-        rollDiceButton.setDisable(true);
-    }
-
-    private void enableRollButton() {
-        rollDiceButton.setDisable(false);
-    }
-
-    public void announceWinner(Player winner) {
-        disableRollButton();
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("The game is over!");
-        alert.setHeaderText("Winner");
-        alert.setContentText("Congratulations, " + winner.getName() + "! You've won the game!");
-        alert.showAndWait();
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-}
