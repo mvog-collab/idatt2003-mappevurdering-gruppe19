@@ -45,13 +45,15 @@
 
 /* Players Box */
 .players-box {
-    -fx-spacing: 10px;
+    -fx-spacing: 5px;
     -fx-alignment: center;
+    -fx-background-color: transparent;
 }
 
 /* Dice Box */
 .dice-box {
     -fx-alignment: center;
+    -fx-spacing: 30;
     -fx-background-color: #AD0000;
     -fx-background-radius: 40;
     -fx-border-color: #000000;
@@ -83,7 +85,9 @@
 
 /* Player Token */
 .player-figure {
-    -fx-fill: blueviolet;
+    -fx-background-color: #35654d;
+    -fx-background-radius: 100;
+
 }
 
 /* Tile Number White */
@@ -188,6 +192,20 @@
 
 .roll-dice-button:hover {
     -fx-background-color: #C98F4B;
+}
+
+.dice-image1 {
+    -fx-rotate: 1323,-120;
+    -fx-border-width: 5;
+    -fx-border-radius: 24;
+    -fx-background-radius: 24;
+}
+
+dice-image2 {
+    -fx-rotate: 1488,-39;
+    -fx-border-width: 5;
+    -fx-border-radius: 24;
+    -fx-background-radius: 24;
 }
 
 
