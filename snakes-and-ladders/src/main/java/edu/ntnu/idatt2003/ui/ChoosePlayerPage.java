@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.ui;
 
+import edu.ntnu.idatt2003.models.Player;
 import java.time.LocalDate;
 
 import javafx.application.Application;
@@ -21,6 +22,7 @@ public class ChoosePlayerPage {
   private Button cancelButton;
   private Button addPlayerButton;
   private Button continueButton;
+  private HBox addedPlayersBox;
 
   public VBox getView(){
     Label title = new Label("Add Players");
@@ -41,11 +43,18 @@ public class ChoosePlayerPage {
     HBox nameBox = new HBox(playerName, nameField);
     HBox birthdayBox = new HBox(playerBirthday, birthdayPicker);
 
+    Label addedPlayersLabel = new Label("Added Players");
+    addedPlayersLabel.getStyleClass().add("added-players");
+    addedPlayersBox = new HBox(addedPlayersLabel);
+
     HBox statusBox = new HBox(cancelButton, addPlayerButton, continueButton);
 
-    VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, statusBox);
+    VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, addedPlayersBox, statusBox);
 
     VBox background = new VBox(playerPopup);
+
+
+
 
     /* Title Styling */
     title.getStyleClass().add("popup-title");
@@ -55,10 +64,12 @@ public class ChoosePlayerPage {
     /* Player-Info Styling */
 
     nameBox.setAlignment(Pos.CENTER_LEFT);
-    nameBox.setSpacing(30);
+    nameBox.setSpacing(70);
     playerName.getStyleClass().add("popup-label");
 
+
     birthdayBox.setAlignment(Pos.CENTER_LEFT);
+    birthdayBox.setSpacing(50);
     playerBirthday.getStyleClass().add("popup-label");
 
     /* Button Styling */
@@ -69,20 +80,29 @@ public class ChoosePlayerPage {
 
     statusBox.setAlignment(Pos.CENTER);
     statusBox.setSpacing(70);
-    statusBox.setPadding(new Insets(40));
+    statusBox.setPadding(new Insets(30));
     background.setAlignment(Pos.CENTER);
     background.setSpacing(70);
 
-    playerPopup.setSpacing(20);
+    playerPopup.setSpacing(10);
 
+    addedPlayersBox.setSpacing(30);
 
     /* Background Styling */
 
-    background.getStyleClass().add("popup-background");
+    background.getStyleClass().add("page-background");
 
     background.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     return background;
   }
+
+  public VBox displayPlayer(Player player) {
+    VBox playerName = new VBox(new Label(player.getName()));
+    playerName.getStyleClass().add("player-name");
+    playerName.setAlignment(Pos.CENTER);
+  return playerName;
+  }
+
 
   public TextField getNameField() {
     return nameField;
@@ -122,6 +142,10 @@ public class ChoosePlayerPage {
 
   public void setContinueButton(Button continueButton) {
     this.continueButton = continueButton;
+  }
+
+  public HBox getAddedPlayersBox() {
+    return addedPlayersBox;
   }
 }
 
