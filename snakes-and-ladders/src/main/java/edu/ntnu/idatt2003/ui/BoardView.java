@@ -159,9 +159,9 @@ public class BoardView {
 
         private void setHeightAndWidth(int boardSize) {
             switch (boardSize) {
-                case 60:
-                    this.width = 6;
-                    this.height = 10;
+                case 64:
+                    this.width = 8;
+                    this.height = 8;
                     break;
                 case 90:
                     this.width = 9;

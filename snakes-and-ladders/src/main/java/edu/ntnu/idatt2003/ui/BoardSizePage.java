@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class BoardSizePage {
 
   //TODO: Choose what to be final and fix setters
-  private Button sixtyTiles;
+  private Button sixtyFourTiles;
   private Button ninetyTiles;
   private Button oneTwentyTiles;
   private Button cancelButton;
@@ -23,13 +23,13 @@ public class BoardSizePage {
     Label title = new Label("Choose Board");
     VBox titleBox = new VBox(title);
 
-    sixtyTiles = new Button("60 tiles");
+    sixtyFourTiles = new Button("64 tiles");
     ninetyTiles = new Button("90 tiles");
     oneTwentyTiles = new Button("120 tiles");
     cancelButton = new Button("Cancel");
     continueButton = new Button("Continue");
 
-    VBox buttonBox = new VBox(sixtyTiles, ninetyTiles, oneTwentyTiles);
+    VBox buttonBox = new VBox(sixtyFourTiles, ninetyTiles, oneTwentyTiles);
 
     HBox statusBox = new HBox(cancelButton, continueButton);
 
@@ -43,7 +43,7 @@ public class BoardSizePage {
     titleBox.setAlignment(Pos.CENTER);
 
     /* Button Styling */
-    sixtyTiles.getStyleClass().add("popup-button");
+    sixtyFourTiles.getStyleClass().add("popup-button");
     ninetyTiles.getStyleClass().add("popup-button");
     oneTwentyTiles.getStyleClass().add("popup-button");
     cancelButton.getStyleClass().add("popup-button");
@@ -65,12 +65,12 @@ public class BoardSizePage {
     return background;
   }
 
-  public Button getSixtyTiles() {
-    return sixtyTiles;
+  public Button getSixtyFourTiles() {
+    return sixtyFourTiles;
   }
 
-  public void setSixtyTiles(Button sixtyTiles) {
-    this.sixtyTiles = sixtyTiles;
+  public void setSixtyFourTiles(Button sixtyTiles) {
+    this.sixtyFourTiles = sixtyTiles;
   }
 
   public Button getNinetyTiles() {

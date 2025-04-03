@@ -17,8 +17,8 @@ public class BoardController {
     
     public BoardController(BoardView boardView, GameModel gameModel) {
         this.boardView = boardView;
-        this.board = BoardMaker.createBoard(boardView.getHeight() * boardView.getWidth());
         this.gameModel = gameModel;
+        this.board = gameModel.getBoard();
     }
     
     public void rollDiceForCurrentPlayer() {

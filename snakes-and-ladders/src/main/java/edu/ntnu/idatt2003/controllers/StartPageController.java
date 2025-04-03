@@ -19,12 +19,28 @@ public class StartPageController {
 
     public StartPageController(StartPage startPage) {
         this.startPage = startPage;
-        Board initialBoard = BoardMaker.createBoard(100);
-        this.gameModel = new GameModel(initialBoard, new Dice());
+        this.gameModel = new GameModel(BoardMaker.createBoard(100), new Dice());
         init();
     }
 
     private void init() {
+        startPage.getChooseBoardButton().setOnAction(e -> {
+            BoardSizePage boardSizePage = new BoardSizePage();
+            Stage boardPickPopup = new Stage();
+            boardPickPopup.initModality(Modality.APPLICATION_MODAL);
+
+            Scene scene = new Scene(boardSizePage.getBoardSizeView(), 500, 350);
+
+            BoardSizeController boardSizeController = new BoardSizeController(boardSizePage, selectedBoard -> {
+                this.gameModel.setBoard(selectedBoard);
+            });
+
+            boardPickPopup.setScene(scene);
+            boardPickPopup.showAndWait();
+
+            startPage.enableChoosePlayerButton();
+        });
+
         startPage.getChoosePlayerButton().setOnAction(e -> {
             ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
             Stage choosePlayerPopup = new Stage();
@@ -37,23 +53,6 @@ public class StartPageController {
 
             choosePlayerPopup.setScene(scene);
             choosePlayerPopup.showAndWait();
-
-            startPage.enableChooseBoardButton();
-        });
-        
-        startPage.getChooseBoardButton().setOnAction(e -> {
-            BoardSizePage boardSizePage = new BoardSizePage();
-            Stage boardPickPopup = new Stage();
-            boardPickPopup.initModality(Modality.APPLICATION_MODAL);
-
-            Scene scene = new Scene(boardSizePage.getBoardSizeView(), 500, 350);
-
-            BoardSizeController boardSizeController = new BoardSizeController(boardSizePage, selectedBoard -> {
-                gameModel.setBoard(selectedBoard);
-            });
-
-            boardPickPopup.setScene(scene);
-            boardPickPopup.showAndWait();
 
             startPage.enableStartButton();
         });
