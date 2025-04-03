@@ -50,5 +50,4 @@ public class BoardSizeController implements BasePopupController {
         Stage stage = (Stage) view.getCancelButton().getScene().getWindow();
         stage.close();
     }
-    
 }
