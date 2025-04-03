@@ -29,8 +29,8 @@ public class GameModelTest {
             @Override
             public int rollDice() {
                 // Set fixed values so that the sum is 3 (e.g. 1 and 2).
-                this.getDice().get(0).setLastRolledValue(1);
-                this.getDice().get(1).setLastRolledValue(2);
+                this.getDiceList().get(0).setLastRolledValue(1);
+                this.getDiceList().get(1).setLastRolledValue(2);
                 return 3;
             }
         };

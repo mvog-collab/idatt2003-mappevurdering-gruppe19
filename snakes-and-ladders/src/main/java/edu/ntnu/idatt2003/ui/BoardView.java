@@ -85,16 +85,16 @@ public class BoardView {
 
         rollDiceButton.setOnAction(e -> {
             boardController.playATurn();
-            /*
-            int firstDieValue = Die.getLastRolledValue();
-            int secondDieValue = Die.getLastRolledValue();
+
+            int firstDieValue = gameModel.getDice().getDiceList().getFirst().getLastRolledValue();
+            int secondDieValue = gameModel.getDice().getDiceList().get(1).getLastRolledValue();
 
             String diceImageFile1 = "/Images/" + firstDieValue + ".png";
             String diceImageFile2 = "/Images/" + secondDieValue + ".png";
 
             diceImageView1.setImage(new Image(getClass().getResourceAsStream(diceImageFile1)));
             diceImageView2.setImage(new Image(getClass().getResourceAsStream(diceImageFile2)));
-            */
+
 
         });
 
