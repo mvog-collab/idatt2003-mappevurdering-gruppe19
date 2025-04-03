@@ -19,10 +19,10 @@ public class BoardSizeController implements BasePopupController {
     }
     
     private void init() {
-        view.getSixtyTiles().setOnAction(e -> {
-            Board board = BoardMaker.createBoard(60);
+        view.getSixtyFourTiles().setOnAction(e -> {
+            Board board = BoardMaker.createBoard(64);
             boardConsumer.accept(board);
-            System.out.println("Chose 60");
+            System.out.println("Chose 64");
         });
         view.getNinetyTiles().setOnAction(e -> {
             Board board = BoardMaker.createBoard(90);
@@ -50,5 +50,4 @@ public class BoardSizeController implements BasePopupController {
         Stage stage = (Stage) view.getCancelButton().getScene().getWindow();
         stage.close();
     }
-    
 }

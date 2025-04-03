@@ -32,12 +32,12 @@ public class StartPage extends Application {
     Label title = new Label("Snakes & Ladders");
     VBox titleBox = new VBox(title);
 
+    choosePlayerButton = new Button("Choose players");
+    disableChoosePlayerButton();
     startButton = new Button("Start game");
     disableStartButton();
     chooseBoardButton = new Button("Choose board");
-    disableChooseBoardButton();
-    choosePlayerButton = new Button("Choose players");
-    VBox menu = new VBox(choosePlayerButton, chooseBoardButton, startButton);
+    VBox menu = new VBox(chooseBoardButton, choosePlayerButton, startButton);
 
     StartPageController startPageController = new StartPageController(this);
 

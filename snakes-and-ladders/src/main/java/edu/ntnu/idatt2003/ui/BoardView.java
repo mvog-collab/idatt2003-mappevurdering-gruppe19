@@ -29,8 +29,8 @@ import javafx.stage.Stage;
 
 public class BoardView {
     private final int tileSize = 50;
-    private final int width = 9;
-    private final int height = 10;
+    private int width;
+    private int height;
 
     private Map<Integer, StackPane> tileUIMap;
     private Map<Player, Node> playerTokens;
@@ -47,6 +47,7 @@ public class BoardView {
         tileUIMap = new HashMap<>();
         playerTokens = new HashMap<>();
         boardController = new BoardController(this, gameModel);
+        setHeightAndWidth(gameModel.getBoard().getSize());
 
         GridPane board = new GridPane();
         board.setPrefSize(tileSize * width, tileSize * height);
@@ -154,6 +155,25 @@ public class BoardView {
                 .add(getClass().getResource("/styles/style.css").toExternalForm());
 
             return scene;
+        }
+
+        private void setHeightAndWidth(int boardSize) {
+            switch (boardSize) {
+                case 64:
+                    this.width = 8;
+                    this.height = 8;
+                    break;
+                case 90:
+                    this.width = 9;
+                    this.height = 10;
+                    break;
+                case 120:
+                    this.width = 10;
+                    this.height = 12;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void BoardSetup (GridPane board){
