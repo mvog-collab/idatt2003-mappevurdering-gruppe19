@@ -35,6 +35,7 @@ public class ChoosePlayerController implements BasePopupController {
 
       gameModel.addPlayer(name, dummyToken, birthday);
       view.getNameField().setText("");
+      view.getAddedPlayersBox().getChildren().add(view.displayPlayer(gameModel.getPlayers().getLast()));
     }
 
     @Override

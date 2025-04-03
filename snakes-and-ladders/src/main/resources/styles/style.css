@@ -158,7 +158,6 @@
     -fx-background-size: 30;
     -fx-background-color: #FFFFFF;
     -fx-text-fill: black;
-    -fx-padding: 10;
 }
 
 .popup-button:hover {
@@ -177,7 +176,13 @@
     -fx-font-size: 30;
     -fx-text-fill: black;
     -fx-padding: 15;
-}
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-background-size: 180;
+    -fx-background-color: #E4A55D;
+    }
+
+
 
 /* Button Menu */
 .roll-dice-button {
@@ -185,7 +190,7 @@
     -fx-background-radius: 100;
     -fx-font-family: "Brush Script MT";
     -fx-font-size: 40px;
-    -fx-background-size: 180;
+    -fx-background-size: 100;
     -fx-background-color: #E4A55D;
     -fx-text-fill: black;
 }
@@ -201,11 +206,31 @@
     -fx-background-radius: 24;
 }
 
-dice-image2 {
-    -fx-rotate: 1488,-39;
-    -fx-border-width: 5;
-    -fx-border-radius: 24;
-    -fx-background-radius: 24;
+.player-name {
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 10;
+    -fx-padding: 10;
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-background-size: 50;
+    -fx-background-color: #E4A55D;
+    -fx-text-fill: black;
 }
+
+.player-name:hover {
+    -fx-background-color: #C98F4B;
+}
+
+.added-players {
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 15;
+    -fx-padding: 10;
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-background-size: 50;
+    -fx-background-color: #E4A55D;
+    -fx-text-fill: black;
+}
+
 
 
