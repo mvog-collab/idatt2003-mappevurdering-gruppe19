@@ -60,6 +60,10 @@ public class GameModel {
     return board;
   }
 
+  public Dice getDice() {
+    return dice;
+  }
+
   public List<Player> getPlayers() {
     return players;
   }
@@ -78,4 +82,5 @@ public class GameModel {
     }
     this.currentPlayer = player;
   }
+
 }

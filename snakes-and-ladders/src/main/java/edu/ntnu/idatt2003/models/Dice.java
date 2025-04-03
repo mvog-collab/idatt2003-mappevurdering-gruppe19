@@ -4,32 +4,32 @@ import java.util.List;
 
 public class Dice {
 
-  private final List<Die> dice;
+  private final List<Die> diceList;
 
   public Dice() {
-    this.dice = new ArrayList<>();
+    this.diceList = new ArrayList<>();
     Die firstDie = new Die();
     Die secondDie = new Die();
 
-    this.dice.add(firstDie);
-    this.dice.add(secondDie);
+    this.diceList.add(firstDie);
+    this.diceList.add(secondDie);
   }
 
   public int rollDice() {
-    int firstRoll = dice.getFirst().rollDie();
-    int secondRoll = dice.get(1).rollDie();
+    int firstRoll = diceList.getFirst().rollDie();
+    int secondRoll = diceList.get(1).rollDie();
     return firstRoll + secondRoll;
   }
 
   public boolean isPair() {
-    return dice.getFirst().getLastRolledValue() == dice.get(1).getLastRolledValue();
+    return diceList.getFirst().getLastRolledValue() == diceList.get(1).getLastRolledValue();
   }
 
   public boolean isPairOfSix() {
-    return dice.getFirst().getLastRolledValue() == 6 || dice.get(1).getLastRolledValue() == 6;
+    return diceList.getFirst().getLastRolledValue() == 6 || diceList.get(1).getLastRolledValue() == 6;
   }
 
-  public List<Die> getDice() {
-    return dice;
+  public List<Die> getDiceList() {
+    return diceList;
   }
 }

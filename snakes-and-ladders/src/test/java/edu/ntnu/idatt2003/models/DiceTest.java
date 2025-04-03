@@ -28,7 +28,7 @@ public class DiceTest {
         @DisplayName("Constructor should initialize the dice list correctly")
         void testCreateConstructorShouldInitializeCorrectly() {
             assertNotNull(testDice);
-            assertNotNull(testDice.getDice());
+            assertNotNull(testDice.getDiceList());
         }
     }
 
@@ -60,12 +60,12 @@ public class DiceTest {
         @Test
         @DisplayName("isPair should return true if both dice have the same value")
         void testIsPairShouldReturnTrueIfPairIsRolledFalseIfNoPair() {
-            testDice.getDice().get(0).setLastRolledValue(5);
-            testDice.getDice().get(1).setLastRolledValue(5);
+            testDice.getDiceList().get(0).setLastRolledValue(5);
+            testDice.getDiceList().get(1).setLastRolledValue(5);
             assertTrue(testDice.isPair());
 
-            testDice.getDice().get(0).setLastRolledValue(1);
-            testDice.getDice().get(1).setLastRolledValue(5);
+            testDice.getDiceList().get(0).setLastRolledValue(1);
+            testDice.getDiceList().get(1).setLastRolledValue(5);
             assertFalse(testDice.isPair());
         }
     }
@@ -77,12 +77,12 @@ public class DiceTest {
         @Test
         @DisplayName("isPairOfSix should return true if both dice roll six")
         void testIsPairOfSixShouldReturnTrueAndFalseAsExpected() {
-            testDice.getDice().get(0).setLastRolledValue(6);
-            testDice.getDice().get(1).setLastRolledValue(6);
+            testDice.getDiceList().get(0).setLastRolledValue(6);
+            testDice.getDiceList().get(1).setLastRolledValue(6);
             assertTrue(testDice.isPairOfSix());
 
-            testDice.getDice().get(0).setLastRolledValue(5);
-            testDice.getDice().get(1).setLastRolledValue(5);
+            testDice.getDiceList().get(0).setLastRolledValue(5);
+            testDice.getDiceList().get(1).setLastRolledValue(5);
             assertFalse(testDice.isPairOfSix());
         }
     }
@@ -94,8 +94,8 @@ public class DiceTest {
         @Test
         @DisplayName("getDice should return the initialized dice list")
         void testGetDiceShouldReturnDiceAsExpected() {
-            assertNotNull(testDice.getDice());
-            assertFalse(testDice.getDice().isEmpty());
+            assertNotNull(testDice.getDiceList());
+            assertFalse(testDice.getDiceList().isEmpty());
         }
     }
 }
