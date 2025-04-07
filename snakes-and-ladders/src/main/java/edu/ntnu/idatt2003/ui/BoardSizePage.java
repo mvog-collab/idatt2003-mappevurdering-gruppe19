@@ -58,7 +58,7 @@ public class BoardSizePage {
     background.setAlignment(Pos.CENTER);
     background.setSpacing(70);
 
-    background.getStyleClass().add("popup-background");
+    background.getStyleClass().add("page-background");
 
     background.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     
