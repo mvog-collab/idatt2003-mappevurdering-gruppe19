@@ -1,9 +1,13 @@
 package edu.ntnu.idatt2003.controllers;
 
+import edu.ntnu.idatt2003.models.Player;
 import java.time.LocalDate;
 
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.ui.ChoosePlayerPage;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import javafx.stage.Stage;
 
 public class ChoosePlayerController implements BasePopupController {
@@ -35,7 +39,15 @@ public class ChoosePlayerController implements BasePopupController {
 
       gameModel.addPlayer(name, dummyToken, birthday);
       view.getNameField().setText("");
+      gameModel.setPlayersOfGame(sortPlayersByBirthday());
       view.getAddedPlayersBox().getChildren().add(view.displayPlayer(gameModel.getPlayers().getLast()));
+    }
+
+    private List<Player> sortPlayersByBirthday() {
+        List<Player> players = new ArrayList<>(gameModel.getPlayers());
+        players.sort(Comparator.comparing(Player::getBirthday).reversed());
+        gameModel.setCurrentPlayer(players.get(0));
+        return players;
     }
 
     @Override

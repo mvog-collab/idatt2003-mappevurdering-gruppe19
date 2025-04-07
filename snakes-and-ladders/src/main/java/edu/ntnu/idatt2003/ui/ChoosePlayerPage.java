@@ -34,6 +34,8 @@ public class ChoosePlayerPage {
 
     Label playerBirthday = new Label("Player Birthday");
     birthdayPicker = new DatePicker();
+    birthdayPicker.setValue(LocalDate.of(2001,1,1));
+    birthdayPicker.getStyleClass().add("date-picker");
     birthdayPicker.setPromptText("Select your birthday");
 
     addPlayerButton = new Button("Add Player");
@@ -52,7 +54,6 @@ public class ChoosePlayerPage {
     VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, addedPlayersBox, statusBox);
 
     VBox background = new VBox(playerPopup);
-
 
 
 
