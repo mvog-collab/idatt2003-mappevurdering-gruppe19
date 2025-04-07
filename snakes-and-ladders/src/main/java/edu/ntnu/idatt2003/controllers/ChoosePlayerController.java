@@ -40,14 +40,21 @@ public class ChoosePlayerController implements BasePopupController {
       gameModel.addPlayer(name, dummyToken, birthday);
       view.getNameField().setText("");
       gameModel.setPlayersOfGame(sortPlayersByBirthday());
+      setFirstPlayer();
       displayPlayersByAge();
     }
 
     private List<Player> sortPlayersByBirthday() {
         List<Player> players = new ArrayList<>(gameModel.getPlayers());
         players.sort(Comparator.comparing(Player::getBirthday).reversed());
-        gameModel.setCurrentPlayer(players.get(0));
         return players;
+    }
+
+    private void setFirstPlayer() {
+        if (gameModel.getPlayers().getFirst() == gameModel.getCurrentPlayer()) {
+            return;
+        }
+        gameModel.setCurrentPlayer(gameModel.getPlayers().getFirst());
     }
 
     private void displayPlayersByAge() {
