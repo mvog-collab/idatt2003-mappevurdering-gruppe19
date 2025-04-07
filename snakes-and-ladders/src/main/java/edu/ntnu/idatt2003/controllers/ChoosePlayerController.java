@@ -40,7 +40,7 @@ public class ChoosePlayerController implements BasePopupController {
       gameModel.addPlayer(name, dummyToken, birthday);
       view.getNameField().setText("");
       gameModel.setPlayersOfGame(sortPlayersByBirthday());
-      view.getAddedPlayersBox().getChildren().add(view.displayPlayer(gameModel.getPlayers().getLast()));
+      displayPlayersByAge();
     }
 
     private List<Player> sortPlayersByBirthday() {
@@ -48,6 +48,14 @@ public class ChoosePlayerController implements BasePopupController {
         players.sort(Comparator.comparing(Player::getBirthday).reversed());
         gameModel.setCurrentPlayer(players.get(0));
         return players;
+    }
+
+    private void displayPlayersByAge() {
+        gameModel.getPlayers();
+        view.getAddedPlayersBox().getChildren().clear();
+        for (Player player : gameModel.getPlayers()) {
+            view.getAddedPlayersBox().getChildren().add(view.displayPlayer(player));;
+        }
     }
 
     @Override
