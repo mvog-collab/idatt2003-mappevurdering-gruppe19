@@ -29,6 +29,12 @@ public class GameModel {
     return Optional.ofNullable(currentPlayer.getCurrentTile());
   }
 
+  public void sendPlayerBackToStart(Player playerToBeRemoved) {
+    playerToBeRemoved.getCurrentTile().removePlayerFromTile(playerToBeRemoved);
+    setStartPosition(playerToBeRemoved); //litt usikker på om denne kanskje heller skal sette den til den første?
+    System.out.println(playerToBeRemoved.getName() + " was sent back to start.");
+  }
+
   public Player nextPlayersTurn() {
     int currentIndex = playersOfGame.indexOf(currentPlayer);
     int nextIndex = (currentIndex + 1) % playersOfGame.size();
