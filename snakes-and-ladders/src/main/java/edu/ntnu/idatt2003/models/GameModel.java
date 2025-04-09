@@ -3,6 +3,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class GameModel {
 
@@ -34,6 +35,27 @@ public class GameModel {
     return Optional.ofNullable(currentPlayer.getCurrentTile());
   }
 
+  public Player playerCollision() {
+    Tile currentTile = currentPlayer.getCurrentTile();
+    Set<Player> playersOnTile = currentTile.getPlayersOnTile();
+
+    if (playersOnTile.size() > 1) {
+      for (Player playerOnTile : playersOnTile) {
+        if (!playerOnTile.equals(currentPlayer)) {
+        sendPlayerBackToStart(playerOnTile);
+        return playerOnTile;
+        }
+      }
+    }
+    return null;
+  }
+
+  private void sendPlayerBackToStart(Player playerToBeRemoved) {
+    playerToBeRemoved.getCurrentTile().removePlayerFromTile(playerToBeRemoved);
+    putPlayerOnFirstTile(playerToBeRemoved);
+    System.out.println(playerToBeRemoved.getName() + " was sent back to start.");
+  }
+
   public Player nextPlayersTurn() {
     if (dice.isPairAndNotTwelve()) {
       return currentPlayer;
@@ -46,6 +68,15 @@ public class GameModel {
 
   public void setStartPosition(Player player) {
     Tile startTile = board.getTile(0);
+    if (startTile != null) {
+      player.placeOnTile(startTile);
+    } else {
+      throw new IllegalStateException("Board has no tiles!");
+    }
+  }
+
+  public void putPlayerOnFirstTile (Player player) {
+    Tile startTile = board.getTile(1);
     if (startTile != null) {
       player.placeOnTile(startTile);
     } else {

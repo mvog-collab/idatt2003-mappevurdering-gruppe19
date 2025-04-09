@@ -57,4 +57,9 @@ public class Tile {
     public void setAction(TileAction action) {
         this.action = action;
     }
+
+    public Set<Player> getPlayersOnTile() {
+        return new HashSet<>(playersOnTile);
+    }
+
 }
