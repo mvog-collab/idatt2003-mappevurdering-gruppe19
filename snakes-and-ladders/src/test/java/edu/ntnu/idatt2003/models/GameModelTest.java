@@ -74,8 +74,10 @@ public class GameModelTest {
         @Test
         @DisplayName("nextPlayersTurn should cycle through the players")
         void testNextPlayersTurn() {
-            gameModel.addPlayer("Martha", "Token", LocalDate.of(2004, 1, 19));
+            gameModel.addPlayer("Martha", "Token", LocalDate.of(2002, 1, 19));
             gameModel.addPlayer("Edvard", "Token", LocalDate.of(2003, 3, 27));
+            gameModel.getDice().getDiceList().getFirst().setLastRolledValue(1);
+            gameModel.getDice().getDiceList().getLast().setLastRolledValue(2);
             Player currentPlayer = gameModel.getCurrentPlayer();
             Player nextPlayer = gameModel.nextPlayersTurn();
             assertNotEquals(currentPlayer, nextPlayer);

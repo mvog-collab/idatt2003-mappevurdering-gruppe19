@@ -62,11 +62,11 @@ public class DiceTest {
         void testIsPairShouldReturnTrueIfPairIsRolledFalseIfNoPair() {
             testDice.getDiceList().get(0).setLastRolledValue(5);
             testDice.getDiceList().get(1).setLastRolledValue(5);
-            assertTrue(testDice.isPair());
+            assertTrue(testDice.isPairAndNotTwelve());
 
             testDice.getDiceList().get(0).setLastRolledValue(1);
             testDice.getDiceList().get(1).setLastRolledValue(5);
-            assertFalse(testDice.isPair());
+            assertFalse(testDice.isPairAndNotTwelve());
         }
     }
 
