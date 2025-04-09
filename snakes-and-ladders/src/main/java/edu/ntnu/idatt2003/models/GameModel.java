@@ -28,11 +28,19 @@ public class GameModel {
 
   public Optional<Tile> moveCurrentPlayer() {
     int roll = dice.rollDice();
+    if (dice.isPairOfSix()) {
+      System.out.println(currentPlayer.getName() + " is skipping their turn!");
+      nextPlayersTurn();
+      return Optional.empty();
+    }
     currentPlayer.move(roll);
     return Optional.ofNullable(currentPlayer.getCurrentTile());
   }
 
   public Player nextPlayersTurn() {
+    if (dice.isPairAndNotTwelve()) {
+      return currentPlayer;
+    }
     int currentIndex = players.indexOf(currentPlayer);
     int nextIndex = (currentIndex + 1) % players.size();
     setCurrentPlayer(players.get(nextIndex));
