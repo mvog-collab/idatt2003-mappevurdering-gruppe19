@@ -8,21 +8,18 @@ public class GameModel {
 
   private Board board;
   private Player currentPlayer;
-  private final List<Player> players;
+  private List<Player> playersOfGame;
   private final Dice dice;
 
   public GameModel(Board board, Dice dice) {
     this.board = board;
-    this.players = new ArrayList<>();
+    this.playersOfGame = new ArrayList<>();
     this.dice = dice;
   }
 
   public void addPlayer(String name, String token, LocalDate birthday) {
     Player player = new Player(name, token, birthday);
-    players.add(player);
-    if (players.size() == 1) {
-      setCurrentPlayer(player);
-    }
+    playersOfGame.add(player);
     setStartPosition(player);
   }
 
@@ -41,9 +38,9 @@ public class GameModel {
     if (dice.isPairAndNotTwelve()) {
       return currentPlayer;
     }
-    int currentIndex = players.indexOf(currentPlayer);
-    int nextIndex = (currentIndex + 1) % players.size();
-    setCurrentPlayer(players.get(nextIndex));
+    int currentIndex = playersOfGame.indexOf(currentPlayer);
+    int nextIndex = (currentIndex + 1) % playersOfGame.size();
+    setCurrentPlayer(playersOfGame.get(nextIndex));
     return currentPlayer;
   }
 
@@ -73,7 +70,7 @@ public class GameModel {
   }
 
   public List<Player> getPlayers() {
-    return players;
+    return playersOfGame;
   }
 
   public Player getCurrentPlayer() {
@@ -91,4 +88,7 @@ public class GameModel {
     this.currentPlayer = player;
   }
 
+  public void setPlayersOfGame(List<Player> playersOfGame) {
+    this.playersOfGame = playersOfGame;
+  }
 }

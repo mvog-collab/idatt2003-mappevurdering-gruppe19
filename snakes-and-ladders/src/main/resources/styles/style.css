@@ -232,5 +232,33 @@
     -fx-text-fill: black;
 }
 
+.date-picker {
+    -fx-background-color: #E4A55D;
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+    -fx-padding: 10;
+}
+
+.date-picker .text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+    -fx-text-fill: black;
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 20px;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #C98F4B;
+    -fx-background-radius: 100;
+}
+
+.date-picker .arrow-button:hover {
+    -fx-background-color: #AD7F3A;
+}
+
 
 

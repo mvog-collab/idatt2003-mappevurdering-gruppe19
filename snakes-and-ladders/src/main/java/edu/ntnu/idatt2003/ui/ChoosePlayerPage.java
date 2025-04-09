@@ -22,6 +22,7 @@ public class ChoosePlayerPage {
   private Button cancelButton;
   private Button addPlayerButton;
   private Button continueButton;
+  private HBox addedPlayersLine;
   private HBox addedPlayersBox;
 
   public VBox getView(){
@@ -34,6 +35,8 @@ public class ChoosePlayerPage {
 
     Label playerBirthday = new Label("Player Birthday");
     birthdayPicker = new DatePicker();
+    birthdayPicker.setValue(LocalDate.of(2001,1,1));
+    birthdayPicker.getStyleClass().add("date-picker");
     birthdayPicker.setPromptText("Select your birthday");
 
     addPlayerButton = new Button("Add Player");
@@ -42,17 +45,17 @@ public class ChoosePlayerPage {
 
     HBox nameBox = new HBox(playerName, nameField);
     HBox birthdayBox = new HBox(playerBirthday, birthdayPicker);
+    addedPlayersBox = new HBox();
 
     Label addedPlayersLabel = new Label("Added Players");
     addedPlayersLabel.getStyleClass().add("added-players");
-    addedPlayersBox = new HBox(addedPlayersLabel);
-
+    addedPlayersLine = new HBox(addedPlayersLabel, addedPlayersBox);
+    addedPlayersLine.setSpacing(20);
     HBox statusBox = new HBox(cancelButton, addPlayerButton, continueButton);
 
-    VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, addedPlayersBox, statusBox);
+    VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, addedPlayersLine, statusBox);
 
     VBox background = new VBox(playerPopup);
-
 
 
 
