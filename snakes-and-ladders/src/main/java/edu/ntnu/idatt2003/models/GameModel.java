@@ -27,29 +27,28 @@ public class GameModel {
   public Optional<Tile> moveCurrentPlayer() {
     int roll = dice.rollDice();
     currentPlayer.move(roll);
-
-    handlePlayerCollision();
-
     return Optional.ofNullable(currentPlayer.getCurrentTile());
   }
 
-  public void handlePlayerCollision() {
+  public Player playerCollision() {
     Tile currentTile = currentPlayer.getCurrentTile();
     Set<Player> playersOnTile = currentTile.getPlayersOnTile();
 
     if (playersOnTile.size() > 1) {
       for (Player playerOnTile : playersOnTile) {
         if (!playerOnTile.equals(currentPlayer)) {
-          sendPlayerBackToStart(playerOnTile);
+          return sendPlayerBackToStart(playerOnTile);
         }
       }
     }
+    return null;
   }
 
-  public void sendPlayerBackToStart(Player playerToBeRemoved) {
+  private Player sendPlayerBackToStart(Player playerToBeRemoved) {
     playerToBeRemoved.getCurrentTile().removePlayerFromTile(playerToBeRemoved);
     putPlayerOnFirstTile(playerToBeRemoved);
     System.out.println(playerToBeRemoved.getName() + " was sent back to start.");
+    return playerToBeRemoved;
   }
 
   public Player nextPlayersTurn() {

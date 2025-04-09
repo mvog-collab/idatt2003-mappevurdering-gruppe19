@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.controllers;
 
+import edu.ntnu.idatt2003.models.Player;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -25,7 +26,13 @@ public class BoardController {
         Optional<Tile> newTile = gameModel.moveCurrentPlayer();
         newTile.ifPresent(tile ->
         boardView.updatePlayerPosition(tile.getTileId(), gameModel.getCurrentPlayer()));
-        
+
+        Player playerToBeRenmoved = gameModel.playerCollision();
+
+        if (playerToBeRenmoved != null) {
+            boardView.updatePlayerPosition(playerToBeRenmoved.getCurrentTile().getTileId(), playerToBeRenmoved);
+        }
+
         //TODO: add something else to do if tile is not present
     }
 
