@@ -205,34 +205,47 @@ public class BoardView {
             tileUIMap.put(tileId, tile);
         }
 
-    public void updatePlayerPosition(int startTileId, int endTileId, Player player) {
-        Node playerToken = playerTokens.get(player);
-
-        // Sørg for å kjøre GUI-oppdateringer på JavaFX Application Thread
-        new Thread(() -> {
-            for (int i = startTileId + 1; i <= endTileId; i++) {
-                try {
-                    Thread.sleep(300); // pause i 300ms for hvert steg
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        public void movePlayerByDiceRoll(int startTileId, int endTileId, Player player, Runnable onComplete) {
+            Node playerToken = playerTokens.get(player);
+        
+            new Thread(() -> {
+                for (int i = startTileId + 1; i <= endTileId; i++) {
+                    try {
+                        Thread.sleep(200); // pause i 300ms for hvert steg
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    int tileId = i;
+        
+                    Platform.runLater(() -> {
+                        // Fjern token fra forrige rute
+                        if (tileId == 1) {
+                            System.out.printf("Player is going from tile 0");
+                        } else if (tileId > startTileId + 1) {
+                            tileUIMap.get(tileId - 1).getChildren().remove(playerToken);
+                        } else {
+                            tileUIMap.get(startTileId).getChildren().remove(playerToken);
+                        }
+                        // Legg token i ny rute
+                        tileUIMap.get(tileId).getChildren().add(playerToken);
+                    });
                 }
-                int tileId = i;
+                // Etter at hele animasjonen er fullført, kaller vi callback
+                if (onComplete != null) {
+                    Platform.runLater(onComplete);
+                }
+            }).start();
+        }
 
-                Platform.runLater(() -> {
-                    // Fjern token fra forrige rute
-                    if (tileId == 1) {
-                        System.out.printf("Player is going from tile 0");
-                    }
-                    else if (tileId > startTileId + 1) {
-                        tileUIMap.get(tileId - 1).getChildren().remove(playerToken);
-                    } else {
-                        tileUIMap.get(startTileId).getChildren().remove(playerToken);
-                    }
-                    // Legg token i ny rute
-                    tileUIMap.get(tileId).getChildren().add(playerToken);
-                });
-            }
-        }).start();
+    public void movePlayerOnSnakeOrLadder(int endTileId, Player player) {
+        Node playerToken = playerTokens.get(player);
+        if (playerToken.getParent() != null && playerToken.getParent() instanceof Pane) {
+            ((Pane) playerToken.getParent()).getChildren().remove(playerToken);
+        }
+        StackPane tile = tileUIMap.get(endTileId);
+        if (!tile.getChildren().contains(playerToken)) {
+            tile.getChildren().add(playerToken);
+        }
     }
 
 
