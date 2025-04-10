@@ -24,14 +24,13 @@ public class GameModel {
     setStartPosition(player);
   }
 
-  public Optional<Tile> moveCurrentPlayer() {
-    int roll = dice.rollDice();
-    if (dice.isPairOfSix()) {
+  public Optional<Tile> moveCurrentPlayer(int diceRoll) {
+    if (diceRoll == 12) {
       System.out.println(currentPlayer.getName() + " is skipping their turn!");
       nextPlayersTurn();
       return Optional.empty();
     }
-    currentPlayer.move(roll);
+    currentPlayer.move(diceRoll);
     return Optional.ofNullable(currentPlayer.getCurrentTile());
   }
 
@@ -113,8 +112,11 @@ public class GameModel {
   }
 
   public void setCurrentPlayer(Player player) {
-    if (player == null || currentPlayer == player) {
+    if (player == null) {
       throw new IllegalArgumentException("New player is invalid");
+    }
+    if (currentPlayer == player) {
+      return;
     }
     this.currentPlayer = player;
   }
