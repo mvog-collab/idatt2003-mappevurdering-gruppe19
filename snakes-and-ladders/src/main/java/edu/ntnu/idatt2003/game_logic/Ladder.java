@@ -7,9 +7,9 @@ import edu.ntnu.idatt2003.models.Board;
 import edu.ntnu.idatt2003.models.Player;
 
 public class Ladder implements TileAction {
-  int startTileId;
-  int endTileId;
-  Board board;
+  private final int startTileId;
+  private final int endTileId;
+  private final Board board;
 
   public Ladder(int startTileId, int endTileId, Board board) {
     this.startTileId = startTileId;
@@ -28,5 +28,13 @@ public class Ladder implements TileAction {
   @Override
   public int getActionPosition() {
     return startTileId;
+  }
+
+  public int getStartTileId() {
+    return startTileId;
+  }
+
+  public int getEndTileId() {
+      return endTileId;
   }
 }
