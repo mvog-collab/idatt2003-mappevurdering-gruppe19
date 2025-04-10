@@ -30,4 +30,12 @@ public class Snake implements TileAction {
     public int getActionPosition() {
         return startTileId;
     }
+
+    public int getStartTileId() {
+        return startTileId;
+    }
+
+    public int getEndTileId() {
+        return endTileId;
+    }
 }
