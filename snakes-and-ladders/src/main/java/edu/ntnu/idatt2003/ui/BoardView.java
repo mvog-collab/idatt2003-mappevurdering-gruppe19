@@ -1,7 +1,6 @@
 package edu.ntnu.idatt2003.ui;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.javafx.UnmodifiableArrayList;
 import javafx.geometry.Point2D;
 
 import edu.ntnu.idatt2003.controllers.BoardController;
@@ -17,14 +16,13 @@ import edu.ntnu.idatt2003.models.Player;
 import edu.ntnu.idatt2003.models.Tile;
 
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
@@ -33,12 +31,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 
 public class BoardView {
     private final int tileSize = 50;
@@ -313,17 +308,53 @@ public class BoardView {
         return overlayList;
     }
 
-    public void updatePlayerPosition ( int tileId, Player player){
+        public void movePlayerByDiceRoll(int startTileId, int endTileId, Player player, Runnable onComplete) {
+            Node playerToken = playerTokens.get(player);
+        
+            new Thread(() -> {
+                for (int i = startTileId + 1; i <= endTileId; i++) {
+                    try {
+                        Thread.sleep(200); // pause i 300ms for hvert steg
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    int tileId = i;
+        
+                    Platform.runLater(() -> {
+                        // Fjern token fra forrige rute
+                        if (tileId == 1) {
+                            System.out.printf("Player is going from tile 0");
+                        } else if (tileId > startTileId + 1) {
+                            tileUIMap.get(tileId - 1).getChildren().remove(playerToken);
+                        } else {
+                            tileUIMap.get(startTileId).getChildren().remove(playerToken);
+                        }
+                        // Legg token i ny rute
+                        tileUIMap.get(tileId).getChildren().add(playerToken);
+                    });
+                }
+                // Etter at hele animasjonen er fullført, kaller vi callback
+                if (onComplete != null) {
+                    Platform.runLater(onComplete);
+                }
+            }).start();
+        }
+
+    public void movePlayerOnSnakeOrLadder(int endTileId, Player player) {
         Node playerToken = playerTokens.get(player);
-        //TODO: check that going from one tile, to the same tile (with a snake) works
-        // tileUIMap.get(player.getCurrentTile().getTileId()).getChildren().remove(playerToken);
-        StackPane tile = tileUIMap.get(tileId);
-        tile.getChildren().add(playerToken);
+        if (playerToken.getParent() != null && playerToken.getParent() instanceof Pane) {
+            ((Pane) playerToken.getParent()).getChildren().remove(playerToken);
+        }
+        StackPane tile = tileUIMap.get(endTileId);
+        if (!tile.getChildren().contains(playerToken)) {
+            tile.getChildren().add(playerToken);
+        }
     }
 
+
     private void disableRollButton () {
-        rollDiceButton.setDisable(true);
-    }
+            rollDiceButton.setDisable(true);
+        }
 
     private void enableRollButton () {
         rollDiceButton.setDisable(false);

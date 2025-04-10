@@ -21,19 +21,14 @@ public class BoardController {
         this.gameModel = gameModel;
         this.board = gameModel.getBoard();
     }
-    
-    public void rollDiceForCurrentPlayer() {
-        Optional<Tile> newTile = gameModel.moveCurrentPlayer();
-        newTile.ifPresent(tile ->
-        boardView.updatePlayerPosition(tile.getTileId(), gameModel.getCurrentPlayer()));
 
-        Player playerToBeRenmoved = gameModel.playerCollision();
-
-        if (playerToBeRenmoved != null) {
-            boardView.updatePlayerPosition(playerToBeRenmoved.getCurrentTile().getTileId(), playerToBeRenmoved);
+    private Tile getTileAfterMovingRolledValue(int startTileId, int steps) {
+        Tile tileToLandOn = gameModel.getBoard().getTile(startTileId);
+        for (int i = 0; i < steps; i++) {
+            if (tileToLandOn.getNextTile() == null) break;
+            tileToLandOn = tileToLandOn.getNextTile();
         }
-
-        //TODO: add something else to do if tile is not present
+        return tileToLandOn;
     }
 
     public void addPlayer(String name, String token, LocalDate birthday) {
@@ -41,18 +36,35 @@ public class BoardController {
     }
 
     public void playATurn() {
-        rollDiceForCurrentPlayer();
+        int startTileId = gameModel.getCurrentPlayer().getCurrentTile().getTileId();
+        int rolledValue = gameModel.getDice().rollDice();
 
-        if (gameModel.hasPlayerWon(gameModel.getCurrentPlayer())) {
-            boardView.announceWinner(gameModel.getCurrentPlayer());
+        if (rolledValue == 12) {
+            //TODO: Add something to happen when player rolls 12
+            gameModel.nextPlayersTurn();
+            return;
         }
 
-        gameModel.nextPlayersTurn();
+        Tile tileBeforeSnakeOrLadder = getTileAfterMovingRolledValue(startTileId, rolledValue);
+
+        boardView.movePlayerByDiceRoll(startTileId, tileBeforeSnakeOrLadder.getTileId(), gameModel.getCurrentPlayer(),  () -> {
+            Optional<Tile> newTile = gameModel.moveCurrentPlayer(rolledValue); 
+            newTile.ifPresent(tile -> boardView.movePlayerOnSnakeOrLadder(tile.getTileId(), gameModel.getCurrentPlayer()));
+            
+            Player playerToBeRemoved = gameModel.playerCollision();
+            if (playerToBeRemoved != null) {
+                boardView.movePlayerByDiceRoll(0, playerToBeRemoved.getCurrentTile().getTileId(), playerToBeRemoved, null);
+            }
+
+            if (gameModel.hasPlayerWon(gameModel.getCurrentPlayer())) {
+                boardView.announceWinner(gameModel.getCurrentPlayer());
+            }
+
+            gameModel.nextPlayersTurn();
+        });
         //TODO: Add more to happen in a turn. Updating UI, checking winner, logging, etc
     }
 
-    
-    
     public BoardView getBoardView() {
         return boardView;
     }
