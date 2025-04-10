@@ -23,11 +23,15 @@ public class Dice {
 
   public boolean isPairAndNotTwelve() {
     return diceList.getFirst().getLastRolledValue() == diceList.get(1).getLastRolledValue() 
-        && diceList.getFirst().getLastRolledValue() + diceList.get(1).getLastRolledValue() != 12;
+        && getSumOfLastRolledValue() != 12;
   }
 
   public boolean isPairOfSix() {
     return diceList.getFirst().getLastRolledValue() == 6 && diceList.get(1).getLastRolledValue() == 6;
+  }
+
+  public int getSumOfLastRolledValue() {
+    return diceList.getFirst().getLastRolledValue() + diceList.get(1).getLastRolledValue();
   }
 
   public List<Die> getDiceList() {
