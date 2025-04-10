@@ -61,7 +61,7 @@ public class GameModelTest {
         void testMoveCurrentPlayer() {
             gameModel.addPlayer("Martha", "Token", LocalDate.of(2004, 1, 19));
             // With a fixed dice roll of 3, the player should move from tile 0 to tile 3.
-            Optional<Tile> newTile = gameModel.moveCurrentPlayer();
+            Optional<Tile> newTile = gameModel.moveCurrentPlayer(gameModel.getDice().rollDice());
             assertTrue(newTile.isPresent());
             assertEquals(3, newTile.get().getTileId());
         }
