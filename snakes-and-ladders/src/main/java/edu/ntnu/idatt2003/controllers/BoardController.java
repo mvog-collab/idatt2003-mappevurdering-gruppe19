@@ -25,12 +25,12 @@ public class BoardController {
     public void rollDiceForCurrentPlayer() {
         Optional<Tile> newTile = gameModel.moveCurrentPlayer();
         newTile.ifPresent(tile ->
-        boardView.updatePlayerPosition(tile.getTileId(), gameModel.getCurrentPlayer()));
+        boardView.updatePlayerPosition(tile.getTileId() - gameModel.getDice().getSumOfLastRolledValue(), tile.getTileId(), gameModel.getCurrentPlayer()));
 
-        Player playerToBeRenmoved = gameModel.playerCollision();
+        Player playerToBeRemoved = gameModel.playerCollision();
 
-        if (playerToBeRenmoved != null) {
-            boardView.updatePlayerPosition(playerToBeRenmoved.getCurrentTile().getTileId(), playerToBeRenmoved);
+        if (playerToBeRemoved != null) {
+            boardView.updatePlayerPosition(0, playerToBeRemoved.getCurrentTile().getTileId(), playerToBeRemoved);
         }
 
         //TODO: add something else to do if tile is not present
@@ -51,8 +51,6 @@ public class BoardController {
         //TODO: Add more to happen in a turn. Updating UI, checking winner, logging, etc
     }
 
-    
-    
     public BoardView getBoardView() {
         return boardView;
     }
