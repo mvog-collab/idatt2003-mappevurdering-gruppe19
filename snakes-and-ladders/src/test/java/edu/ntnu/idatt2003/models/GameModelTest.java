@@ -60,6 +60,7 @@ public class GameModelTest {
         @DisplayName("moveCurrentPlayer should move the current player based on the dice roll")
         void testMoveCurrentPlayer() {
             gameModel.addPlayer("Martha", "Token", LocalDate.of(2004, 1, 19));
+            gameModel.setCurrentPlayer(gameModel.getPlayers().getFirst());
             // With a fixed dice roll of 3, the player should move from tile 0 to tile 3.
             Optional<Tile> newTile = gameModel.moveCurrentPlayer(gameModel.getDice().rollDice());
             assertTrue(newTile.isPresent());
