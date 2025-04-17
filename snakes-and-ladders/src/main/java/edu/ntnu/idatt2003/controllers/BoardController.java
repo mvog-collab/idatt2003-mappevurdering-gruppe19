@@ -4,7 +4,6 @@ import edu.ntnu.idatt2003.models.Player;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import edu.ntnu.idatt2003.game_logic.BoardMaker;
 import edu.ntnu.idatt2003.models.Board;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Tile;
@@ -61,6 +60,7 @@ public class BoardController {
             }
 
             gameModel.nextPlayersTurn();
+            boardView.updateCurrentPlayerView(gameModel.getCurrentPlayer());
         });
         //TODO: Add more to happen in a turn. Updating UI, checking winner, logging, etc
     }

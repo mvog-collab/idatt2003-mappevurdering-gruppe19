@@ -4,27 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.geometry.Point2D;
 
 import edu.ntnu.idatt2003.controllers.BoardController;
-import edu.ntnu.idatt2003.game_logic.BoardMaker;
-import edu.ntnu.idatt2003.game_logic.Ladder;
-import edu.ntnu.idatt2003.game_logic.Snake;
-import edu.ntnu.idatt2003.game_logic.TileAction;
-import edu.ntnu.idatt2003.models.Board;
-import edu.ntnu.idatt2003.models.Dice;
-import edu.ntnu.idatt2003.models.Die;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
-import edu.ntnu.idatt2003.models.Tile;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import javafx.application.Platform;
-import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -42,6 +33,7 @@ public class BoardView {
 
     private Map<Integer, StackPane> tileUIMap;
     private Map<Player, Node> playerTokens;
+    private Map<Player, HBox> playerDisplayBoxes = new HashMap<>();
     private BoardController boardController;
     private Button rollDiceButton;
 
@@ -72,6 +64,7 @@ public class BoardView {
         boardContainer.setMaxSize(tileSize * width, tileSize * height);
         boardContainer.getStyleClass().add("board-container");
         boardContainer.setAlignment(Pos.CENTER);
+        HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30)); // top, right, bottom, left
 
         Label playersLabel = new Label("Players");
         HBox playersBox = new HBox();
@@ -135,7 +128,14 @@ public class BoardView {
             "QueenChessWood.png"
         };
 
-        for (int i = 0; i < 5; i++) {
+
+        for (int i = 0; i < gameModel.getPlayers().size(); i++) {
+            HBox playerDisplayBox = new HBox();
+            playerDisplayBox.getStyleClass().add("display-player-box");
+            playersBox.getChildren().add(playerDisplayBox);
+
+            Player player = gameModel.getPlayers().get(i);
+            playerDisplayBoxes.put(player, playerDisplayBox);
             String selectedImageFile = imageFiles[i % imageFiles.length];
             Image playerImage = new Image(
                 getClass().getResourceAsStream("/Images/" + selectedImageFile));
@@ -145,11 +145,12 @@ public class BoardView {
             playerImageView.setFitHeight(100);
             playerImageView.getStyleClass().add("player-figure");
 
-            playersBox.getChildren().add(playerImageView);
+            playerDisplayBox.getChildren().add(playerImageView);
         }
 
         int i = 0;
         for (Player player : gameModel.getPlayers()) {
+            
             String selectedImageFile = imageFiles[i % imageFiles.length];
             Image playerImage = new Image(
                 getClass().getResourceAsStream("/Images/" + selectedImageFile));
@@ -170,6 +171,8 @@ public class BoardView {
         Platform.runLater(() -> {
             addOverlaysFromJson();
         });
+
+        updateCurrentPlayerView(gameModel.getCurrentPlayer());
 
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets()
@@ -238,6 +241,16 @@ public class BoardView {
         tileUIMap.put(tileId, tile);
     }
 
+    public void updateCurrentPlayerView(Player currentPlayer) {
+        for (Map.Entry<Player, HBox> entry : playerDisplayBoxes.entrySet()) {
+            HBox box = entry.getValue();
+            box.getStyleClass().removeIf(style -> style.equals("current-player"));
+            if (entry.getKey().equals(currentPlayer)) {
+                box.getStyleClass().add("current-player");
+            }
+        }
+    }
+
     private void addOverlaysFromJson() {
         List<OverlayParams> overlayList = loadOverlaysFromJson();
         for (OverlayParams params : overlayList) {
@@ -292,9 +305,7 @@ public class BoardView {
             JsonNode overlaysNode = root.path("overlays");
             if (overlaysNode.isArray()) {
                 for (JsonNode node : overlaysNode) {
-                    String type = node.path("type").asText();
                     int startTileId = node.path("startTileId").asInt();
-                    int endTileId = node.path("endTileId").asInt();
                     String imagePath = node.path("imagePath").asText();
                     int offsetX = node.path("offsetX").asInt();
                     int offsetY = node.path("offsetY").asInt();
