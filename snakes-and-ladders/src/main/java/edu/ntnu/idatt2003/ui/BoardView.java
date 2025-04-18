@@ -1,11 +1,26 @@
 package edu.ntnu.idatt2003.ui;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.geometry.Point2D;
-
 import edu.ntnu.idatt2003.controllers.BoardController;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
+import javafx.application.Platform;
+import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -13,26 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.application.Platform;
-import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-
 public class BoardView {
     private final int tileSize = 50;
     private int width;
     private int height;
 
     private Map<Integer, StackPane> tileUIMap;
-    private Map<Player, Node> playerTokens;
+    private Map<Player, ImageView> playerTokens;
     private Map<Player, HBox> playerDisplayBoxes = new HashMap<>();
     private BoardController boardController;
     private Button rollDiceButton;
@@ -40,6 +42,7 @@ public class BoardView {
     private GameModel gameModel;
 
     private Pane overlayPane;
+    private Pane tokenPane;
 
     public BoardView(GameModel gameModel) {
         this.gameModel = gameModel;
@@ -59,12 +62,16 @@ public class BoardView {
         overlayPane.setPickOnBounds(false);
         overlayPane.setPrefSize(tileSize * width, tileSize * height);
 
+        tokenPane = new Pane();
+        tokenPane.setPickOnBounds(false);
+        tokenPane.setPrefSize(tileSize * width, tileSize * height);
+
         StackPane boardContainer = new StackPane();
-        boardContainer.getChildren().addAll(boardGrid, overlayPane);
+        boardContainer.getChildren().addAll(boardGrid, overlayPane, tokenPane);
         boardContainer.setMaxSize(tileSize * width, tileSize * height);
         boardContainer.getStyleClass().add("board-container");
         boardContainer.setAlignment(Pos.CENTER);
-        HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30)); // top, right, bottom, left
+        HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30));
 
         Label playersLabel = new Label("Players");
         HBox playersBox = new HBox();
@@ -77,7 +84,6 @@ public class BoardView {
         HBox diceBoxContainer = new HBox(diceBox);
         diceBoxContainer.getStyleClass().add("dice-box-container");
 
-        /* ImageView diceImages*/
         ImageView diceImageView1 = new ImageView("/Images/1.png");
         ImageView diceImageView2 = new ImageView("/Images/5.png");
         diceImageView1.setFitWidth(50);
@@ -86,12 +92,10 @@ public class BoardView {
         diceImageView2.setFitHeight(50);
         diceImageView1.getStyleClass().add("dice-image1");
         diceImageView2.getStyleClass().add("dice-image2");
-
         diceBox.getChildren().addAll(diceImageView1, diceImageView2);
 
         rollDiceButton = new Button("Roll Dice");
         rollDiceButton.getStyleClass().add("roll-dice-button");
-
         rollDiceButton.setOnAction(e -> {
             boardController.playATurn();
 
@@ -103,8 +107,6 @@ public class BoardView {
 
             diceImageView1.setImage(new Image(getClass().getResourceAsStream(diceImageFile1)));
             diceImageView2.setImage(new Image(getClass().getResourceAsStream(diceImageFile2)));
-
-
         });
 
         HBox buttonBox = new HBox(rollDiceButton);
@@ -117,8 +119,6 @@ public class BoardView {
         mainBox.getStyleClass().add("main-box");
 
         BoardSetup(boardGrid);
-        
-
 
         String[] imageFiles = {
             "QueenChessBlack.png",
@@ -128,7 +128,7 @@ public class BoardView {
             "QueenChessWood.png"
         };
 
-
+        // Sidepane: spiller-bilder
         for (int i = 0; i < gameModel.getPlayers().size(); i++) {
             HBox playerDisplayBox = new HBox();
             playerDisplayBox.getStyleClass().add("display-player-box");
@@ -136,52 +136,40 @@ public class BoardView {
 
             Player player = gameModel.getPlayers().get(i);
             playerDisplayBoxes.put(player, playerDisplayBox);
-            String selectedImageFile = imageFiles[i % imageFiles.length];
-            Image playerImage = new Image(
-                getClass().getResourceAsStream("/Images/" + selectedImageFile));
-            ImageView playerImageView = new ImageView(playerImage);
-
+            ImageView playerImageView = new ImageView(
+                new Image(getClass().getResourceAsStream("/Images/" + imageFiles[i % imageFiles.length]))
+            );
             playerImageView.setFitWidth(100);
             playerImageView.setFitHeight(100);
             playerImageView.getStyleClass().add("player-figure");
-
             playerDisplayBox.getChildren().add(playerImageView);
         }
 
+        // Initialisere tokens og plassere på start
         int i = 0;
         for (Player player : gameModel.getPlayers()) {
-            
-            String selectedImageFile = imageFiles[i % imageFiles.length];
-            Image playerImage = new Image(
-                getClass().getResourceAsStream("/Images/" + selectedImageFile));
-            ImageView playerImageView = new ImageView(playerImage);
-
-            playerImageView.setFitWidth(40);
-            playerImageView.setFitHeight(40);
-            playerImageView.getStyleClass().add("player-figure");
-
-            playerTokens.put(player, playerImageView);
-
+            ImageView token = new ImageView(
+                new Image(getClass().getResourceAsStream("/Images/" + imageFiles[i % imageFiles.length]))
+            );
+            token.setFitWidth(40);
+            token.setFitHeight(40);
+            token.getStyleClass().add("player-figure");
+            playerTokens.put(player, token);
+            placeTokenOnTile(1, token);
             i++;
         }
 
-        /* Background */
         mainBox.getStyleClass().add("page-background");
 
-        Platform.runLater(() -> {
-            addOverlaysFromJson();
-        });
+        Platform.runLater(this::addOverlaysFromJson);
 
         updateCurrentPlayerView(gameModel.getCurrentPlayer());
 
         Scene scene = new Scene(mainBox, 1000, 700);
-        scene.getStylesheets()
-            .add(getClass().getResource("/styles/style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
 
-        
         return scene;
     }
-    
 
     private void setHeightAndWidth(int boardSize) {
         switch (boardSize) {
@@ -202,11 +190,9 @@ public class BoardView {
         }
     }
 
-    private void BoardSetup (GridPane board){
-
+    private void BoardSetup(GridPane board) {
         boolean leftToRight = true;
         int tileId = 1;
-
         for (int row = height - 1; row >= 0; row--) {
             if (leftToRight) {
                 for (int col = 0; col < width; col++) {
@@ -221,12 +207,11 @@ public class BoardView {
         }
     }
 
-    private void addTile (GridPane board,int row, int col, int tileId){
+    private void addTile(GridPane board, int row, int col, int tileId) {
         StackPane tile = new StackPane();
         tile.setPrefSize(tileSize, tileSize);
 
         Label tileLabel = new Label(String.valueOf(tileId));
-
         if ((row + col) % 2 == 0) {
             tile.getStyleClass().add("tile-white");
             tileLabel.getStyleClass().add("tile-label-black");
@@ -234,54 +219,9 @@ public class BoardView {
             tile.getStyleClass().add("tile-black");
             tileLabel.getStyleClass().add("tile-label-white");
         }
-
         tile.getChildren().add(tileLabel);
         board.add(tile, col, row);
-
         tileUIMap.put(tileId, tile);
-    }
-
-    public void updateCurrentPlayerView(Player currentPlayer) {
-        for (Map.Entry<Player, HBox> entry : playerDisplayBoxes.entrySet()) {
-            HBox box = entry.getValue();
-            box.getStyleClass().removeIf(style -> style.equals("current-player"));
-            if (entry.getKey().equals(currentPlayer)) {
-                box.getStyleClass().add("current-player");
-            }
-        }
-    }
-
-    private void addOverlaysFromJson() {
-        List<OverlayParams> overlayList = loadOverlaysFromJson();
-        for (OverlayParams params : overlayList) {
-            // Her bruker vi startTileId fra JSON for å finne hvor overlayet skal plasseres.
-            // Forutsetter at du har lagt til en metode getStartTileId() i OverlayParams.
-            StackPane startTile = tileUIMap.get(params.getStartTileId() + 1);  // Dersom kartleggingen din krever +1
-            if (startTile == null) {
-                System.err.println("Fant ikke tile med id: " + params.getStartTileId());
-                continue;
-            }
-            
-            Point2D center = getTileCenter(startTile);
-            
-            // Hent InputStream for bildet
-            InputStream is = getClass().getResourceAsStream(params.getImagePath());
-            if (is == null) {
-                System.err.println("Fant ikke ressurs: " + params.getImagePath());
-                continue;
-            }
-            
-            Image image = new Image(is);
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(params.getFitWidth());
-            imageView.setPreserveRatio(true);
-            
-            // Plasser overlayet med de angitte offset-verdiene
-            imageView.setLayoutX(center.getX() + params.getOffsetX() - imageView.getFitWidth() / 2);
-            imageView.setLayoutY(center.getY() + params.getOffsetY() - imageView.getBoundsInParent().getHeight() / 2);
-            
-            overlayPane.getChildren().add(imageView);
-        }
     }
 
     private Point2D getTileCenter(StackPane tile) {
@@ -291,7 +231,30 @@ public class BoardView {
         return new Point2D(centerX, centerY);
     }
 
-    // Eksempelmetode for å lese JSON-fil og lage liste med overlay-definisjoner
+    private void addOverlaysFromJson() {
+        List<OverlayParams> overlayList = loadOverlaysFromJson();
+        for (OverlayParams params : overlayList) {
+            StackPane startTile = tileUIMap.get(params.getStartTileId() + 1);
+            if (startTile == null) {
+                System.err.println("Fant ikke tile med id: " + params.getStartTileId());
+                continue;
+            }
+            Point2D center = getTileCenter(startTile);
+            InputStream is = getClass().getResourceAsStream(params.getImagePath());
+            if (is == null) {
+                System.err.println("Fant ikke ressurs: " + params.getImagePath());
+                continue;
+            }
+            Image image = new Image(is);
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(params.getFitWidth());
+            imageView.setPreserveRatio(true);
+            imageView.setLayoutX(center.getX() + params.getOffsetX() - imageView.getFitWidth() / 2);
+            imageView.setLayoutY(center.getY() + params.getOffsetY() - imageView.getBoundsInParent().getHeight() / 2);
+            overlayPane.getChildren().add(imageView);
+        }
+    }
+
     public List<OverlayParams> loadOverlaysFromJson() {
         List<OverlayParams> overlayList = new ArrayList<>();
         try (InputStream is = getClass().getResourceAsStream("/overlays.json")) {
@@ -299,7 +262,6 @@ public class BoardView {
                 System.err.println("Fant ikke konfigurasjonsfilen for overlays!");
                 return overlayList;
             }
-            // Bruk et JSON-bibliotek (f.eks. Jackson) for å parse filen:
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(is);
             JsonNode overlaysNode = root.path("overlays");
@@ -319,59 +281,50 @@ public class BoardView {
         return overlayList;
     }
 
-        public void movePlayerByDiceRoll(int startTileId, int endTileId, Player player, Runnable onComplete) {
-            Node playerToken = playerTokens.get(player);
-        
-            new Thread(() -> {
-                for (int i = startTileId + 1; i <= endTileId; i++) {
-                    try {
-                        Thread.sleep(200); // pause i 300ms for hvert steg
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    int tileId = i;
-        
-                    Platform.runLater(() -> {
-                        // Fjern token fra forrige rute
-                        if (tileId == 1) {
-                            System.out.printf("Player is going from tile 0");
-                        } else if (tileId > startTileId + 1) {
-                            tileUIMap.get(tileId - 1).getChildren().remove(playerToken);
-                        } else {
-                            tileUIMap.get(startTileId).getChildren().remove(playerToken);
-                        }
-                        // Legg token i ny rute
-                        tileUIMap.get(tileId).getChildren().add(playerToken);
-                    });
-                }
-                // Etter at hele animasjonen er fullført, kaller vi callback
-                if (onComplete != null) {
-                    Platform.runLater(onComplete);
-                }
-            }).start();
-        }
-
-    public void movePlayerOnSnakeOrLadder(int endTileId, Player player) {
-        Node playerToken = playerTokens.get(player);
-        if (playerToken.getParent() != null && playerToken.getParent() instanceof Pane) {
-            ((Pane) playerToken.getParent()).getChildren().remove(playerToken);
-        }
-        StackPane tile = tileUIMap.get(endTileId);
-        if (!tile.getChildren().contains(playerToken)) {
-            tile.getChildren().add(playerToken);
-        }
+    /**
+     * Plasserer en ImageView-token på midten av en gitt rute-ID.
+     */
+    private void placeTokenOnTile(int tileId, ImageView token) {
+        tokenPane.getChildren().remove(token);
+        StackPane tile = tileUIMap.get(tileId);
+        Point2D center = getTileCenter(tile);
+        token.setLayoutX(center.getX() - token.getFitWidth() / 2);
+        token.setLayoutY(center.getY() - token.getFitHeight() / 2);
+        tokenPane.getChildren().add(token);
     }
 
+    public void movePlayerByDiceRoll(int startTileId, int endTileId, Player player, Runnable onComplete) {
+        ImageView token = playerTokens.get(player);
+        new Thread(() -> {
+            for (int i = startTileId + 1; i <= endTileId; i++) {
+                int tileId = i;
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(() -> placeTokenOnTile(tileId, token));
+            }
+            if (onComplete != null) {
+                Platform.runLater(onComplete);
+            }
+        }).start();
+    }
 
-    private void disableRollButton () {
-            rollDiceButton.setDisable(true);
-        }
+    public void movePlayerOnSnakeOrLadder(int endTileId, Player player) {
+        ImageView token = playerTokens.get(player);
+        Platform.runLater(() -> placeTokenOnTile(endTileId, token));
+    }
 
-    private void enableRollButton () {
+    private void disableRollButton() {
+        rollDiceButton.setDisable(true);
+    }
+
+    private void enableRollButton() {
         rollDiceButton.setDisable(false);
     }
 
-    public void announceWinner (Player winner){
+    public void announceWinner(Player winner) {
         disableRollButton();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("The game is over!");
@@ -380,11 +333,23 @@ public class BoardView {
         alert.showAndWait();
     }
 
-    public int getWidth () {
+    public int getWidth() {
         return width;
     }
 
-    public int getHeight () {
+    public int getHeight() {
         return height;
     }
+    
+    public void updateCurrentPlayerView(Player currentPlayer) {
+        for (Map.Entry<Player, HBox> entry : playerDisplayBoxes.entrySet()) {
+            HBox box = entry.getValue();
+            box.getStyleClass().removeIf(style -> style.equals("current-player"));
+            if (entry.getKey().equals(currentPlayer)) {
+                box.getStyleClass().add("current-player");
+            }
+        }
+    }
 }
+
+
