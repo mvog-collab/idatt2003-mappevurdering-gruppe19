@@ -116,6 +116,8 @@ public class StartPage extends Application {
   public Button getChooseBoardButton() {
     return chooseBoardButton;
   }
+
+  public Button getResetGameButton() { return resetGameButton; }
   
   public ChoosePlayerPage getChoosePlayerPage() {
     return choosePlayerPage;
