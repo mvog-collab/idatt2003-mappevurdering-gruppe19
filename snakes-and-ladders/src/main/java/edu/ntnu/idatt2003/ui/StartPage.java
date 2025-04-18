@@ -24,6 +24,7 @@ public class StartPage extends Application {
   private Button startButton;
   private Button choosePlayerButton;
   private Button chooseBoardButton;
+  private Button resetGameButton;
   private ChoosePlayerPage choosePlayerPage;
   private BoardSizePage boardSizePage;
 
@@ -37,7 +38,8 @@ public class StartPage extends Application {
     startButton = new Button("Start game");
     disableStartButton();
     chooseBoardButton = new Button("Choose board");
-    VBox menu = new VBox(chooseBoardButton, choosePlayerButton, startButton);
+    resetGameButton = new Button("Reset game");
+    VBox menu = new VBox(chooseBoardButton, choosePlayerButton, startButton, resetGameButton);
 
     StartPageController startPageController = new StartPageController(this);
 
@@ -59,6 +61,7 @@ public class StartPage extends Application {
     chooseBoardButton.getStyleClass().add("start-page-button");
     startButton.getStyleClass().add("start-page-button");
     choosePlayerButton.getStyleClass().add("start-page-button");
+    resetGameButton.getStyleClass().add("start-page-button");
 
     /* Main Start page */
     HBox mainStartPage = new HBox(leftSide, menu);
