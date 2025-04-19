@@ -40,7 +40,7 @@ public class StartPageController {
         startPage.getChooseBoardButton().setOnAction(e -> {
             BoardSizePage boardSizePage = new BoardSizePage();
 
-            Stage boardPickPopup = createModalPopup("Choose Board Size", boardSizePage.getBoardSizeView(), 500, 350);
+            Stage boardPickPopup = createModalPopup("Choose Board Size", boardSizePage.getBoardSizeView(), 600, 500);
 
             new BoardSizeController(boardSizePage, selectedBoard -> {
                 gameModel.setBoard(selectedBoard);
@@ -55,10 +55,11 @@ public class StartPageController {
         startPage.getChoosePlayerButton().setOnAction(e -> {
             ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
 
-            Stage choosePlayerPopup = createModalPopup("Choose Players", choosePlayerPage.getView(), 600, 500);
+            Stage choosePlayerPopup = createModalPopup("Choose Players", choosePlayerPage.getView(), 800, 700);
 
             new ChoosePlayerController(choosePlayerPage, gameModel);
 
+            
             choosePlayerPopup.showAndWait();
             startPage.enableStartButton();
         });
@@ -101,7 +102,12 @@ public class StartPageController {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle(title);
-        popupStage.setScene(new Scene(root, width, height));
+
+        Scene scene = new Scene(root, width, height);
+        
+        scene.getRoot().requestFocus();
+
+        popupStage.setScene(scene);
         return popupStage;
     }
 }

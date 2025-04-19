@@ -52,7 +52,7 @@ public class ChoosePlayerPage {
 
     addPlayerButton = new Button("Add Player");
     cancelButton = new Button("Cancel");
-    continueButton = new Button("Continue");
+    continueButton = new Button("Confirm");
 
     HBox nameBox = new HBox(playerName, nameField);
     HBox birthdayBox = new HBox(playerBirthday, birthdayPicker);
@@ -100,24 +100,25 @@ public class ChoosePlayerPage {
 
     /* Player-Info Styling */
 
-    nameBox.setAlignment(Pos.CENTER_LEFT);
+    nameBox.setAlignment(Pos.CENTER);
     nameBox.setSpacing(70);
     playerName.getStyleClass().add("popup-label");
 
 
-    birthdayBox.setAlignment(Pos.CENTER_LEFT);
+    birthdayBox.setAlignment(Pos.CENTER);
     birthdayBox.setSpacing(50);
     playerBirthday.getStyleClass().add("popup-label");
 
     /* Button Styling */
 
-    addPlayerButton.getStyleClass().add("popup-button");
-    cancelButton.getStyleClass().add("popup-button");
-    continueButton.getStyleClass().add("popup-button");
+    addPlayerButton.getStyleClass().add("confirm-button");
+    cancelButton.getStyleClass().add("exit-button");
+    continueButton.getStyleClass().add("confirm-button");
 
     statusBox.setAlignment(Pos.CENTER);
     statusBox.setSpacing(70);
     statusBox.setPadding(new Insets(30));
+    playerPopup.setAlignment(Pos.CENTER);
     background.setAlignment(Pos.CENTER);
     background.setSpacing(70);
 
