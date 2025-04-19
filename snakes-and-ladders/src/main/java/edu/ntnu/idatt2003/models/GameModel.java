@@ -18,7 +18,7 @@ public class GameModel {
     this.dice = dice;
   }
 
-  public void addPlayer(String name, String token, LocalDate birthday) {
+  public void addPlayer(String name, PlayerTokens token, LocalDate birthday) {
     Player player = new Player(name, token, birthday);
     playersOfGame.add(player);
     setStartPosition(player);
