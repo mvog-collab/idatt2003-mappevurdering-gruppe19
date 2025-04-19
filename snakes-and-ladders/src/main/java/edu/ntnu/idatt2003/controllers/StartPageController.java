@@ -9,54 +9,62 @@ import edu.ntnu.idatt2003.ui.BoardView;
 import edu.ntnu.idatt2003.ui.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.StartPage;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class StartPageController {
 
     private final StartPage startPage;
-    private final GameModel gameModel;
+    private GameModel gameModel;
+    private final int DEFAULT_BOARD_SIZE = 100;
 
     public StartPageController(StartPage startPage) {
         this.startPage = startPage;
-        this.gameModel = new GameModel(BoardMaker.createBoard(100), new Dice());
-        init();
+        this.gameModel = createNewGameModel();
+        initializeButtonHandlers();
     }
 
-    private void init() {
+    private GameModel createNewGameModel() {
+        return new GameModel(BoardMaker.createBoard(DEFAULT_BOARD_SIZE), new Dice());
+    }
+
+    private void initializeButtonHandlers() {
+        setupChooseBoardButton();
+        setupChoosePlayerButton();
+        setupStartButton();
+        setupResetGameButton();
+    }
+
+    private void setupChooseBoardButton() {
         startPage.getChooseBoardButton().setOnAction(e -> {
             BoardSizePage boardSizePage = new BoardSizePage();
-            Stage boardPickPopup = new Stage();
-            boardPickPopup.initModality(Modality.APPLICATION_MODAL);
 
-            Scene scene = new Scene(boardSizePage.getBoardSizeView(), 500, 350);
+            Stage boardPickPopup = createModalPopup("Choose Board Size", boardSizePage.getBoardSizeView(), 500, 350);
 
-            BoardSizeController boardSizeController = new BoardSizeController(boardSizePage, selectedBoard -> {
-                this.gameModel.setBoard(selectedBoard);
+            new BoardSizeController(boardSizePage, selectedBoard -> {
+                gameModel.setBoard(selectedBoard);
             });
 
-            boardPickPopup.setScene(scene);
             boardPickPopup.showAndWait();
-
             startPage.enableChoosePlayerButton();
         });
+    }
 
+    private void setupChoosePlayerButton() {
         startPage.getChoosePlayerButton().setOnAction(e -> {
             ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
-            Stage choosePlayerPopup = new Stage();
-            choosePlayerPopup.initModality(Modality.APPLICATION_MODAL);
-            choosePlayerPopup.setTitle("Choose players");
 
-            Scene scene = new Scene(choosePlayerPage.getView(), 600, 500);
+            Stage choosePlayerPopup = createModalPopup("Choose Players", choosePlayerPage.getView(), 600, 500);
 
-            ChoosePlayerController choosePlayerController = new ChoosePlayerController(choosePlayerPage, gameModel);
+            new ChoosePlayerController(choosePlayerPage, gameModel);
 
-            choosePlayerPopup.setScene(scene);
             choosePlayerPopup.showAndWait();
-
             startPage.enableStartButton();
         });
+    }
 
+    private void setupStartButton() {
         startPage.getStartButton().setOnAction(e -> {
             BoardView gameBoard = new BoardView(gameModel);
             Stage stage = (Stage) startPage.getStartButton().getScene().getWindow();
@@ -64,8 +72,36 @@ public class StartPageController {
         });
     }
 
+    private void setupResetGameButton() {
+        startPage.getResetGameButton().setOnAction(e -> {
+            resetGame();
+            updateUIAfterReset();
+            showResetConfirmation();
+        });
+    }
 
+    private void resetGame() {
+        this.gameModel = createNewGameModel();
+    }
 
+    private void updateUIAfterReset() {
+        startPage.disableChoosePlayerButton();
+        startPage.disableStartButton();
+    }
 
-    
+    private void showResetConfirmation() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Reset");
+        alert.setHeaderText(null);
+        alert.setContentText("The game has been reset successfully. Please choose a board to continue.");
+        alert.showAndWait();
+    }
+
+    private Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setTitle(title);
+        popupStage.setScene(new Scene(root, width, height));
+        return popupStage;
+    }
 }
