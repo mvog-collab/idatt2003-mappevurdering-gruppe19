@@ -132,7 +132,7 @@
 
 /* Page Background */
 .page-background {
-    -fx-background-image: url("/images/Background.png");
+    -fx-background-image: url("/Images/Background.png");
     -fx-background-size: cover;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;

@@ -4,18 +4,18 @@ import java.time.LocalDate;
 public class Player {
 
     private final String name;
-    private final String token;
+    private final PlayerTokens token;
     private Tile currentTile;
     private final LocalDate birthday;
 
-    public Player(String name, String token, LocalDate birthday) {
+    public Player(String name, PlayerTokens token, LocalDate birthday) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Invalid name input. Name cannot be null or empty.");
         }
         if (birthday.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Invalid birthday input. Birthday cannot be in the future.");
         }
-        if (token == null || token.isEmpty()) {
+        if (token == null) {
             throw new IllegalArgumentException("Invalid token input. Token cannot be null or empty.");
         }
         this.token = token;
@@ -59,7 +59,7 @@ public class Player {
         return name;
     }
 
-    public String getToken() {
+    public PlayerTokens getToken() {
         return token;
     }
 

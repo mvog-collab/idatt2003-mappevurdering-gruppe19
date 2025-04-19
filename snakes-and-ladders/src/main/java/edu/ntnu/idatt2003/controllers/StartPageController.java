@@ -55,7 +55,7 @@ public class StartPageController {
         startPage.getChoosePlayerButton().setOnAction(e -> {
             ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
 
-            Stage choosePlayerPopup = createModalPopup("Choose Players", choosePlayerPage.getView(), 500, 350);
+            Stage choosePlayerPopup = createModalPopup("Choose Players", choosePlayerPage.getView(), 600, 500);
 
             new ChoosePlayerController(choosePlayerPage, gameModel);
 

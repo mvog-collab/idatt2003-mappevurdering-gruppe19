@@ -1,16 +1,24 @@
 package edu.ntnu.idatt2003.ui;
 
 import edu.ntnu.idatt2003.models.Player;
-import java.time.LocalDate;
+import edu.ntnu.idatt2003.models.PlayerTokens;
 
-import javafx.application.Application;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -24,6 +32,9 @@ public class ChoosePlayerPage {
   private Button continueButton;
   private HBox addedPlayersLine;
   private HBox addedPlayersBox;
+  private HBox playerTokensBox;
+  private ToggleGroup tokenToggleGroup;
+  private Map<PlayerTokens, ToggleButton> tokenButtons = new HashMap<>();
 
   public VBox getView(){
     Label title = new Label("Add Players");
@@ -46,6 +57,7 @@ public class ChoosePlayerPage {
     HBox nameBox = new HBox(playerName, nameField);
     HBox birthdayBox = new HBox(playerBirthday, birthdayPicker);
     addedPlayersBox = new HBox();
+    playerTokensBox = new HBox();
 
     Label addedPlayersLabel = new Label("Added Players");
     addedPlayersLabel.getStyleClass().add("added-players");
@@ -53,11 +65,33 @@ public class ChoosePlayerPage {
     addedPlayersLine.setSpacing(20);
     HBox statusBox = new HBox(cancelButton, addPlayerButton, continueButton);
 
-    VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, addedPlayersLine, statusBox);
+    Label chooseTokenLabel = new Label("Choose player token");
+    tokenToggleGroup = new ToggleGroup();
 
-    VBox background = new VBox(playerPopup);
+    HBox tokenSelectionBox = new HBox(10);
+    tokenSelectionBox.setSpacing(10);
+  
+  for (PlayerTokens token : PlayerTokens.values()) {
+    ToggleButton toggleButton = new ToggleButton();
+    InputStream inputStream = getClass().getResourceAsStream(token.getImagePath());
+    if (inputStream == null) {
+      throw new RuntimeException("Could not load image: " + token.getImagePath());
+    }
+    ImageView imageView = new ImageView(new Image(inputStream));
+    imageView.setFitWidth(50);
+    imageView.setFitHeight(50);
 
+    toggleButton.setGraphic(imageView);
+    toggleButton.setUserData(token);
+    toggleButton.setToggleGroup(tokenToggleGroup);
 
+    tokenButtons.put(token, toggleButton);
+    tokenSelectionBox.getChildren().add(toggleButton);
+  }
+
+  VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, chooseTokenLabel, tokenSelectionBox, addedPlayersLine, statusBox);
+
+  VBox background = new VBox(playerPopup);
 
     /* Title Styling */
     title.getStyleClass().add("popup-title");
@@ -103,7 +137,22 @@ public class ChoosePlayerPage {
     VBox playerName = new VBox(new Label(player.getName()));
     playerName.getStyleClass().add("player-name");
     playerName.setAlignment(Pos.CENTER);
-  return playerName;
+    return playerName;
+  }
+
+  public PlayerTokens getSelectedToken() {
+    Toggle selected = tokenToggleGroup.getSelectedToggle();
+    return selected == null ? null : (PlayerTokens)selected.getUserData();
+  }
+
+  public void disableToken(PlayerTokens token) {
+    ToggleButton button = tokenButtons.get(token);
+    if (button != null) {
+      button.setDisable(true);
+      if (button.isSelected()) {
+        tokenToggleGroup.selectToggle(null);
+      }
+    }
   }
 
 
