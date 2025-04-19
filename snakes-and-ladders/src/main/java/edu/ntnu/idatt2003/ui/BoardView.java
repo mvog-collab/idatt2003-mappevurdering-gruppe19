@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2003.controllers.BoardController;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
+import edu.ntnu.idatt2003.models.PlayerTokens;
+import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -84,8 +86,9 @@ public class BoardView {
         HBox diceBoxContainer = new HBox(diceBox);
         diceBoxContainer.getStyleClass().add("dice-box-container");
 
-        ImageView diceImageView1 = new ImageView("/Images/1.png");
-        ImageView diceImageView2 = new ImageView("/Images/5.png");
+        String image_dir = ResourcePaths.IMAGE_DIR;
+        ImageView diceImageView1 = new ImageView(image_dir + "1.png");
+        ImageView diceImageView2 = new ImageView(image_dir + "5.png");
         diceImageView1.setFitWidth(50);
         diceImageView1.setFitHeight(50);
         diceImageView2.setFitWidth(50);
@@ -102,8 +105,8 @@ public class BoardView {
             int firstDieValue = gameModel.getDice().getDiceList().getFirst().getLastRolledValue();
             int secondDieValue = gameModel.getDice().getDiceList().get(1).getLastRolledValue();
 
-            String diceImageFile1 = "/Images/" + firstDieValue + ".png";
-            String diceImageFile2 = "/Images/" + secondDieValue + ".png";
+            String diceImageFile1 = image_dir + firstDieValue + ".png";
+            String diceImageFile2 = image_dir + secondDieValue + ".png";
 
             diceImageView1.setImage(new Image(getClass().getResourceAsStream(diceImageFile1)));
             diceImageView2.setImage(new Image(getClass().getResourceAsStream(diceImageFile2)));
@@ -120,14 +123,6 @@ public class BoardView {
 
         BoardSetup(boardGrid);
 
-        String[] imageFiles = {
-            "QueenChessBlack.png",
-            "QueenChessGold.png",
-            "QueenChessSilver.png",
-            "QueenChessWhite.png",
-            "QueenChessWood.png"
-        };
-
         // Sidepane: spiller-bilder
         for (int i = 0; i < gameModel.getPlayers().size(); i++) {
             HBox playerDisplayBox = new HBox();
@@ -137,7 +132,7 @@ public class BoardView {
             Player player = gameModel.getPlayers().get(i);
             playerDisplayBoxes.put(player, playerDisplayBox);
             ImageView playerImageView = new ImageView(
-                new Image(getClass().getResourceAsStream("/Images/" + imageFiles[i % imageFiles.length]))
+                new Image(getClass().getResourceAsStream(player.getToken().getImagePath()))
             );
             playerImageView.setFitWidth(100);
             playerImageView.setFitHeight(100);
@@ -149,7 +144,7 @@ public class BoardView {
         int i = 0;
         for (Player player : gameModel.getPlayers()) {
             ImageView token = new ImageView(
-                new Image(getClass().getResourceAsStream("/Images/" + imageFiles[i % imageFiles.length]))
+                new Image(getClass().getResourceAsStream(player.getToken().getImagePath()))
             );
             token.setFitWidth(40);
             token.setFitHeight(40);
@@ -316,11 +311,11 @@ public class BoardView {
         Platform.runLater(() -> placeTokenOnTile(endTileId, token));
     }
 
-    private void disableRollButton() {
+    public void disableRollButton() {
         rollDiceButton.setDisable(true);
     }
 
-    private void enableRollButton() {
+    public void enableRollButton() {
         rollDiceButton.setDisable(false);
     }
 
