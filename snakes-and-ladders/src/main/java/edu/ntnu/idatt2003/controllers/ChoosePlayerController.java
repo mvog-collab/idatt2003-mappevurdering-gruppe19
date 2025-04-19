@@ -1,6 +1,8 @@
 package edu.ntnu.idatt2003.controllers;
 
 import edu.ntnu.idatt2003.models.Player;
+import edu.ntnu.idatt2003.models.PlayerTokens;
+
 import java.time.LocalDate;
 
 import edu.ntnu.idatt2003.models.GameModel;
@@ -8,6 +10,8 @@ import edu.ntnu.idatt2003.ui.ChoosePlayerPage;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 public class ChoosePlayerController implements BasePopupController {
@@ -30,18 +34,20 @@ public class ChoosePlayerController implements BasePopupController {
     private void addPlayer() {
         String name = view.getNameField().getText();
         LocalDate birthday = view.getBirthdayPicker().getValue();
+        PlayerTokens chosenToken = view.getSelectedToken();
 
-        if (name == null || name.isBlank() || birthday == null || birthday.isAfter(LocalDate.now())) {
-        return;
-      }
+        if (name == null || name.isBlank() || birthday == null || birthday.isAfter(LocalDate.now()) || chosenToken == null) {
+            new Alert(Alert.AlertType.WARNING,
+    "Please choose a valid token, birthday and name.").showAndWait();
+            return;
+        }
 
-      String dummyToken = "DummyToken";
-
-      gameModel.addPlayer(name, dummyToken, birthday);
+      gameModel.addPlayer(name, chosenToken, birthday);
       view.getNameField().setText("");
       gameModel.setPlayersOfGame(sortPlayersByBirthday());
       setFirstPlayer();
       displayPlayersByAge();
+      view.disableToken(chosenToken);
     }
 
     private List<Player> sortPlayersByBirthday() {
