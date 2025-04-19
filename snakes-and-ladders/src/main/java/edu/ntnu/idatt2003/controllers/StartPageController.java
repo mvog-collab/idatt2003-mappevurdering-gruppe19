@@ -47,7 +47,7 @@ public class StartPageController {
             choosePlayerPopup.initModality(Modality.APPLICATION_MODAL);
             choosePlayerPopup.setTitle("Choose players");
 
-            Scene scene = new Scene(choosePlayerPage.getView(), 500, 350);
+            Scene scene = new Scene(choosePlayerPage.getView(), 600, 500);
 
             ChoosePlayerController choosePlayerController = new ChoosePlayerController(choosePlayerPage, gameModel);
 

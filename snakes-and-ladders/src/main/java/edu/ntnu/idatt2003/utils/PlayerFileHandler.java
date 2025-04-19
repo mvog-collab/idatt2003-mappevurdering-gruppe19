@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.ntnu.idatt2003.models.Player;
+import edu.ntnu.idatt2003.models.PlayerTokens;
 
 public class PlayerFileHandler {
 
@@ -38,8 +39,8 @@ public class PlayerFileHandler {
                     String name = parts[0].trim();
                     String token = parts[1].trim();
                     //TODO: find out how we want to implement birthday
-                    Player player = new Player(name, token, LocalDate.now());
-                    players.add(player);
+                    //Player player = new Player(name, token, LocalDate.now());
+                    //players.add(player);
                 }
             }
         }
