@@ -3,9 +3,12 @@ package edu.ntnu.idatt2003.ui;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2003.controllers.BoardController;
+import edu.ntnu.idatt2003.game_logic.Ladder;
+import edu.ntnu.idatt2003.game_logic.Snake;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
 import edu.ntnu.idatt2003.models.PlayerTokens;
+import edu.ntnu.idatt2003.models.Tile;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -208,12 +211,22 @@ public class BoardView {
         tile.setPrefSize(tileSize, tileSize);
 
         Label tileLabel = new Label(String.valueOf(tileId));
+
         if ((row + col) % 2 == 0) {
             tile.getStyleClass().add("tile-white");
             tileLabel.getStyleClass().add("tile-label-black");
         } else {
             tile.getStyleClass().add("tile-black");
             tileLabel.getStyleClass().add("tile-label-white");
+        }
+
+        Tile modelTile = gameModel.getBoard().getTile(tileId);
+        if (modelTile != null && modelTile.getAction() != null) {
+            if (modelTile.getAction() instanceof Snake) {
+                tile.getStyleClass().add("tile-snake");
+            } else if (modelTile.getAction() instanceof Ladder) {
+                tile.getStyleClass().add("tile-ladder");
+            }
         }
         tile.getChildren().add(tileLabel);
         board.add(tile, col, row);
