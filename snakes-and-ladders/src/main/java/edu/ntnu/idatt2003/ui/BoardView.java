@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -37,7 +38,8 @@ public class BoardView {
 
     private Map<Integer, StackPane> tileUIMap;
     private Map<Player, ImageView> playerTokens;
-    private Map<Player, HBox> playerDisplayBoxes = new HashMap<>();
+    private Map<Player, VBox> playerDisplayBoxes = new HashMap<>();
+    private VBox playerDisplayBox;
     private BoardController boardController;
     private Button rollDiceButton;
 
@@ -126,23 +128,30 @@ public class BoardView {
 
         // Sidepane: spiller-bilder
         for (int i = 0; i < gameModel.getPlayers().size(); i++) {
-            HBox playerDisplayBox = new HBox();
+            playerDisplayBox = new VBox();
+            playerDisplayBox.setAlignment(Pos.CENTER);
+            playerDisplayBox.setSpacing(5);
             playerDisplayBox.getStyleClass().add("display-player-box");
             playersBox.getChildren().add(playerDisplayBox);
-
+        
             Player player = gameModel.getPlayers().get(i);
             playerDisplayBoxes.put(player, playerDisplayBox);
+        
             ImageView playerImageView = new ImageView(
                 new Image(getClass().getResourceAsStream(player.getToken().getImagePath()))
             );
             playerImageView.setFitWidth(100);
             playerImageView.setFitHeight(100);
             playerImageView.getStyleClass().add("player-figure");
-            playerDisplayBox.getChildren().add(playerImageView);
+        
+            Label turnLabel = new Label("🎲 Your Turn!");
+            turnLabel.getStyleClass().add("turn-indicator");
+            turnLabel.setVisible(false);
+        
+            playerDisplayBox.getChildren().addAll(turnLabel, playerImageView);
         }
 
         // Initialisere tokens og plassere på start
-        int i = 0;
         for (Player player : gameModel.getPlayers()) {
             ImageView token = new ImageView(
                 new Image(getClass().getResourceAsStream(player.getToken().getImagePath()))
@@ -152,7 +161,6 @@ public class BoardView {
             token.getStyleClass().add("player-figure");
             playerTokens.put(player, token);
             placeTokenOnTile(1, token);
-            i++;
         }
 
         mainBox.getStyleClass().add("page-background");
@@ -336,13 +344,34 @@ public class BoardView {
     public int getHeight() {
         return height;
     }
-    
+
     public void updateCurrentPlayerView(Player currentPlayer) {
-        for (Map.Entry<Player, HBox> entry : playerDisplayBoxes.entrySet()) {
-            HBox box = entry.getValue();
-            box.getStyleClass().removeIf(style -> style.equals("current-player"));
-            if (entry.getKey().equals(currentPlayer)) {
+        for (Map.Entry<Player, VBox> entry : playerDisplayBoxes.entrySet()) {
+            Player player = entry.getKey();
+            VBox box = entry.getValue();
+    
+            // Fjern stilklassen for alle
+            box.getStyleClass().remove("current-player");
+    
+            // Fjern glow fra token
+            ImageView token = playerTokens.get(player);
+            token.setEffect(null);
+    
+            // Finn den innebygde turn-indicator labelen hvis den finnes
+            for (javafx.scene.Node node : box.getChildren()) {
+                if (node instanceof Label && node.getStyleClass().contains("turn-indicator")) {
+                    node.setVisible(player.equals(currentPlayer));
+                }
+            }
+    
+            // Dersom dette er spilleren som har tur
+            if (player.equals(currentPlayer)) {
                 box.getStyleClass().add("current-player");
+    
+                // Legg til glow på token
+                DropShadow glow = new DropShadow(20, javafx.scene.paint.Color.GOLD);
+                glow.setSpread(0.5);
+                token.setEffect(glow);
             }
         }
     }

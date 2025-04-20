@@ -61,7 +61,7 @@ public class StartPage extends Application {
     chooseBoardButton.getStyleClass().add("start-page-button");
     startButton.getStyleClass().add("start-page-button");
     choosePlayerButton.getStyleClass().add("start-page-button");
-    resetGameButton.getStyleClass().add("start-page-button");
+    resetGameButton.getStyleClass().add("exit-button");
 
     /* Main Start page */
     HBox mainStartPage = new HBox(leftSide, menu);

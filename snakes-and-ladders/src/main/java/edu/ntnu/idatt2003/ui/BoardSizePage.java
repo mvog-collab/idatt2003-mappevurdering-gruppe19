@@ -1,5 +1,7 @@
 package edu.ntnu.idatt2003.ui;
 
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,15 +29,15 @@ public class BoardSizePage {
     ninetyTiles = new Button("90 tiles");
     oneTwentyTiles = new Button("120 tiles");
     cancelButton = new Button("Cancel");
-    continueButton = new Button("Continue");
+    continueButton = new Button("Confirm");
 
-    VBox buttonBox = new VBox(sixtyFourTiles, ninetyTiles, oneTwentyTiles);
+    VBox buttonBox = new VBox(20, sixtyFourTiles, ninetyTiles, oneTwentyTiles);
 
-    HBox statusBox = new HBox(cancelButton, continueButton);
+    HBox statusBox = new HBox(60, cancelButton, continueButton);
 
-    VBox BoardPopup = new VBox(titleBox, buttonBox, statusBox);
+    VBox boardPopup = new VBox(10, titleBox, buttonBox, statusBox);
 
-    VBox background = new VBox(BoardPopup);
+    VBox background = new VBox(70, boardPopup);
 
     /* Title Styling */
     title.getStyleClass().add("popup-title");
@@ -43,20 +45,16 @@ public class BoardSizePage {
     titleBox.setAlignment(Pos.CENTER);
 
     /* Button Styling */
-    sixtyFourTiles.getStyleClass().add("popup-button");
-    ninetyTiles.getStyleClass().add("popup-button");
-    oneTwentyTiles.getStyleClass().add("popup-button");
-    cancelButton.getStyleClass().add("popup-button");
-    continueButton.getStyleClass().add("popup-button");
+    sixtyFourTiles.getStyleClass().add("board-size-button");
+    ninetyTiles.getStyleClass().add("board-size-button");
+    oneTwentyTiles.getStyleClass().add("board-size-button");
+    cancelButton.getStyleClass().add("exit-button");
+    continueButton.getStyleClass().add("confirm-button");
 
     buttonBox.setAlignment(Pos.CENTER);
-    buttonBox.setSpacing(10);
     statusBox.setAlignment(Pos.CENTER);
-    statusBox.setSpacing(70);
     statusBox.setPadding(new Insets(40));
-
     background.setAlignment(Pos.CENTER);
-    background.setSpacing(70);
 
     background.getStyleClass().add("page-background");
 

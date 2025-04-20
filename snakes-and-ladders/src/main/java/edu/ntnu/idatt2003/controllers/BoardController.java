@@ -45,6 +45,7 @@ public class BoardController {
         if (rolledValue == 12) {
             //TODO: Add something to happen when player rolls 12
             gameModel.nextPlayersTurn();
+            boardView.enableRollButton();
             return;
         }
 
