@@ -81,6 +81,14 @@ public class StartPage extends Application {
     primaryStage.show();
   }
 
+  public void alertUserAboutUnfinishedSetup() {
+    Alert alert = new Alert(Alert.AlertType.WARNING);
+    alert.setTitle("Incomplete Setup");
+    alert.setHeaderText("Game setup is incomplete");
+    alert.setContentText("Please complete the game setup by selecting a board and adding at least one player before starting the game.");
+    alert.showAndWait();
+  }
+
   public void disableStartButton() {
     startButton.setDisable(true);
   }
