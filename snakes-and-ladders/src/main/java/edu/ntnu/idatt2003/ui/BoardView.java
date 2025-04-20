@@ -74,6 +74,7 @@ public class BoardView {
         HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30));
 
         Label playersLabel = new Label("Players");
+        playersLabel.getStyleClass().add("players-label");
         HBox playersBox = new HBox();
         playersBox.getStyleClass().add("players-box");
 

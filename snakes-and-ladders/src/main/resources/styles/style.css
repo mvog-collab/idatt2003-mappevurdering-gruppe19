@@ -271,3 +271,7 @@
     -fx-border-radius: 40;
     -fx-background-color: rgba(190, 190, 190, 0.600);
 }
+
+.players-label {
+    -fx-text-fill: white;
+}
