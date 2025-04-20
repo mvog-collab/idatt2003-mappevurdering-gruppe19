@@ -12,11 +12,11 @@ public class BoardMaker {
           throw new IllegalArgumentException("Invalid board size.");
         }
         Board board = new Board(size);
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size + 1; i++) {
           board.addTile(new Tile(i));
         }
     
-        for (int i = 0; i < size - 1; i++) {
+        for (int i = 0; i < size-1; i++) {
           Tile currentTile = board.getTile(i);
           Tile nextTile = board.getTile(i + 1);
           currentTile.setNextTile(nextTile);
