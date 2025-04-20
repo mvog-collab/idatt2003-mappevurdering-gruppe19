@@ -67,6 +67,10 @@ public class StartPageController {
 
     private void setupStartButton() {
         startPage.getStartButton().setOnAction(e -> {
+            // if (gameModel.getBoard() == null || gameModel.getBoard().getSize() == 100 || gameModel.getPlayers().size() < 2) {
+            //     startPage.alertUserAboutUnfinishedSetup();
+            //     return;
+            // }
             BoardView gameBoard = new BoardView(gameModel);
             Stage stage = (Stage) startPage.getStartButton().getScene().getWindow();
             stage.setScene(gameBoard.start());
