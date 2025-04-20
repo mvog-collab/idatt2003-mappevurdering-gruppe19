@@ -259,9 +259,22 @@ public class BoardView {
         }
     }
 
+    private String getOverlaysPath(int boardSize) {
+        switch (boardSize) {
+            case 64:
+                return "/overlays64.json";
+            case 90: 
+                return "/overlays90.json";
+            case 120:
+                return "/overlays120.json";
+            default:
+                return "/overlays90.json";
+        }
+    }
+
     public List<OverlayParams> loadOverlaysFromJson() {
         List<OverlayParams> overlayList = new ArrayList<>();
-        try (InputStream is = getClass().getResourceAsStream("/overlays.json")) {
+        try (InputStream is = getClass().getResourceAsStream(getOverlaysPath(gameModel.getBoard().getSize()))) {
             if (is == null) {
                 System.err.println("Fant ikke konfigurasjonsfilen for overlays!");
                 return overlayList;
