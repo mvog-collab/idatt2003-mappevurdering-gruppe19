@@ -47,7 +47,7 @@ public class ChoosePlayerPage {
     Label playerBirthday = new Label("Player Birthday");
     birthdayPicker = new DatePicker();
     birthdayPicker.setValue(LocalDate.of(2001,1,1));
-    birthdayPicker.getStyleClass().add("date-picker");
+    birthdayPicker.getStyleClass().add("birthday-picker-style");
     birthdayPicker.setPromptText("Select your birthday");
 
     addPlayerButton = new Button("Add Player");
@@ -59,9 +59,7 @@ public class ChoosePlayerPage {
     addedPlayersBox = new HBox();
     playerTokensBox = new HBox();
 
-    Label addedPlayersLabel = new Label("Added Players");
-    addedPlayersLabel.getStyleClass().add("added-players");
-    addedPlayersLine = new HBox(addedPlayersLabel, addedPlayersBox);
+    addedPlayersLine = new HBox(addedPlayersBox);
     addedPlayersLine.setSpacing(20);
     HBox statusBox = new HBox(cancelButton, addPlayerButton, continueButton);
 
@@ -70,6 +68,8 @@ public class ChoosePlayerPage {
 
     HBox tokenSelectionBox = new HBox(10);
     tokenSelectionBox.setSpacing(10);
+    tokenSelectionBox.setAlignment(Pos.CENTER);
+    tokenSelectionBox.getStyleClass().add("token-selection-box");
   
   for (PlayerTokens token : PlayerTokens.values()) {
     ToggleButton toggleButton = new ToggleButton();
@@ -84,6 +84,7 @@ public class ChoosePlayerPage {
     toggleButton.setGraphic(imageView);
     toggleButton.setUserData(token);
     toggleButton.setToggleGroup(tokenToggleGroup);
+    toggleButton.getStyleClass().add("token-button");
 
     tokenButtons.put(token, toggleButton);
     tokenSelectionBox.getChildren().add(toggleButton);
@@ -94,7 +95,7 @@ public class ChoosePlayerPage {
   VBox background = new VBox(playerPopup);
 
     /* Title Styling */
-    title.getStyleClass().add("popup-title");
+    title.getStyleClass().add("choose-player-title-label");
     title.setAlignment(Pos.CENTER);
     titleBox.setAlignment(Pos.CENTER);
 
@@ -108,6 +109,9 @@ public class ChoosePlayerPage {
     birthdayBox.setAlignment(Pos.CENTER);
     birthdayBox.setSpacing(50);
     playerBirthday.getStyleClass().add("popup-label");
+
+    playerTokensBox.setAlignment(Pos.CENTER);
+    playerTokensBox.setSpacing(100);
 
     /* Button Styling */
 
@@ -125,6 +129,10 @@ public class ChoosePlayerPage {
     playerPopup.setSpacing(10);
 
     addedPlayersBox.setSpacing(30);
+
+    nameField.getStyleClass().add("name-field-style");
+    nameBox.getStyleClass().add("player-info-box");
+    birthdayBox.getStyleClass().add("player-info-box");
 
     /* Background Styling */
 
