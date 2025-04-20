@@ -48,7 +48,7 @@
     -fx-alignment: center;
     -fx-spacing: 30;
     -fx-background-color: #AD0000;
-    -fx-background-radius: 40;
+    -fx-background-radius: 50;
     -fx-border-color: #000000;
     -fx-border-radius: 40;
     -fx-border-width: 20;
@@ -237,7 +237,22 @@
     -fx-background-insets: 0;
 }
 
+.choose-player-title-label {
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 44px;
+    -fx-text-fill: #fff;
+    -fx-underline: true;
+    -fx-padding: 20;
+    -fx-alignment: center;
 
+    -fx-background-color: linear-gradient(to bottom, #8C6239, #4E342E);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #FFD27A;
+    -fx-border-width: 2px;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0.3, 0, 2);
+}
 
 /* Button Menu */
 .roll-dice-button {
@@ -245,13 +260,33 @@
     -fx-background-radius: 100;
     -fx-font-family: "Brush Script MT";
     -fx-font-size: 40px;
-    -fx-background-size: 100;
-    -fx-background-color: #E4A55D;
     -fx-text-fill: black;
+    -fx-padding: 10 30;
+
+    -fx-background-color: linear-gradient(to bottom, #FFD54F, #E4A55D, #C98F4B);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.4), 10, 0.3, 0, 2);
+    -fx-cursor: hand;
 }
 
 .roll-dice-button:hover {
-    -fx-background-color: #C98F4B;
+    -fx-background-color: linear-gradient(to bottom, #FFEB8C, #E4A55D, #AD7F3A);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.6), 15, 0.3, 0, 3);
+}
+
+@keyframes glow {
+    0% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
+    50% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.9), 20, 0.8, 0, 0); }
+    100% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
+}
+
+.current-player {
+    -fx-border-color: rgb(255, 255, 255);
+    -fx-border-width: 3px;
+    -fx-border-radius: 40;
+    -fx-background-color: rgba(190, 190, 190, 0.6);
+    -fx-animation: glow 2s infinite;
 }
 
 .dice-image1 {
@@ -263,28 +298,38 @@
 
 .player-name {
     -fx-font-family: "Brush Script MT";
-    -fx-font-size: 10;
-    -fx-padding: 10;
-    -fx-border-radius: 100;
-    -fx-background-radius: 100;
-    -fx-background-size: 50;
-    -fx-background-color: #E4A55D;
-    -fx-text-fill: black;
+    -fx-font-size: 18px;
+    -fx-padding: 8 20;
+    -fx-border-radius: 50;
+    -fx-background-radius: 50;
+    -fx-background-insets: 0;
+    -fx-text-fill: #1a1a1a;
+
+    -fx-background-color: linear-gradient(to bottom, #FFE082, #E4A55D, #C98F4B);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2px;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.2, 0, 1);
+    -fx-alignment: center;
+    -fx-min-width: 120px;
+    -fx-max-width: 200px;
 }
 
 .player-name:hover {
     -fx-background-color: #C98F4B;
 }
 
-.added-players {
+.added-players-label {
     -fx-font-family: "Brush Script MT";
-    -fx-font-size: 15;
-    -fx-padding: 10;
-    -fx-border-radius: 100;
+    -fx-font-size: 25px;
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to bottom, #E4A55D, #C98F4B);
     -fx-background-radius: 100;
-    -fx-background-size: 50;
-    -fx-background-color: #E4A55D;
-    -fx-text-fill: black;
+    -fx-padding: 10 20;
+    -fx-border-color: #8C6239;
+    -fx-border-radius: 100;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0.3, 0, 2);
 }
 
 .date-picker {
@@ -315,14 +360,106 @@
     -fx-background-color: #AD7F3A;
 }
 
-.display-player-box {
-    -fx-background-color: rgba(248, 223, 130, 0.600);
+.token-selection-box {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
     -fx-background-radius: 40;
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-border-color: #E4A55D;
+    -fx-border-width: 2px;
+    -fx-border-radius: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0.2, 0, 1);
+}
+
+.token-button {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-width: 3;
+    -fx-border-color: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-padding: 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0.2, 0, 1);
+    -fx-alignment: center;
+}
+
+.token-button:selected {
+    -fx-border-color: #FFD700;
+    -fx-background-color: linear-gradient(to bottom, #FFE082, #C98F4B);
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.5), 12, 0.4, 0, 3);
+}
+
+.token-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-border-color: #777;
+    -fx-background-color: #bbb;
+    -fx-cursor: default;
+}
+
+.token-button:hover:enabled {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A, #E4A55D);
+    -fx-border-color: #E4A55D;
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.4), 8, 0.3, 0, 2);
+}
+
+.name-field-style {
+    -fx-background-color: white;
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-border-color: #C98F4B;
+    -fx-border-width: 3px;
+    -fx-padding: 10 20;
+    -fx-font-size: 20px;
+    -fx-font-family: "Brush Script MT";
+    -fx-text-fill: black;
+    -fx-prompt-text-fill: rgba(0,0,0,0.4);
+}
+
+.birthday-picker-style {
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+    -fx-padding: 10 20;
+    -fx-font-size: 20px;
+    -fx-font-family: "Brush Script MT";
+    -fx-border-color: #C98F4B;
+    -fx-border-width: 3px;
+}
+
+.display-player-box {
+    -fx-background-color: linear-gradient(to bottom, rgba(248, 223, 130, 0.7), rgba(228, 165, 93, 0.7));
+    -fx-background-radius: 40;
+    -fx-border-radius: 35;
+    -fx-border-width: 3px;
+    -fx-border-color: #8C6239;
+    -fx-pref-width: 130px;
+    -fx-pref-height: 160px;
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.2, 0, 1);
+    -fx-background-insets: 0;
+}
+
+@keyframes glow {
+    0% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
+    50% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.9), 20, 0.8, 0, 0); }
+    100% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
 }
 
 .current-player {
-    -fx-border-color: rgb(255, 255, 255);
-    -fx-border-width: 3px;
-    -fx-border-radius: 40;
-    -fx-background-color: rgba(190, 190, 190, 0.600);
+    -fx-background-color: linear-gradient(to bottom, #C5E1A5, #A5D6A7, #81C784);
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 4px;
+    -fx-border-radius: 35;
+    -fx-background-radius: 40;
+
+    -fx-effect: dropshadow(gaussian, rgba(76, 175, 80, 0.5), 12, 0.4, 0, 2);
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.turn-indicator {
+    -fx-font-size: 18px;
+    -fx-font-family: "Brush Script MT";
+    -fx-text-fill: #2E7D32;
+    -fx-font-weight: bold;
 }
