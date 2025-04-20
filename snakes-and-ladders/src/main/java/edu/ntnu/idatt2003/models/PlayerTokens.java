@@ -3,11 +3,11 @@ package edu.ntnu.idatt2003.models;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 
 public enum PlayerTokens {
-    BLACK("QueenChessBlack.png"),
-    GOLD("QueenChessGold.png"),
-    SILVER("QueenChessSilver.png"),
-    WHITE("QueenChessWhite.png"),
-    WOOD("QueenChessWood.png");
+    BLUE("bluePiece.png"),
+    GREEN("greenPiece.png"),
+    YELLOW("yellowPiece.png"),
+    RED("redPiece.png"),
+    PURPLE("purplePiece.png");
 
     private final String imageFile;
 
