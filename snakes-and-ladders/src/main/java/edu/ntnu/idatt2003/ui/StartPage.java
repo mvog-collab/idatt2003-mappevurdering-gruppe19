@@ -6,6 +6,7 @@ import edu.ntnu.idatt2003.controllers.ChoosePlayerController;
 import edu.ntnu.idatt2003.controllers.StartPageController;
 import edu.ntnu.idatt2003.models.GameModel;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -25,6 +26,7 @@ public class StartPage extends Application {
   private Button choosePlayerButton;
   private Button chooseBoardButton;
   private Button resetGameButton;
+  private Button settingsButton;
   private ChoosePlayerPage choosePlayerPage;
   private BoardSizePage boardSizePage;
 
@@ -38,6 +40,8 @@ public class StartPage extends Application {
     startButton = new Button("Start game");
     disableStartButton();
     chooseBoardButton = new Button("Choose board");
+    settingsButton = new Button();
+    settingsButton.setGraphic(new ImageView(new Image("images/settings.png")));
     resetGameButton = new Button("Reset game");
     VBox menu = new VBox(chooseBoardButton, choosePlayerButton, startButton, resetGameButton);
 
@@ -62,10 +66,16 @@ public class StartPage extends Application {
     startButton.getStyleClass().add("start-page-button");
     choosePlayerButton.getStyleClass().add("start-page-button");
     resetGameButton.getStyleClass().add("exit-button");
+    settingsButton.getStyleClass().add("icon-button");
+
 
     /* Main Start page */
     HBox mainStartPage = new HBox(leftSide, menu);
     mainStartPage.getStyleClass().add("page-background");
+
+    StackPane layout = new StackPane(mainStartPage, settingsButton);
+    StackPane.setAlignment(settingsButton, Pos.TOP_RIGHT);
+    StackPane.setMargin(settingsButton, new Insets(10));
 
 
     /* Label title styling */
@@ -73,7 +83,7 @@ public class StartPage extends Application {
     title.setAlignment(Pos.CENTER_LEFT);
 
     /* Scene */
-    Scene scene = new Scene(mainStartPage, 1000, 700);
+    Scene scene = new Scene(layout, 1000, 700);
 
     scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     primaryStage.setTitle("Snakes and ladders");
@@ -124,6 +134,9 @@ public class StartPage extends Application {
   public Button getChooseBoardButton() {
     return chooseBoardButton;
   }
+
+  public Button getSettingsButton() {
+    return settingsButton; }
 
   public Button getResetGameButton() { return resetGameButton; }
   

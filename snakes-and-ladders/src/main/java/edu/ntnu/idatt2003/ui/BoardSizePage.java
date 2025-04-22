@@ -20,6 +20,7 @@ public class BoardSizePage {
   private Button oneTwentyTiles;
   private Button cancelButton;
   private Button continueButton;
+  private Button saveBoardButton;
   
   public VBox getBoardSizeView(){
     Label title = new Label("Choose Board");
@@ -30,10 +31,12 @@ public class BoardSizePage {
     oneTwentyTiles = new Button("120 tiles");
     cancelButton = new Button("Cancel");
     continueButton = new Button("Confirm");
+    saveBoardButton = new Button("Save");
+
 
     VBox buttonBox = new VBox(20, sixtyFourTiles, ninetyTiles, oneTwentyTiles);
 
-    HBox statusBox = new HBox(60, cancelButton, continueButton);
+    HBox statusBox = new HBox(60, cancelButton, saveBoardButton, continueButton);
 
     VBox boardPopup = new VBox(10, titleBox, buttonBox, statusBox);
 
@@ -49,6 +52,7 @@ public class BoardSizePage {
     ninetyTiles.getStyleClass().add("board-size-button");
     oneTwentyTiles.getStyleClass().add("board-size-button");
     cancelButton.getStyleClass().add("exit-button");
+    saveBoardButton.getStyleClass().add("board-size-button");
     continueButton.getStyleClass().add("confirm-button");
 
     buttonBox.setAlignment(Pos.CENTER);

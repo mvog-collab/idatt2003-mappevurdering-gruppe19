@@ -7,6 +7,7 @@ import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.ui.BoardSizePage;
 import edu.ntnu.idatt2003.ui.BoardView;
 import edu.ntnu.idatt2003.ui.ChoosePlayerPage;
+import edu.ntnu.idatt2003.ui.SettingsPage;
 import edu.ntnu.idatt2003.ui.StartPage;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -34,6 +35,7 @@ public class StartPageController {
         setupChoosePlayerButton();
         setupStartButton();
         setupResetGameButton();
+        setupSettingsButton();
     }
 
     private void setupChooseBoardButton() {
@@ -100,6 +102,20 @@ public class StartPageController {
         alert.setHeaderText(null);
         alert.setContentText("The game has been reset successfully. Please choose a board to continue.");
         alert.showAndWait();
+    }
+
+    private void setupSettingsButton() {
+        startPage.getSettingsButton().setOnAction(e -> {
+            SettingsPage settingsPage = new SettingsPage();
+            Scene scene = new Scene(settingsPage.getView(), 400, 300);
+            scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            Stage popup = new Stage();
+            popup.setTitle("Settings");
+            popup.setScene(scene);
+            popup.initModality(Modality.APPLICATION_MODAL);
+            new SettingsController(settingsPage, gameModel);
+            popup.showAndWait();
+        });
     }
 
     private Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {

@@ -3,6 +3,9 @@ package edu.ntnu.idatt2003.controllers;
 import edu.ntnu.idatt2003.models.Player;
 import edu.ntnu.idatt2003.models.PlayerTokens;
 
+import edu.ntnu.idatt2003.utils.PlayerFileHandler;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 
 import edu.ntnu.idatt2003.models.GameModel;
@@ -12,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javafx.scene.control.Alert;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class ChoosePlayerController implements BasePopupController {
@@ -29,6 +33,7 @@ public class ChoosePlayerController implements BasePopupController {
         view.getAddPlayerButton().setOnAction(e -> addPlayer());
         view.getContinueButton().setOnAction(e -> confirm());
         view.getCancelButton().setOnAction(e -> cancel());
+        view.getSavePlayerButton().setOnAction(e -> savePlayers());
     }
 
     private void addPlayer() {
@@ -70,6 +75,26 @@ public class ChoosePlayerController implements BasePopupController {
             view.getAddedPlayersBox().getChildren().add(view.displayPlayer(player));;
         }
     }
+
+    private void savePlayers() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save players");
+        fileChooser.setInitialFileName("Players_" + java.time.LocalDateTime.now().toString().replace(":", "-") + ".csv");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV-files", "*.csv"));
+
+        File file = fileChooser.showSaveDialog(view.getSavePlayerButton().getScene().getWindow());
+
+        if (file != null) {
+            try {
+                PlayerFileHandler.savePlayersToCSV(gameModel.getPlayers(), file.getAbsolutePath());
+                new Alert(Alert.AlertType.INFORMATION, "Players saved to file").showAndWait();
+            } catch (IOException ex) {
+                new Alert(Alert.AlertType.ERROR, "Could not save players: " + ex.getMessage()).showAndWait();
+            }
+        }
+    }
+
+
 
     @Override
     public void confirm() {
