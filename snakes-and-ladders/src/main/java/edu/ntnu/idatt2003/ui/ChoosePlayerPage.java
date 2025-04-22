@@ -196,6 +196,8 @@ public class ChoosePlayerPage {
     return addPlayerButton;
   }
 
+  public Button getSavePlayerButton() {return savePlayerButton;}
+
   public void setAddPlayerButton(Button addPlayerButton) {
     this.addPlayerButton = addPlayerButton;
   }
