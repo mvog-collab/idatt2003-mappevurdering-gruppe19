@@ -1,7 +1,5 @@
 package edu.ntnu.idatt2003.models;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Board {
@@ -30,6 +28,10 @@ public class Board {
 
   public Tile getTile(int tileId) {
     return tiles.get(tileId);
+  }
+
+  public Map<Integer, Tile> getTiles() {
+    return tiles;
   }
 
   public int getSize() {
