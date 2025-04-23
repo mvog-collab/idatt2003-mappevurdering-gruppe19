@@ -71,18 +71,20 @@ public class BoardController {
         //TODO: Add more to happen in a turn. Updating UI, checking winner, logging, etc
     }
 
-    private void playAgain() {
+    public void playAgain() {
         for (Player player : gameModel.getPlayers()) {
-            gameModel.setStartPosition(player); // Setter spiller på startfelt
+            gameModel.setStartPosition(player);
         }
 
         if (!gameModel.getPlayers().isEmpty()) {
             gameModel.setCurrentPlayer(gameModel.getPlayers().getFirst());
-            boardView.updateCurrentPlayerView(gameModel.getCurrentPlayer());
         }
 
+        boardView.setTokensOnStartPosition();
+        boardView.updateCurrentPlayerView(gameModel.getCurrentPlayer());
         boardView.enableRollButton();
     }
+
 
 
     public String getTokenPath(PlayerTokens token) {

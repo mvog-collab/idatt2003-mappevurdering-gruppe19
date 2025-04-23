@@ -487,7 +487,6 @@
     -fx-scale-y: 1.05;
 }
 
-/* ---------- SETTINGS PAGE WINDOW ---------- */
 .settings-page {
     -fx-background-color: #f9f3e7;
     -fx-border-radius: 20px;
@@ -500,7 +499,6 @@
     -fx-border-width: 2px;
 }
 
-/* ---------- SETTINGS TITLE ---------- */
 .settings-title {
     -fx-font-family: "Segoe Script";
     -fx-font-size: 30px;
@@ -510,7 +508,6 @@
     -fx-padding: 5;
 }
 
-/* ---------- SETTINGS BUTTONS ---------- */
 .settings-button-box .button {
     -fx-font-family: "Segoe Script";
     -fx-font-size: 20px;
@@ -526,4 +523,26 @@
 .settings-button-box .button:hover {
     -fx-background-color: linear-gradient(to bottom, #FFD27A, #C98F4B);
     -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.4), 8, 0.2, 0, 1);
+}
+
+.play-again-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Brush Script MT";
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+    -fx-padding: 10 30;
+
+    -fx-background-color: linear-gradient(to bottom, #FFD54F, #E4A55D, #C98F4B);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.4), 10, 0.3, 0, 2);
+    -fx-cursor: hand;
+}
+
+.play-again-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFEB8C, #E4A55D, #AD7F3A);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.6), 12, 0.4, 0, 3);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }

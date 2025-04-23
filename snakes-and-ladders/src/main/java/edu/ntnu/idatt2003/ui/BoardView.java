@@ -52,6 +52,8 @@ public class BoardView {
     private Pane overlayPane;
     private Pane tokenPane;
 
+    private final Point2D offBoardStartPosition = new Point2D(20, tileSize * height - 60);
+
     public BoardView(GameModel gameModel) {
         this.gameModel = gameModel;
     }
@@ -121,11 +123,11 @@ public class BoardView {
 
         playAgainButton = new Button("Play Again");
         playAgainButton.getStyleClass().add("play-again-button");
-
+        playAgainButton.setOnAction(e -> {boardController.playAgain();});
 
         HBox buttonBox = new HBox(rollDiceButton);
         buttonBox.getStyleClass().add("button-box");
-        VBox gameControl = new VBox(playersLabel, playersBox, diceBoxContainer, buttonBox);
+        VBox gameControl = new VBox(playersLabel, playersBox, diceBoxContainer, buttonBox, playAgainButton);
         gameControl.getStyleClass().add("game-control");
 
         HBox mainBox = new HBox(boardContainer, gameControl);
@@ -168,8 +170,10 @@ public class BoardView {
             token.setFitHeight(40);
             token.getStyleClass().add("player-figure");
             playerTokens.put(player, token);
-            placeTokenOnTile(1, token);
+            placeTokenOffBoard(player);
         }
+
+
 
         mainBox.getStyleClass().add("page-background");
 
@@ -327,6 +331,31 @@ public class BoardView {
         token.setLayoutY(center.getY() - token.getFitHeight() / 2);
         tokenPane.getChildren().add(token);
     }
+
+    private void placeTokenOffBoard(Player player) {
+        ImageView token = playerTokens.get(player);
+
+        double finalOffsetX = -50;
+        double finalOffsetY = tileSize * height - 20;
+
+        token.setLayoutX(finalOffsetX);
+        token.setLayoutY(finalOffsetY);
+
+        // ✅ Sjekk først
+        if (!tokenPane.getChildren().contains(token)) {
+            tokenPane.getChildren().add(token);
+        }
+    }
+
+
+
+
+    public void setTokensOnStartPosition() {
+        for (Player player : playerTokens.keySet()) {
+            placeTokenOffBoard(player);
+        }
+    }
+
 
     public void movePlayerByDiceRoll(int startTileId, int endTileId, Player player, Runnable onComplete) {
         ImageView token = playerTokens.get(player);
