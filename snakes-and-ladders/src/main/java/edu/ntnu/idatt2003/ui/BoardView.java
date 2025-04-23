@@ -45,6 +45,7 @@ public class BoardView {
     private VBox playerDisplayBox;
     private BoardController boardController;
     private Button rollDiceButton;
+    private Button playAgainButton;
 
     private GameModel gameModel;
 
@@ -117,6 +118,10 @@ public class BoardView {
             diceImageView1.setImage(new Image(getClass().getResourceAsStream(diceImageFile1)));
             diceImageView2.setImage(new Image(getClass().getResourceAsStream(diceImageFile2)));
         });
+
+        playAgainButton = new Button("Play Again");
+        playAgainButton.getStyleClass().add("play-again-button");
+
 
         HBox buttonBox = new HBox(rollDiceButton);
         buttonBox.getStyleClass().add("button-box");
