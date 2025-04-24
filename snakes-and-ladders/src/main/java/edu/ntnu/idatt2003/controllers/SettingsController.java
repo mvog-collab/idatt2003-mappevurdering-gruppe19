@@ -3,19 +3,21 @@ package edu.ntnu.idatt2003.controllers;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
 import edu.ntnu.idatt2003.ui.SettingsPage;
-import edu.ntnu.idatt2003.utils.PlayerFileHandler;
+import edu.ntnu.idatt2003.utils.CsvPlayerHandler;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public class SettingsController {
 
   private final SettingsPage view;
   private final GameModel gameModel;
+  private final CsvPlayerHandler playerFileHandler = new CsvPlayerHandler();
 
   public SettingsController(SettingsPage view, GameModel gameModel) {
     this.view = view;
@@ -35,10 +37,11 @@ public class SettingsController {
     fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV-files", "*.csv"));
 
     File file = fileChooser.showOpenDialog(view.getView().getScene().getWindow());
+    Path in = fileChooser.showOpenDialog(view.getLoadPlayersButton().getScene().getWindow()).toPath();
 
     if (file != null) {
       try {
-        List<Player> players = PlayerFileHandler.loadPlayersFromCSV(file.getAbsolutePath());
+        List<Player> players = playerFileHandler.load(in);
         gameModel.setPlayersOfGame(players);
         gameModel.setCurrentPlayer(players.getFirst());
         for (Player player : players) {
@@ -60,10 +63,11 @@ public class SettingsController {
     fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV-files", "*.csv"));
 
     File file = fileChooser.showSaveDialog(view.getView().getScene().getWindow());
+    Path out = fileChooser.showOpenDialog(view.getSavePlayersButton().getScene().getWindow()).toPath();
 
     if (file != null) {
       try {
-        PlayerFileHandler.savePlayersToCSV(gameModel.getPlayers(), file.getAbsolutePath());
+        playerFileHandler.save(gameModel.getPlayers(), out);
         new Alert(Alert.AlertType.INFORMATION, "Players saved to file").showAndWait();
       } catch (IOException ex) {
         new Alert(Alert.AlertType.ERROR, "Could not save players: " + ex.getMessage()).showAndWait();
