@@ -34,6 +34,9 @@ public class ChoosePlayerController implements BasePopupController {
         view.getContinueButton().setOnAction(e -> confirm());
         view.getCancelButton().setOnAction(e -> cancel());
         view.getSavePlayerButton().setOnAction(e -> savePlayers());
+        displayPlayersByAge();
+        disableInitialTokens();
+
     }
 
     private void addPlayer() {
@@ -94,7 +97,11 @@ public class ChoosePlayerController implements BasePopupController {
         }
     }
 
-
+    private void disableInitialTokens() {
+        for (Player p : gameModel.getPlayers()) {
+            view.disableToken(p.getToken());
+        }
+    }
 
     @Override
     public void confirm() {
