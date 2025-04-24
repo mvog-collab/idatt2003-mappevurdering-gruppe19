@@ -45,11 +45,14 @@ public class BoardView {
     private VBox playerDisplayBox;
     private BoardController boardController;
     private Button rollDiceButton;
+    private Button playAgainButton;
 
     private GameModel gameModel;
 
     private Pane overlayPane;
     private Pane tokenPane;
+
+    private final Point2D offBoardStartPosition = new Point2D(20, tileSize * height - 60);
 
     public BoardView(GameModel gameModel) {
         this.gameModel = gameModel;
@@ -80,8 +83,6 @@ public class BoardView {
         boardContainer.setAlignment(Pos.CENTER);
         HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30));
 
-        Label playersLabel = new Label("Players");
-        playersLabel.getStyleClass().add("players-label");
         HBox playersBox = new HBox();
         playersBox.getStyleClass().add("players-box");
 
@@ -118,9 +119,13 @@ public class BoardView {
             diceImageView2.setImage(new Image(getClass().getResourceAsStream(diceImageFile2)));
         });
 
-        HBox buttonBox = new HBox(rollDiceButton);
+        playAgainButton = new Button("Play Again");
+        playAgainButton.getStyleClass().add("play-again-button");
+        playAgainButton.setOnAction(e -> {boardController.playAgain();});
+
+        HBox buttonBox = new HBox(rollDiceButton, playAgainButton);
         buttonBox.getStyleClass().add("button-box");
-        VBox gameControl = new VBox(playersLabel, playersBox, diceBoxContainer, buttonBox);
+        VBox gameControl = new VBox(playersBox, diceBoxContainer, buttonBox);
         gameControl.getStyleClass().add("game-control");
 
         HBox mainBox = new HBox(boardContainer, gameControl);
@@ -129,32 +134,29 @@ public class BoardView {
 
         BoardSetup(boardGrid);
 
-        // Sidepane: spiller-bilder
-        for (int i = 0; i < gameModel.getPlayers().size(); i++) {
-            playerDisplayBox = new VBox();
-            playerDisplayBox.setAlignment(Pos.CENTER);
-            playerDisplayBox.setSpacing(5);
-            playerDisplayBox.getStyleClass().add("display-player-box");
-            playersBox.getChildren().add(playerDisplayBox);
-        
-            Player player = gameModel.getPlayers().get(i);
-            playerDisplayBoxes.put(player, playerDisplayBox);
-        
-            ImageView playerImageView = new ImageView(
-                new Image(getClass().getResourceAsStream(player.getToken().getImagePath()))
-            );
-            playerImageView.setFitWidth(100);
-            playerImageView.setFitHeight(100);
-            playerImageView.getStyleClass().add("player-figure");
-        
+        for (Player player : gameModel.getPlayers()) {
+            VBox displayBox = new VBox();
+            displayBox.setAlignment(Pos.CENTER);
+            displayBox.setSpacing(5);
+            displayBox.getStyleClass().add("display-player-box");
+
+            ImageView tokenImage = new ImageView(new Image(getClass().getResourceAsStream(player.getToken().getImagePath())));
+            tokenImage.setFitWidth(100);
+            tokenImage.setFitHeight(100);
+            tokenImage.getStyleClass().add("player-figure");
+
             Label turnLabel = new Label("🎲 Your Turn!");
             turnLabel.getStyleClass().add("turn-indicator");
             turnLabel.setVisible(false);
-        
-            playerDisplayBox.getChildren().addAll(turnLabel, playerImageView);
+
+            Label nameLabel = new Label(player.getName());
+            nameLabel.getStyleClass().add("player-name");
+
+            displayBox.getChildren().addAll(turnLabel, tokenImage, nameLabel);
+            playerDisplayBoxes.put(player, displayBox);
+            playersBox.getChildren().add(displayBox);
         }
 
-        // Initialisere tokens og plassere på start
         for (Player player : gameModel.getPlayers()) {
             ImageView token = new ImageView(
                 new Image(getClass().getResourceAsStream(player.getToken().getImagePath()))
@@ -163,18 +165,15 @@ public class BoardView {
             token.setFitHeight(40);
             token.getStyleClass().add("player-figure");
             playerTokens.put(player, token);
-            placeTokenOnTile(1, token);
+            placeTokenOffBoard(player);
         }
 
         mainBox.getStyleClass().add("page-background");
-
         Platform.runLater(this::addOverlaysFromJson);
-
         updateCurrentPlayerView(gameModel.getCurrentPlayer());
 
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-
         return scene;
     }
 
@@ -276,7 +275,7 @@ public class BoardView {
         switch (boardSize) {
             case 64:
                 return "/overlays64.json";
-            case 90: 
+            case 90:
                 return "/overlays90.json";
             case 120:
                 return "/overlays120.json";
@@ -322,6 +321,31 @@ public class BoardView {
         token.setLayoutY(center.getY() - token.getFitHeight() / 2);
         tokenPane.getChildren().add(token);
     }
+
+    private void placeTokenOffBoard(Player player) {
+        ImageView token = playerTokens.get(player);
+
+        double finalOffsetX = -50;
+        double finalOffsetY = tileSize * height - 20;
+
+        token.setLayoutX(finalOffsetX);
+        token.setLayoutY(finalOffsetY);
+
+        // ✅ Sjekk først
+        if (!tokenPane.getChildren().contains(token)) {
+            tokenPane.getChildren().add(token);
+        }
+    }
+
+
+
+
+    public void setTokensOnStartPosition() {
+        for (Player player : playerTokens.keySet()) {
+            placeTokenOffBoard(player);
+        }
+    }
+
 
     public void movePlayerByDiceRoll(int startTileId, int endTileId, Player player, Runnable onComplete) {
         ImageView token = playerTokens.get(player);
@@ -375,25 +399,25 @@ public class BoardView {
         for (Map.Entry<Player, VBox> entry : playerDisplayBoxes.entrySet()) {
             Player player = entry.getKey();
             VBox box = entry.getValue();
-    
+
             // Fjern stilklassen for alle
             box.getStyleClass().remove("current-player");
-    
+
             // Fjern glow fra token
             ImageView token = playerTokens.get(player);
             token.setEffect(null);
-    
+
             // Finn den innebygde turn-indicator labelen hvis den finnes
             for (javafx.scene.Node node : box.getChildren()) {
                 if (node instanceof Label && node.getStyleClass().contains("turn-indicator")) {
                     node.setVisible(player.equals(currentPlayer));
                 }
             }
-    
+
             // Dersom dette er spilleren som har tur
             if (player.equals(currentPlayer)) {
                 box.getStyleClass().add("current-player");
-    
+
                 // Legg til glow på token
                 DropShadow glow = new DropShadow(20, javafx.scene.paint.Color.GOLD);
                 glow.setSpread(0.5);
