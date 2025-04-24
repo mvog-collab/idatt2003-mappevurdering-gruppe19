@@ -76,6 +76,7 @@
 /* Button Box */
 .button-box {
     -fx-alignment: center;
+    -fx-spacing: 20;
 }
 
 /* Game Control Panel */
