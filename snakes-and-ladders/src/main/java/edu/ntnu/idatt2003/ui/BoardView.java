@@ -7,7 +7,6 @@ import edu.ntnu.idatt2003.game_logic.Ladder;
 import edu.ntnu.idatt2003.game_logic.Snake;
 import edu.ntnu.idatt2003.models.GameModel;
 import edu.ntnu.idatt2003.models.Player;
-import edu.ntnu.idatt2003.models.PlayerTokens;
 import edu.ntnu.idatt2003.models.Tile;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.application.Platform;
@@ -274,13 +273,13 @@ public class BoardView {
     private String getOverlaysPath(int boardSize) {
         switch (boardSize) {
             case 64:
-                return "/overlays64.json";
+                return "/board/overlay/overlays64.json";
             case 90:
-                return "/overlays90.json";
+                return "/board/overlay/overlays90.json";
             case 120:
-                return "/overlays120.json";
+                return "/board/overlay/overlays120.json";
             default:
-                return "/overlays90.json";
+                return "/board/overlay/overlays90.json";
         }
     }
 

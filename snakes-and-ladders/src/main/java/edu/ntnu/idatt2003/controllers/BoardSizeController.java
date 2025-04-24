@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import edu.ntnu.idatt2003.game_logic.BoardMaker;
 import edu.ntnu.idatt2003.models.Board;
 import edu.ntnu.idatt2003.ui.BoardSizePage;
+import edu.ntnu.idatt2003.utils.BoardFactory;
 import javafx.stage.Stage;
 
 public class BoardSizeController implements BasePopupController {
@@ -20,18 +21,15 @@ public class BoardSizeController implements BasePopupController {
     
     private void init() {
         view.getSixtyFourTiles().setOnAction(e -> {
-            Board board = BoardMaker.createBoard(64);
-            boardConsumer.accept(board);
+            boardConsumer.accept(BoardFactory.createBoardFromClassPath("/board/board64.json"));
             System.out.println("Chose 64");
         });
         view.getNinetyTiles().setOnAction(e -> {
-            Board board = BoardMaker.createBoard(90);
-            boardConsumer.accept(board);
+            boardConsumer.accept(BoardFactory.createBoardFromClassPath("/board/board90.json"));
             System.out.println("Chose 90");
         });
         view.getOneTwentyTiles().setOnAction(e -> {
-            Board board = BoardMaker.createBoard(120);
-            boardConsumer.accept(board);
+            boardConsumer.accept(BoardFactory.createBoardFromClassPath("/board/board64.json"));
             System.out.println("Chose 120");
         });
         view.getContinueButton().setOnAction(e -> confirm());
