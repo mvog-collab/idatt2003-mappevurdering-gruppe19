@@ -30,6 +30,7 @@ public class ChoosePlayerPage {
   private Button cancelButton;
   private Button addPlayerButton;
   private Button savePlayerButton;
+  private Button loadPlayersButton;
   private Button continueButton;
   private HBox addedPlayersLine;
   private HBox addedPlayersBox;
@@ -53,7 +54,8 @@ public class ChoosePlayerPage {
 
     addPlayerButton = new Button("Add Player");
     cancelButton = new Button("Cancel");
-    savePlayerButton = new Button("Save");
+    savePlayerButton = new Button("Save Players");
+    loadPlayersButton = new Button("Load Players");
     continueButton = new Button("Confirm");
 
     HBox nameBox = new HBox(playerName, nameField);
@@ -63,7 +65,7 @@ public class ChoosePlayerPage {
 
     addedPlayersLine = new HBox(addedPlayersBox);
     addedPlayersLine.setSpacing(20);
-    HBox statusBox = new HBox(cancelButton, addPlayerButton, savePlayerButton, continueButton);
+    HBox statusBox = new HBox(cancelButton, addPlayerButton, savePlayerButton, loadPlayersButton, continueButton);
 
     Label chooseTokenLabel = new Label("Choose player token");
     tokenToggleGroup = new ToggleGroup();
@@ -121,6 +123,7 @@ public class ChoosePlayerPage {
     cancelButton.getStyleClass().add("exit-button");
     continueButton.getStyleClass().add("confirm-button");
     savePlayerButton.getStyleClass().add("board-size-button");
+    loadPlayersButton.getStyleClass().add("board-size-button");
 
     statusBox.setAlignment(Pos.CENTER);
     statusBox.setSpacing(70);
@@ -165,6 +168,10 @@ public class ChoosePlayerPage {
         tokenToggleGroup.selectToggle(null);
       }
     }
+  }
+
+  public Button getLoadPlayersButton() {
+    return loadPlayersButton;
   }
 
 
