@@ -83,8 +83,6 @@ public class BoardView {
         boardContainer.setAlignment(Pos.CENTER);
         HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30));
 
-        Label playersLabel = new Label("Players");
-        playersLabel.getStyleClass().add("players-label");
         HBox playersBox = new HBox();
         playersBox.getStyleClass().add("players-box");
 
@@ -125,9 +123,9 @@ public class BoardView {
         playAgainButton.getStyleClass().add("play-again-button");
         playAgainButton.setOnAction(e -> {boardController.playAgain();});
 
-        HBox buttonBox = new HBox(rollDiceButton);
+        HBox buttonBox = new HBox(rollDiceButton, playAgainButton);
         buttonBox.getStyleClass().add("button-box");
-        VBox gameControl = new VBox(playersLabel, playersBox, diceBoxContainer, buttonBox, playAgainButton);
+        VBox gameControl = new VBox(playersBox, diceBoxContainer, buttonBox);
         gameControl.getStyleClass().add("game-control");
 
         HBox mainBox = new HBox(boardContainer, gameControl);
