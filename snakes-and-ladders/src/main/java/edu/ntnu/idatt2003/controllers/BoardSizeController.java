@@ -2,7 +2,6 @@ package edu.ntnu.idatt2003.controllers;
 
 import java.util.function.Consumer;
 
-import edu.ntnu.idatt2003.game_logic.BoardMaker;
 import edu.ntnu.idatt2003.models.Board;
 import edu.ntnu.idatt2003.ui.BoardSizePage;
 import edu.ntnu.idatt2003.utils.BoardFactory;

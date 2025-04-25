@@ -1,6 +1,5 @@
 package edu.ntnu.idatt2003.controllers;
 
-import edu.ntnu.idatt2003.game_logic.BoardMaker;
 import edu.ntnu.idatt2003.models.Board;
 import edu.ntnu.idatt2003.models.Dice;
 import edu.ntnu.idatt2003.models.GameModel;
@@ -9,6 +8,7 @@ import edu.ntnu.idatt2003.ui.BoardView;
 import edu.ntnu.idatt2003.ui.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.SettingsPage;
 import edu.ntnu.idatt2003.ui.StartPage;
+import edu.ntnu.idatt2003.utils.BoardFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Modality;
@@ -27,7 +27,7 @@ public class StartPageController {
     }
 
     private GameModel createNewGameModel() {
-        return new GameModel(BoardMaker.createBoard(DEFAULT_BOARD_SIZE), new Dice());
+        return new GameModel(BoardFactory.createBoardFromClassPath("/board/board90.json"), new Dice());
     }
 
     private void initializeButtonHandlers() {
