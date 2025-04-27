@@ -45,7 +45,7 @@ public final class LinearBoard implements Board {
       return tile;
     }
   
-    public LinearTile getTileId(int id) { 
+    LinearTile tile(int id) { 
         return tiles.get(id); 
     }
   
@@ -54,5 +54,10 @@ public final class LinearBoard implements Board {
           throw new IllegalArgumentException("Not a LinearTile");
       }
       return lt;
+    }
+
+    @Override
+    public boolean isEnd(Tile tile) {
+      return cast(tile).next == null;
     }
   }

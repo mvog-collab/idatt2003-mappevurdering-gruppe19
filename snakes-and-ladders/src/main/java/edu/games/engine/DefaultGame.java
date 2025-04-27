@@ -35,7 +35,7 @@ public final class DefaultGame implements Game {
           currentIndex = (currentIndex + 1) % players.size();
         }
 
-        if (board.move(destinationTile, 1) == destinationTile) {
+        if (board.isEnd(destinationTile)) {
             winner = currentPlayer;
         }
         return rolledValue;
