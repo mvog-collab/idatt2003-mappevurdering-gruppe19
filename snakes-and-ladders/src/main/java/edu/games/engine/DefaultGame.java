@@ -55,4 +55,8 @@ public final class DefaultGame implements Game {
       public List<Player> players() { 
         return players;
       }
+
+      public Board board() {
+        return board;
+      }
 }

@@ -21,7 +21,7 @@ public final class SnlRuleEngine implements RuleEngine {
       if (tail != null || top != null) {
         int dest = tail != null ? tail : top;
         LinearBoard linearBoard = (LinearBoard) board;              // safe: SnL uses linear
-        player.moveTo(linearBoard.getTileId(dest));
+        player.moveTo(linearBoard.tile(dest));
       }
   
       /* “pair but not 12 grants extra turn” rule */
