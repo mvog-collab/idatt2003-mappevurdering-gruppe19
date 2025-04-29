@@ -1,23 +1,24 @@
 package edu.ntnu.idatt2003.controllers;
-
-import edu.ntnu.idatt2003.models.Player;
-import edu.ntnu.idatt2003.models.PlayerTokens;
-
-import edu.ntnu.idatt2003.utils.CsvPlayerHandler;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import edu.ntnu.idatt2003.models.GameModel;
+import edu.ntnu.idatt2003.gateway.GameGateway;
+import edu.ntnu.idatt2003.gateway.PlayerView;
 import edu.ntnu.idatt2003.ui.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.LoadedPlayersPage;
+import edu.ntnu.idatt2003.utils.PlayerCsv;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+
 import java.nio.file.Path;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -26,133 +27,148 @@ import javafx.stage.Stage;
 public class ChoosePlayerController implements BasePopupController {
 
     private ChoosePlayerPage view;
-    private GameModel gameModel;
-    private final CsvPlayerHandler playerFileHandler = new CsvPlayerHandler();
+    private GameGateway gameGateway;
+    private String firstPlayerToken;
 
-    public ChoosePlayerController(ChoosePlayerPage view, GameModel gameModel) {
+    public ChoosePlayerController(ChoosePlayerPage view, GameGateway gameGateway) {
         this.view = view;
-        this.gameModel = gameModel;
-        init();
+        this.gameGateway = gameGateway;
+        initButtons();
+        refreshUi();
     }
 
-    private void init() {
+    private void initButtons() {
         view.getAddPlayerButton().setOnAction(e -> addPlayer());
         view.getContinueButton().setOnAction(e -> confirm());
         view.getCancelButton().setOnAction(e -> cancel());
         view.getSavePlayerButton().setOnAction(e -> savePlayers());
-        displayPlayersByAge();
-        disableInitialTokens();
-        loadPlayerButton();
+        view.getLoadPlayersButton().setOnAction(e -> loadPlayers());
     }
 
     private void addPlayer() {
-        String name = view.getNameField().getText();
-        LocalDate birthday = view.getBirthdayPicker().getValue();
-        PlayerTokens chosenToken = view.getSelectedToken();
+      String name = view.getNameField().getText().trim();
+      String token = view.getSelectedToken();
+      LocalDate birthday = view.getBirthdayPicker().getValue();
+      boolean invalid = name.isEmpty()
+                      || birthday == null || birthday.isAfter(LocalDate.now())
+                      || token == null || token.isEmpty();
 
-        if (name == null || name.isBlank() || birthday == null || birthday.isAfter(LocalDate.now()) || chosenToken == null) {
-            new Alert(Alert.AlertType.WARNING,
-    "Please choose a valid token, birthday and name.").showAndWait();
-            return;
-        }
+      if (invalid) {
+          alert("Please choose a valid name, birthday and token.");
+          return;
+      }
 
-      gameModel.addPlayer(name, chosenToken, birthday);
-      view.getNameField().setText("");
-      gameModel.setPlayersOfGame(sortPlayersByBirthday());
-      setFirstPlayer();
-      displayPlayersByAge();
-      view.disableToken(chosenToken);
+      gameGateway.addPlayer(name, token, birthday);
+      view.getNameField().clear();
+      view.disableToken(token);
+      refreshUi();
+  }
+
+    private List<PlayerView> sortPlayersByBirthday() {
+        return gameGateway.players().stream()
+                 .sorted(Comparator.comparing(PlayerView::birthday).reversed())
+                 .toList();
     }
-
-    private List<Player> sortPlayersByBirthday() {
-        List<Player> players = new ArrayList<>(gameModel.getPlayers());
-        players.sort(Comparator.comparing(Player::getBirthday).reversed());
-        return players;
-    }
-
+    
     private void setFirstPlayer() {
-        if (gameModel.getPlayers().getFirst() == gameModel.getCurrentPlayer()) {
-            return;
+        if (!gameGateway.players().isEmpty()) {
+            firstPlayerToken = sortPlayersByBirthday().getFirst().token();
+            // TODO: tell gateway / board whose turn it is
         }
-        gameModel.setCurrentPlayer(gameModel.getPlayers().getFirst());
     }
 
     private void displayPlayersByAge() {
-        gameModel.getPlayers();
-        view.getAddedPlayersBox().getChildren().clear();
-        for (Player player : gameModel.getPlayers()) {
-            view.getAddedPlayersBox().getChildren().add(view.displayPlayer(player));;
-        }
+        view.getAddedPlayersBox().getChildren().setAll(
+            sortPlayersByBirthday().stream()
+                                   .map(this::playerBox)
+                                   .toList());
     }
+  
+  private VBox playerBox(PlayerView pv) {
+    int years = java.time.Period.between(pv.birthday(), LocalDate.now()).getYears();
+
+    Label name = new Label(pv.name());
+    name.getStyleClass().add("player-name");
+
+    Label age  = new Label(years + " yrs");
+    age.getStyleClass().add("player-age");
+
+    VBox box = new VBox(name, age);
+    box.setAlignment(javafx.geometry.Pos.CENTER);
+    box.setSpacing(2);
+    return box;
+  }
 
     private void savePlayers() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save players");
-        fileChooser.setInitialFileName("Players_" + java.time.LocalDateTime.now().toString().replace(":", "-") + ".csv");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV-files", "*.csv"));
+      FileChooser fc = new FileChooser();
+      fc.setTitle("Save players");
+      fc.setInitialFileName("players.csv");
+      fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files", "*.csv"));
 
-        File file = fileChooser.showSaveDialog(view.getSavePlayerButton().getScene().getWindow());
-        Path out = fileChooser.showOpenDialog(view.getSavePlayerButton().getScene().getWindow()).toPath();
+      File out = fc.showSaveDialog(view.getAddPlayerButton().getScene().getWindow());
+      if (out == null) return;
 
-        if (file != null) {
-            try {
-                playerFileHandler.save(gameModel.getPlayers(), out);
-                new Alert(Alert.AlertType.INFORMATION, "Players saved to file").showAndWait();
-            } catch (IOException ex) {
-                new Alert(Alert.AlertType.ERROR, "Could not save players: " + ex.getMessage()).showAndWait();
-            }
-        }
-    }
+      try {
+          List<String[]> rows = gameGateway.players().stream()
+                                   .map(p -> new String[]{p.name(), p.token(), p.birthday().toString()})
+                                   .toList();
+          PlayerCsv.save(rows, out.toPath());
+      } catch (IOException ex) {
+          alert("Could not save players: " + ex.getMessage());
+      }
+  }
 
-    private void disableInitialTokens() {
-        for (Player p : gameModel.getPlayers()) {
-            view.disableToken(p.getToken());
-        }
-    }
-    private void loadPlayerButton() {
-        view.getLoadPlayersButton().setOnAction(e -> {
-    
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Choose players");
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("CSV-files", "*.csv"));
-            File   chosenFile   = fileChooser.showOpenDialog(view.getLoadPlayersButton()
-                                              .getScene().getWindow());
-            if (chosenFile == null) return;
-    
-            List<Player> playersFromFile;
-            try {
-                playersFromFile = playerFileHandler.load(chosenFile.toPath());
-            } catch (IOException ex) {
-                new Alert(Alert.AlertType.ERROR,
-                          "Could not load players: " + ex.getMessage()).showAndWait();
-                return;
-            }
-    
-            LoadedPlayersPage loadedPlayerPage = new LoadedPlayersPage(playersFromFile);
-            Stage popup = createModalPopup("Choose players",
-                                           loadedPlayerPage.getView(), 600, 500);
-    
-            /* 4. Når brukeren trykker “Add selected”, legg dem inn i spillet */
-            loadedPlayerPage.getLoadPlayersButton().setOnAction(ev -> {
-                for (Player player : loadedPlayerPage.getSelectedPlayers()) {
-                    // unngå duplikater
-                    boolean exists = gameModel.getPlayers().stream()
-                                        .anyMatch(pl -> pl.getName().equals(player.getName()));
-                    if (!exists) {
-                        gameModel.getPlayers().add(player);
-                        gameModel.setStartPosition(player);
-                        view.disableToken(player.getToken());
-                    }
-                }
-                displayPlayersByAge();      // oppdater listen i hoved-dialogen
-                popup.close();
-            });
-    
-            loadedPlayerPage.getCancelButton().setOnAction(ev -> popup.close());
-            popup.showAndWait();
+  private void loadPlayers() {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Load players");
+    fileChooser.getExtensionFilters()
+      .add(new FileChooser.ExtensionFilter("CSV files", "*.csv"));
+
+    File in = fileChooser.showOpenDialog(view.getAddPlayerButton().getScene().getWindow());
+    if (in == null) return;
+
+    try {
+        List<String[]> rows = PlayerCsv.load(in.toPath());
+
+        LoadedPlayersPage loadedPlayersPage = new LoadedPlayersPage(rows);
+        Stage pop = createModalPopup("Players", loadedPlayersPage.getView(), 550, 450);
+
+        loadedPlayersPage.getaddSelectedButton().setOnAction(ev -> {
+            gameGateway.loadPlayers(loadedPlayersPage.getSelectedRows());  // only chosen ones
+            refreshUi();
+            pop.close();
         });
+        loadedPlayersPage.getCancelButton().setOnAction(ev -> pop.close());
+
+        pop.showAndWait();
+
+    } catch (IOException ex) {
+        alert("Could not load players: " + ex.getMessage());
     }
+}
+
+  private void refreshUi() {
+    // sort descending by birthday  (oldest first → starts)
+    List<PlayerView> sorted = gameGateway.players().stream()
+                                 .sorted(Comparator.comparing(PlayerView::birthday).reversed())
+                                 .toList();
+
+    // highlight first turn token (if needed elsewhere you can store it)
+    if (!sorted.isEmpty()) {
+        String firstToken = sorted.getFirst().token();
+        // gw.setFirstTurn(firstToken)   // ← optional future API call
+    }
+
+    // rebuild the visible list
+    view.getAddedPlayersBox().getChildren().setAll(
+            sorted.stream()
+                  .map(this::nameLabel)
+                  .collect(Collectors.toList())
+    );
+
+    // grey-out already taken tokens
+    sorted.forEach(pv -> view.disableToken(pv.token()));
+  }
 
     private Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {
         Stage popupStage = new Stage();
@@ -167,22 +183,27 @@ public class ChoosePlayerController implements BasePopupController {
         return popupStage;
     }
 
-
-
-    @Override
-    public void confirm() {
-        if (gameModel.getPlayers().isEmpty()) {
-            System.out.println("No players added!");
-            return;
-        }
-        Stage stage = (Stage) view.getContinueButton().getScene().getWindow();
-        stage.close();
+    private VBox nameLabel(PlayerView pv) {
+        Label lbl = new Label(pv.name());
+        lbl.getStyleClass().add("player-name");
+        VBox box  = new VBox(lbl);
+        box.setAlignment(javafx.geometry.Pos.CENTER);
+        return box;
     }
-    
-    @Override
-    public void cancel() {
-        Stage stage = (Stage) view.getCancelButton().getScene().getWindow();
-        stage.close();
+
+    @Override public void confirm() { 
+        close(); 
     }
+    @Override public void cancel()  { 
+        close(); 
+    }
+
+  private void close() {
+    ((Stage) view.getContinueButton().getScene().getWindow()).close();
+  }
+
+  private static void alert(String message) {
+    new Alert(Alert.AlertType.WARNING, message).showAndWait();
+  }
     
 }

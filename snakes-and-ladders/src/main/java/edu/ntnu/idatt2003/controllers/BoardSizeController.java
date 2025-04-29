@@ -1,34 +1,32 @@
 package edu.ntnu.idatt2003.controllers;
 
-import java.util.function.Consumer;
-
-import edu.ntnu.idatt2003.models.Board;
+import edu.ntnu.idatt2003.gateway.GameGateway;
 import edu.ntnu.idatt2003.ui.BoardSizePage;
-import edu.ntnu.idatt2003.utils.BoardFactory;
 import javafx.stage.Stage;
 
 public class BoardSizeController implements BasePopupController {
 
     private final BoardSizePage view;
-    private final Consumer<Board> boardConsumer;
+    private final GameGateway gameGateway;
 
-    public BoardSizeController(BoardSizePage view, Consumer<Board> boardConsumer) {
+    public BoardSizeController(BoardSizePage view, GameGateway gameGateway) {
         this.view = view;
-        this.boardConsumer = boardConsumer;
+        this.gameGateway = gameGateway;
+
         init();
     }
     
     private void init() {
         view.getSixtyFourTiles().setOnAction(e -> {
-            boardConsumer.accept(BoardFactory.createBoardFromClassPath("/board/board64.json"));
+            gameGateway.newGame(64);
             System.out.println("Chose 64");
         });
         view.getNinetyTiles().setOnAction(e -> {
-            boardConsumer.accept(BoardFactory.createBoardFromClassPath("/board/board90.json"));
+            gameGateway.newGame(90);
             System.out.println("Chose 90");
         });
         view.getOneTwentyTiles().setOnAction(e -> {
-            boardConsumer.accept(BoardFactory.createBoardFromClassPath("/board/board64.json"));
+            gameGateway.newGame(120);
             System.out.println("Chose 120");
         });
         view.getContinueButton().setOnAction(e -> confirm());
@@ -36,15 +34,18 @@ public class BoardSizeController implements BasePopupController {
     }
 
     @Override
-    public void confirm() {
-        Stage stage = (Stage) view.getContinueButton().getScene().getWindow();
-        stage.close();
+    public void confirm() { 
+        close();
     }
 
-    
     @Override
-    public void cancel() {
-        Stage stage = (Stage) view.getCancelButton().getScene().getWindow();
-        stage.close();
+    public void cancel()  { 
+        close();
     }
+
+  private void close() {
+    System.out.println("Closing board size page");
+    Stage s = (Stage) view.getContinueButton().getScene().getWindow();
+    s.close();
+  }
 }
