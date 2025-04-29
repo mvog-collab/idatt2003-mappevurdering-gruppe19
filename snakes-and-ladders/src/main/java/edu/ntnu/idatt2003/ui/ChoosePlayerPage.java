@@ -1,13 +1,11 @@
 package edu.ntnu.idatt2003.ui;
 
-import edu.ntnu.idatt2003.models.Player;
-import edu.ntnu.idatt2003.models.PlayerTokens;
-
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.games.engine.Player;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -36,7 +34,9 @@ public class ChoosePlayerPage {
   private HBox addedPlayersBox;
   private HBox playerTokensBox;
   private ToggleGroup tokenToggleGroup;
-  private Map<PlayerTokens, ToggleButton> tokenButtons = new HashMap<>();
+  private Map<String, ToggleButton> tokenButtons = new HashMap<>();
+
+  private static final String[] TOKEN_NAMES = { "BLUE","GREEN","YELLOW","RED","PURPLE" };
 
   public VBox getView(){
     Label title = new Label("Add Players");
@@ -70,28 +70,15 @@ public class ChoosePlayerPage {
     Label chooseTokenLabel = new Label("Choose player token");
     tokenToggleGroup = new ToggleGroup();
 
-    HBox tokenSelectionBox = new HBox(10);
+    HBox tokenSelectionBox = new HBox();
     tokenSelectionBox.setSpacing(10);
     tokenSelectionBox.setAlignment(Pos.CENTER);
     tokenSelectionBox.getStyleClass().add("token-selection-box");
   
-  for (PlayerTokens token : PlayerTokens.values()) {
-    ToggleButton toggleButton = new ToggleButton();
-    InputStream inputStream = getClass().getResourceAsStream(token.getImagePath());
-    if (inputStream == null) {
-      throw new RuntimeException("Could not load image: " + token.getImagePath());
-    }
-    ImageView imageView = new ImageView(new Image(inputStream));
-    imageView.setFitWidth(50);
-    imageView.setFitHeight(50);
-
-    toggleButton.setGraphic(imageView);
-    toggleButton.setUserData(token);
-    toggleButton.setToggleGroup(tokenToggleGroup);
-    toggleButton.getStyleClass().add("token-button");
-
-    tokenButtons.put(token, toggleButton);
-    tokenSelectionBox.getChildren().add(toggleButton);
+  for (String token : TOKEN_NAMES) {
+    ToggleButton tb = buildTokenButton(token);
+    tokenButtons.put(token, tb);
+    tokenSelectionBox.getChildren().add(tb);
   }
 
   VBox playerPopup = new VBox(titleBox, nameBox, birthdayBox, chooseTokenLabel, tokenSelectionBox, addedPlayersLine, statusBox);
@@ -148,6 +135,19 @@ public class ChoosePlayerPage {
     return background;
   }
 
+  private ToggleButton buildTokenButton(String token) {
+    ToggleButton toggleButton = new ToggleButton();
+    String imgPath = "/images/" + token.toLowerCase() + "Piece.png";
+    ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(imgPath)));
+    imageView.setFitHeight(50);
+    imageView.setFitWidth(50);
+    toggleButton.setGraphic(imageView);
+    toggleButton.setUserData(token);
+    toggleButton.setToggleGroup(tokenToggleGroup);
+    toggleButton.getStyleClass().add("token-button");
+    return toggleButton;
+  }
+
   public VBox displayPlayer(Player player) {
     VBox playerName = new VBox(new Label(player.getName()));
     playerName.getStyleClass().add("player-name");
@@ -155,18 +155,16 @@ public class ChoosePlayerPage {
     return playerName;
   }
 
-  public PlayerTokens getSelectedToken() {
-    Toggle selected = tokenToggleGroup.getSelectedToggle();
-    return selected == null ? null : (PlayerTokens)selected.getUserData();
+  public String getSelectedToken() {
+    Toggle selectedToken = tokenToggleGroup.getSelectedToggle();
+    return selectedToken == null ? null : (String) selectedToken.getUserData();
   }
 
-  public void disableToken(PlayerTokens token) {
-    ToggleButton button = tokenButtons.get(token);
-    if (button != null) {
-      button.setDisable(true);
-      if (button.isSelected()) {
-        tokenToggleGroup.selectToggle(null);
-      }
+  public void disableToken(String token) {
+    ToggleButton tokenButton = tokenButtons.get(token);
+    if (tokenButton != null) {
+        tokenButton.setDisable(true);
+        if (tokenButton.isSelected()) tokenToggleGroup.selectToggle(null);
     }
   }
 

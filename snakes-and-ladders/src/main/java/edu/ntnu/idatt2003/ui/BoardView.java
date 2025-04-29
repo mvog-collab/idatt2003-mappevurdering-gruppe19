@@ -1,13 +1,6 @@
 package edu.ntnu.idatt2003.ui;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.ntnu.idatt2003.controllers.BoardController;
-import edu.ntnu.idatt2003.game_logic.Ladder;
-import edu.ntnu.idatt2003.game_logic.Snake;
-import edu.ntnu.idatt2003.models.GameModel;
-import edu.ntnu.idatt2003.models.Player;
-import edu.ntnu.idatt2003.models.Tile;
+import edu.ntnu.idatt2003.gateway.PlayerView;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -27,403 +20,276 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BoardView {
-    private final int tileSize = 50;
+
+    private static final int TILE_SIZE = 50;
+
     private int width;
     private int height;
+    private int gameSizeHint = 0; 
 
-    private Map<Integer, StackPane> tileUIMap;
-    private Map<Player, ImageView> playerTokens;
-    private Map<Player, VBox> playerDisplayBoxes = new HashMap<>();
-    private VBox playerDisplayBox;
-    private BoardController boardController;
-    private Button rollDiceButton;
-    private Button playAgainButton;
+    /* javafx nodes we need later */
+    private final Map<Integer, StackPane> tileUI = new HashMap<>();
+    private final Map<String, ImageView> tokenUI = new HashMap<>();
+    private final Map<String, VBox> playerBoxes = new HashMap<>();
 
-    private GameModel gameModel;
+    private final Pane   overlayPane = new Pane();
+    private final Pane   tokenPane   = new Pane();
 
-    private Pane overlayPane;
-    private Pane tokenPane;
+    private final Button rollButton  = new Button("Roll dice");
+    private final Button againButton = new Button("Play again");
 
-    private final Point2D offBoardStartPosition = new Point2D(20, tileSize * height - 60);
+    private final HBox root;
 
-    public BoardView(GameModel gameModel) {
-        this.gameModel = gameModel;
+    public BoardView() {
+        /* dummy root so `getScene()` does not NPE before controller calls start() */
+        root = new HBox();
     }
 
+    /** Build the scene and return it.  Call **once** directly before showing the stage. */
     public Scene start() {
-        tileUIMap = new HashMap<>();
-        playerTokens = new HashMap<>();
-        boardController = new BoardController(this, gameModel);
-        setHeightAndWidth(gameModel.getBoard().getSize());
+        return new Scene(root, 1000, 700);
+    }
+
+    /* ------------------------------------------------------------------
+     *  Wiring helpers for controller
+     * ------------------------------------------------------------------ */
+    public Button getRollButton() {
+        return rollButton; 
+    }
+
+    public Button getAgainButton() {
+        return againButton; 
+    }
+
+    public void disableRollButton() {
+        rollButton.setDisable(true);
+    }
+
+    public void enableRollButton()  {
+        rollButton.setDisable(false);
+    }
+
+    public void announceWinner(String name) {
+        disableRollButton();
+        new Alert(Alert.AlertType.INFORMATION,
+                  "Congratulations, " + name + "! You won the game").showAndWait();
+    }
+
+    public void setGameSize(int size) {
+        this.gameSizeHint = size;
+    }
+
+    /* ------------------------------------------------------------------
+     *  PUBLIC  — snapshot‑based setters called from controller
+     * ------------------------------------------------------------------ */
+
+    public void setPlayers(List<PlayerView> players, List<OverlayParams> overlays) {
+        Objects.requireNonNull(players);
+
+        /* 1. First call?  then build static part of the board */
+        if (root.getChildren().isEmpty()) {
+            int boardSize = gameSizeHint != 0
+                          ? gameSizeHint
+                          : players.stream()
+                                   .mapToInt(PlayerView::tileId)
+                                   .max()
+                                   .orElse(90);  // fallback for empty list
+            buildBoardStatic(boardSize, overlays);
+        }
+
+        /* 2. rebuild side panel ------------------------------------------------------------ */
+        VBox playersBox = ((VBox) ((HBox) root.getChildren().get(1)).getChildren().getFirst());
+        playersBox.getChildren().clear();
+        playerBoxes.clear();
+
+        for (PlayerView pv : players) {
+            VBox box = createPlayerBox(pv);
+            playersBox.getChildren().add(box);
+            playerBoxes.put(pv.token(), box);
+        }
+
+        /* 3. tokens on board --------------------------------------------------------------- */
+        tokenPane.getChildren().clear();
+        tokenUI.clear();
+        for (PlayerView pv : players) {
+            ImageView iv = createTokenImage(pv.token());
+            tokenUI.put(pv.token(), iv);
+            placeTokenOnTile(pv.tileId(), iv);
+        }
+
+        /* 4. highlight current turn -------------------------------------------------------- */
+        players.forEach(this::updateTurnIndicator);
+    }
+
+    /**
+     * Animate one token from start‑id to end‑id and call the callback afterwards.
+     */
+    public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
+        ImageView token = tokenUI.get(tokenName);
+        if (token == null) { if (onFinished!=null) onFinished.run(); return; }
+
+        new Thread(() -> {
+            for (int i = startId + 1; i <= endId; i++) {
+                int id = i;
+                try { Thread.sleep(200); } catch (InterruptedException ignored) {}
+                Platform.runLater(() -> placeTokenOnTile(id, token));
+            }
+            if (onFinished != null) Platform.runLater(onFinished);
+        }).start();
+    }
+
+    /* ------------------------------------------------------------------
+     *  private helpers – UI construction / effects
+     * ------------------------------------------------------------------ */
+
+    private void buildBoardStatic(int boardSize, List<OverlayParams> overlays) {
+        setWidthHeight(boardSize);
 
         GridPane boardGrid = new GridPane();
-        boardGrid.setPrefSize(tileSize * width, tileSize * height);
-        boardGrid.setMaxSize(tileSize * width, tileSize * height);
+        boardGrid.setPrefSize(TILE_SIZE * width, TILE_SIZE * height);
 
-        overlayPane = new Pane();
         overlayPane.setPickOnBounds(false);
-        overlayPane.setPrefSize(tileSize * width, tileSize * height);
-
-        tokenPane = new Pane();
+        overlayPane.setPrefSize(boardGrid.getPrefWidth(), boardGrid.getPrefHeight());
         tokenPane.setPickOnBounds(false);
-        tokenPane.setPrefSize(tileSize * width, tileSize * height);
+        tokenPane.setPrefSize(boardGrid.getPrefWidth(), boardGrid.getPrefHeight());
 
-        StackPane boardContainer = new StackPane();
-        boardContainer.getChildren().addAll(boardGrid, overlayPane, tokenPane);
-        boardContainer.setMaxSize(tileSize * width, tileSize * height);
-        boardContainer.getStyleClass().add("board-container");
-        boardContainer.setAlignment(Pos.CENTER);
+        StackPane boardContainer = new StackPane(boardGrid, overlayPane, tokenPane);
+        boardContainer.setMaxSize(boardGrid.getPrefWidth(), boardGrid.getPrefHeight());
         HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30));
 
-        HBox playersBox = new HBox();
+        VBox playersBox = new VBox();
         playersBox.getStyleClass().add("players-box");
 
-        HBox diceBox = new HBox();
+        HBox diceBox = new HBox();    // kept for styling, content added by controller if desired
         diceBox.setPrefSize(280, 285);
         diceBox.getStyleClass().add("dice-box");
 
-        HBox diceBoxContainer = new HBox(diceBox);
-        diceBoxContainer.getStyleClass().add("dice-box-container");
+        HBox diceContainer = new HBox(diceBox);
+        diceContainer.getStyleClass().add("dice-box-container");
 
-        String image_dir = ResourcePaths.IMAGE_DIR;
-        ImageView diceImageView1 = new ImageView(image_dir + "1.png");
-        ImageView diceImageView2 = new ImageView(image_dir + "5.png");
-        diceImageView1.setFitWidth(50);
-        diceImageView1.setFitHeight(50);
-        diceImageView2.setFitWidth(50);
-        diceImageView2.setFitHeight(50);
-        diceImageView1.getStyleClass().add("dice-image1");
-        diceImageView2.getStyleClass().add("dice-image2");
-        diceBox.getChildren().addAll(diceImageView1, diceImageView2);
+        HBox buttons = new HBox(rollButton, againButton);
+        buttons.getStyleClass().add("button-box");
 
-        rollDiceButton = new Button("Roll Dice");
-        rollDiceButton.getStyleClass().add("roll-dice-button");
-        rollDiceButton.setOnAction(e -> {
-            boardController.playATurn();
-
-            int firstDieValue = gameModel.getDice().getDiceList().getFirst().getLastRolledValue();
-            int secondDieValue = gameModel.getDice().getDiceList().get(1).getLastRolledValue();
-
-            String diceImageFile1 = image_dir + firstDieValue + ".png";
-            String diceImageFile2 = image_dir + secondDieValue + ".png";
-
-            diceImageView1.setImage(new Image(getClass().getResourceAsStream(diceImageFile1)));
-            diceImageView2.setImage(new Image(getClass().getResourceAsStream(diceImageFile2)));
-        });
-
-        playAgainButton = new Button("Play Again");
-        playAgainButton.getStyleClass().add("play-again-button");
-        playAgainButton.setOnAction(e -> {boardController.playAgain();});
-
-        HBox buttonBox = new HBox(rollDiceButton, playAgainButton);
-        buttonBox.getStyleClass().add("button-box");
-        VBox gameControl = new VBox(playersBox, diceBoxContainer, buttonBox);
+        VBox gameControl = new VBox(playersBox, diceContainer, buttons);
         gameControl.getStyleClass().add("game-control");
 
-        HBox mainBox = new HBox(boardContainer, gameControl);
-        mainBox.setAlignment(Pos.CENTER);
-        mainBox.getStyleClass().add("main-box");
+        HBox main = new HBox(boardContainer, gameControl);
+        main.setAlignment(Pos.CENTER);
+        main.getStyleClass().add("main-box");
 
-        BoardSetup(boardGrid);
+        root.getChildren().setAll(main);
+        root.getStyleClass().add("page-background");
 
-        for (Player player : gameModel.getPlayers()) {
-            VBox displayBox = new VBox();
-            displayBox.setAlignment(Pos.CENTER);
-            displayBox.setSpacing(5);
-            displayBox.getStyleClass().add("display-player-box");
-
-            ImageView tokenImage = new ImageView(new Image(getClass().getResourceAsStream(player.getToken().getImagePath())));
-            tokenImage.setFitWidth(100);
-            tokenImage.setFitHeight(100);
-            tokenImage.getStyleClass().add("player-figure");
-
-            Label turnLabel = new Label("🎲 Your Turn!");
-            turnLabel.getStyleClass().add("turn-indicator");
-            turnLabel.setVisible(false);
-
-            Label nameLabel = new Label(player.getName());
-            nameLabel.getStyleClass().add("player-name");
-
-            displayBox.getChildren().addAll(turnLabel, tokenImage, nameLabel);
-            playerDisplayBoxes.put(player, displayBox);
-            playersBox.getChildren().add(displayBox);
-        }
-
-        for (Player player : gameModel.getPlayers()) {
-            ImageView token = new ImageView(
-                new Image(getClass().getResourceAsStream(player.getToken().getImagePath()))
-            );
-            token.setFitWidth(40);
-            token.setFitHeight(40);
-            token.getStyleClass().add("player-figure");
-            playerTokens.put(player, token);
-            placeTokenOffBoard(player);
-        }
-
-        mainBox.getStyleClass().add("page-background");
-        Platform.runLater(this::addOverlaysFromJson);
-        updateCurrentPlayerView(gameModel.getCurrentPlayer());
-
-        Scene scene = new Scene(mainBox, 1000, 700);
-        scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-        return scene;
+        buildTiles(boardGrid);
+        addOverlays(overlays);
     }
 
-    private void setHeightAndWidth(int boardSize) {
-        switch (boardSize) {
-            case 64:
-                this.width = 8;
-                this.height = 8;
-                break;
-            case 90:
-                this.width = 9;
-                this.height = 10;
-                break;
-            case 120:
-                this.width = 10;
-                this.height = 12;
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void BoardSetup(GridPane board) {
+    private void buildTiles(GridPane grid) {
         boolean leftToRight = true;
-        int tileId = 1;
+        int id = 1;
         for (int row = height - 1; row >= 0; row--) {
             if (leftToRight) {
-                for (int col = 0; col < width; col++) {
-                    addTile(board, row, col, tileId++);
-                }
+                for (int col = 0; col < width; col++) addTile(grid, row, col, id++);
             } else {
-                for (int col = width - 1; col >= 0; col--) {
-                    addTile(board, row, col, tileId++);
-                }
+                for (int col = width - 1; col >= 0; col--) addTile(grid, row, col, id++);
             }
             leftToRight = !leftToRight;
         }
     }
 
-    private void addTile(GridPane board, int row, int col, int tileId) {
+    private void addTile(GridPane grid, int row, int col, int id) {
         StackPane tile = new StackPane();
-        tile.setPrefSize(tileSize, tileSize);
-
-        Label tileLabel = new Label(String.valueOf(tileId));
-
-        if ((row + col) % 2 == 0) {
-            tile.getStyleClass().add("tile-white");
-            tileLabel.getStyleClass().add("tile-label-black");
-        } else {
-            tile.getStyleClass().add("tile-black");
-            tileLabel.getStyleClass().add("tile-label-white");
-        }
-
-        Tile modelTile = gameModel.getBoard().getTile(tileId);
-        if (modelTile != null && modelTile.getAction() != null) {
-            if (modelTile.getAction() instanceof Snake) {
-                tile.getStyleClass().add("tile-snake");
-            } else if (modelTile.getAction() instanceof Ladder) {
-                tile.getStyleClass().add("tile-ladder");
-            }
-        }
-        tile.getChildren().add(tileLabel);
-        board.add(tile, col, row);
-        tileUIMap.put(tileId, tile);
+        tile.setPrefSize(TILE_SIZE, TILE_SIZE);
+        Label lbl = new Label(String.valueOf(id));
+        boolean white = (row + col) % 2 == 0;
+        tile.getStyleClass().add(white ? "tile-white" : "tile-black");
+        lbl .getStyleClass().add(white ? "tile-label-black" : "tile-label-white");
+        tile.getChildren().add(lbl);
+        grid.add(tile, col, row);
+        tileUI.put(id, tile);
     }
 
-    private Point2D getTileCenter(StackPane tile) {
-        Bounds bounds = tile.getBoundsInParent();
-        double centerX = bounds.getMinX() + bounds.getWidth() / 2;
-        double centerY = bounds.getMinY() + bounds.getHeight() / 2;
-        return new Point2D(centerX, centerY);
-    }
-
-    private void addOverlaysFromJson() {
-        List<OverlayParams> overlayList = loadOverlaysFromJson();
-        for (OverlayParams params : overlayList) {
-            StackPane startTile = tileUIMap.get(params.getStartTileId() + 1);
-            if (startTile == null) {
-                System.err.println("Fant ikke tile med id: " + params.getStartTileId());
-                continue;
-            }
-            Point2D center = getTileCenter(startTile);
-            InputStream is = getClass().getResourceAsStream(params.getImagePath());
-            if (is == null) {
-                System.err.println("Fant ikke ressurs: " + params.getImagePath());
-                continue;
-            }
-            Image image = new Image(is);
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(params.getFitWidth());
-            imageView.setPreserveRatio(true);
-            imageView.setLayoutX(center.getX() + params.getOffsetX() - imageView.getFitWidth() / 2);
-            imageView.setLayoutY(center.getY() + params.getOffsetY() - imageView.getBoundsInParent().getHeight() / 2);
+    private void addOverlays(List<OverlayParams> overlays) {
+        overlayPane.getChildren().clear();
+        for (OverlayParams overlayParams : overlays) {
+            StackPane start = tileUI.get(overlayParams.getStartTileId()+1);
+            if (start == null) continue;
+            Point2D tileCenter = tileCenter(start);
+            ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(overlayParams.getImagePath())));
+            imageView.setFitWidth(overlayParams.getFitWidth()); imageView.setPreserveRatio(true);
+            imageView.setLayoutX(tileCenter.getX()+overlayParams.getOffsetX()-imageView.getFitWidth()/2);
+            imageView.setLayoutY(tileCenter.getY()+overlayParams.getOffsetY()-imageView.getBoundsInParent().getHeight()/2);
             overlayPane.getChildren().add(imageView);
         }
     }
 
-    private String getOverlaysPath(int boardSize) {
-        switch (boardSize) {
-            case 64:
-                return "/board/overlay/overlays64.json";
-            case 90:
-                return "/board/overlay/overlays90.json";
-            case 120:
-                return "/board/overlay/overlays120.json";
-            default:
-                return "/board/overlay/overlays90.json";
+    /* ---------- token & player helpers ---------- */
+    private VBox createPlayerBox(PlayerView playerView) {
+        VBox box = new VBox();
+        box.setAlignment(Pos.CENTER); box.setSpacing(5);
+        box.getStyleClass().add("display-player-box");
+
+        ImageView tokenImg = createTokenImage(playerView.token()); tokenImg.setFitWidth(100); tokenImg.setFitHeight(100);
+        Label turnLbl = new Label("\uD83C\uDFB2 Your turn!");      // dice emoji
+        turnLbl.getStyleClass().add("turn-indicator"); turnLbl.setVisible(playerView.hasTurn());
+        Label nameLbl = new Label(playerView.name()); nameLbl.getStyleClass().add("player-name");
+
+        box.getChildren().addAll(turnLbl, tokenImg, nameLbl);
+        if (playerView.hasTurn()) box.getStyleClass().add("current-player");
+        return box;
+    }
+
+    private ImageView createTokenImage(String tokenName) {
+        String path = ResourcePaths.IMAGE_DIR + tokenName.toLowerCase() + "Piece.png";
+        ImageView iv = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iv.setFitWidth(40); iv.setFitHeight(40); iv.getStyleClass().add("player-figure");
+        return iv;
+    }
+
+    private void updateTurnIndicator(PlayerView playerView) {
+        VBox box = playerBoxes.get(playerView.token()); 
+        if (box == null) return;
+        if (playerView.hasTurn()) {
+            box.getStyleClass().add("current-player");
         }
-    }
-
-    public List<OverlayParams> loadOverlaysFromJson() {
-        List<OverlayParams> overlayList = new ArrayList<>();
-        try (InputStream is = getClass().getResourceAsStream(getOverlaysPath(gameModel.getBoard().getSize()))) {
-            if (is == null) {
-                System.err.println("Fant ikke konfigurasjonsfilen for overlays!");
-                return overlayList;
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(is);
-            JsonNode overlaysNode = root.path("overlays");
-            if (overlaysNode.isArray()) {
-                for (JsonNode node : overlaysNode) {
-                    int startTileId = node.path("startTileId").asInt();
-                    String imagePath = node.path("imagePath").asText();
-                    int offsetX = node.path("offsetX").asInt();
-                    int offsetY = node.path("offsetY").asInt();
-                    int fitWidth = node.path("fitWidth").asInt();
-                    overlayList.add(new OverlayParams(imagePath, offsetX, offsetY, fitWidth, startTileId));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return overlayList;
-    }
-
-    /**
-     * Plasserer en ImageView-token på midten av en gitt rute-ID.
-     */
-    private void placeTokenOnTile(int tileId, ImageView token) {
-        tokenPane.getChildren().remove(token);
-        StackPane tile = tileUIMap.get(tileId);
-        Point2D center = getTileCenter(tile);
-        token.setLayoutX(center.getX() - token.getFitWidth() / 2);
-        token.setLayoutY(center.getY() - token.getFitHeight() / 2);
-        tokenPane.getChildren().add(token);
-    }
-
-    private void placeTokenOffBoard(Player player) {
-        ImageView token = playerTokens.get(player);
-
-        double finalOffsetX = -50;
-        double finalOffsetY = tileSize * height - 20;
-
-        token.setLayoutX(finalOffsetX);
-        token.setLayoutY(finalOffsetY);
-
-        // ✅ Sjekk først
-        if (!tokenPane.getChildren().contains(token)) {
-            tokenPane.getChildren().add(token);
-        }
-    }
-
-
-
-
-    public void setTokensOnStartPosition() {
-        for (Player player : playerTokens.keySet()) {
-            placeTokenOffBoard(player);
-        }
-    }
-
-
-    public void movePlayerByDiceRoll(int startTileId, int endTileId, Player player, Runnable onComplete) {
-        ImageView token = playerTokens.get(player);
-        new Thread(() -> {
-            for (int i = startTileId + 1; i <= endTileId; i++) {
-                int tileId = i;
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Platform.runLater(() -> placeTokenOnTile(tileId, token));
-            }
-            if (onComplete != null) {
-                Platform.runLater(onComplete);
-            }
-        }).start();
-    }
-
-    public void movePlayerOnSnakeOrLadder(int endTileId, Player player) {
-        ImageView token = playerTokens.get(player);
-        Platform.runLater(() -> placeTokenOnTile(endTileId, token));
-    }
-
-    public void disableRollButton() {
-        rollDiceButton.setDisable(true);
-    }
-
-    public void enableRollButton() {
-        rollDiceButton.setDisable(false);
-    }
-
-    public void announceWinner(Player winner) {
-        disableRollButton();
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("The game is over!");
-        alert.setHeaderText("Winner");
-        alert.setContentText("Congratulations, " + winner.getName() + "! You've won the game!");
-        alert.showAndWait();
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void updateCurrentPlayerView(Player currentPlayer) {
-        for (Map.Entry<Player, VBox> entry : playerDisplayBoxes.entrySet()) {
-            Player player = entry.getKey();
-            VBox box = entry.getValue();
-
-            // Fjern stilklassen for alle
+        else {
             box.getStyleClass().remove("current-player");
+        }
+        for (var n : box.getChildren())
+            if (n instanceof Label l && l.getStyleClass().contains("turn-indicator"))
+                l.setVisible(playerView.hasTurn());
+        if (playerView.hasTurn()) {
+            ImageView t = tokenUI.get(playerView.token());
+            DropShadow glow = new DropShadow(20, javafx.scene.paint.Color.GOLD); glow.setSpread(0.5);
+            t.setEffect(glow);
+        } else {
+            tokenUI.get(playerView.token()).setEffect(null);
+        }
+    }
 
-            // Fjern glow fra token
-            ImageView token = playerTokens.get(player);
-            token.setEffect(null);
+    /* ---------- tile helpers ---------- */
+    private void placeTokenOnTile(int id, ImageView token) {
+        if (!tokenPane.getChildren().contains(token)) tokenPane.getChildren().add(token);
+        StackPane tile = tileUI.get(id);
+        Point2D c = tileCenter(tile);
+        token.setLayoutX(c.getX()-token.getFitWidth()/2);
+        token.setLayoutY(c.getY()-token.getFitHeight()/2);
+    }
 
-            // Finn den innebygde turn-indicator labelen hvis den finnes
-            for (javafx.scene.Node node : box.getChildren()) {
-                if (node instanceof Label && node.getStyleClass().contains("turn-indicator")) {
-                    node.setVisible(player.equals(currentPlayer));
-                }
-            }
+    private Point2D tileCenter(StackPane tile) {
+        Bounds b = tile.getBoundsInParent();
+        return new Point2D(b.getMinX()+b.getWidth()/2, b.getMinY()+b.getHeight()/2);
+    }
 
-            // Dersom dette er spilleren som har tur
-            if (player.equals(currentPlayer)) {
-                box.getStyleClass().add("current-player");
-
-                // Legg til glow på token
-                DropShadow glow = new DropShadow(20, javafx.scene.paint.Color.GOLD);
-                glow.setSpread(0.5);
-                token.setEffect(glow);
-            }
+    private void setWidthHeight(int size) {
+        switch (size) {
+            case 64 -> { width = 8;  height = 8; }
+            case 90 -> { width = 9;  height = 10;}
+            case 120 -> { width = 10; height = 12;}
+            default -> throw new IllegalArgumentException("Unsupported board size " + size);
         }
     }
 }
-
-

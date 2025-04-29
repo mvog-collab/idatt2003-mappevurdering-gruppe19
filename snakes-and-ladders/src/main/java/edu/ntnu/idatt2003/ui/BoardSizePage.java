@@ -1,16 +1,11 @@
 package edu.ntnu.idatt2003.ui;
 
-import java.util.List;
-
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class BoardSizePage {
 
@@ -40,7 +35,7 @@ public class BoardSizePage {
 
     VBox boardPopup = new VBox(10, titleBox, buttonBox, statusBox);
 
-    VBox background = new VBox(70, boardPopup);
+    VBox root = new VBox(70, boardPopup);
 
     /* Title Styling */
     title.getStyleClass().add("popup-title");
@@ -58,13 +53,13 @@ public class BoardSizePage {
     buttonBox.setAlignment(Pos.CENTER);
     statusBox.setAlignment(Pos.CENTER);
     statusBox.setPadding(new Insets(40));
-    background.setAlignment(Pos.CENTER);
+    root.setAlignment(Pos.CENTER);
 
-    background.getStyleClass().add("page-background");
+    root.getStyleClass().add("page-background");
 
-    background.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+    root.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
     
-    return background;
+    return root;
   }
 
   public Button getSixtyFourTiles() {
