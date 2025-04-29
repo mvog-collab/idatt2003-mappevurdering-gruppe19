@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.ntnu.idatt2003.ui.OverlayParams;
+import edu.ntnu.idatt2003.utils.BoardAdapter;
 
 public interface GameGateway {
 
   void newGame(int boardSize);
+  void newGame(BoardAdapter.MapData data);
   void addPlayer(String name, String token, LocalDate birthday);
   void loadPlayers(List<String[]> rows);
   void savePlayers(java.nio.file.Path out) throws java.io.IOException;
