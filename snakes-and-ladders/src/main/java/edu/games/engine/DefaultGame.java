@@ -1,5 +1,6 @@
 package edu.games.engine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public final class DefaultGame implements Game {
         this.board = Objects.requireNonNull(board);
         this.rules = Objects.requireNonNull(rules);
         this.dice = new DiceService(numberOfDice);
-        this.players = List.copyOf(players);
+        this.players = new ArrayList<>();
         players.forEach(p -> p.moveTo(board.start()));
     }
 

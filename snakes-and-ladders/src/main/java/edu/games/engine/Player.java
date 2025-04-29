@@ -34,7 +34,7 @@ public final class Player {
         return currentTile;
     }
 
-    void moveTo(Tile tile) {
+    public void moveTo(Tile tile) {
         this.currentTile = Objects.requireNonNull(tile);
     }
 
