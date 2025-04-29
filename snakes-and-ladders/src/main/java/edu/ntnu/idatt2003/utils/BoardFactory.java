@@ -2,28 +2,42 @@ package edu.ntnu.idatt2003.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 
-import edu.ntnu.idatt2003.models.Board;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import edu.ntnu.idatt2003.dto.BoardDTO;
+import edu.ntnu.idatt2003.dto.TileDTO;
 
 public final class BoardFactory {
 
-    private static final JsonBoardHandler handler = new JsonBoardHandler();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private BoardFactory() { }
 
-    public static Board createBoardFromClassPath(String resourcePath) {
+    public static BoardAdapter.MapData loadFromClasspath(String resourcePath) {
+
         try (InputStream inputStream = BoardFactory.class.getResourceAsStream(resourcePath)) {
+
             if (inputStream == null) {
-                throw new IllegalArgumentException("Could not find: " + resourcePath);
+                throw new IllegalArgumentException("Resource not found: " + resourcePath);
             }
-            Path tmp = Files.createTempFile("board", ".json");
-            Files.copy(inputStream, tmp, StandardCopyOption.REPLACE_EXISTING);
-            return handler.load(tmp);
-            } catch (IOException e) {
-            throw new RuntimeException("Could not read file: ", e);
+
+            BoardDTO dto = MAPPER.readValue(inputStream, BoardDTO.class);
+
+            Map<Integer,Integer> snakes  = new HashMap<>();
+            Map<Integer,Integer> ladders = new HashMap<>();
+
+            for (TileDTO tile : dto.tiles()) {
+                if (tile.snakeTo()  != null) snakes .put(tile.id(), tile.snakeTo());
+                if (tile.ladderTo() != null) ladders.put(tile.id(), tile.ladderTo());
+            }
+
+            return new BoardAdapter.MapData(dto.size(), snakes, ladders);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read board JSON", e);
         }
     }
 }

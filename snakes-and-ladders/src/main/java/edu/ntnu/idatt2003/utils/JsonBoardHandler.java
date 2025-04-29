@@ -7,21 +7,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import edu.ntnu.idatt2003.dto.BoardDTO;
-import edu.ntnu.idatt2003.models.Board;
 
-public class JsonBoardHandler implements FileHandler<Board>{
+public class JsonBoardHandler implements FileHandler<BoardAdapter.MapData> {
 
     private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
     @Override
-    public void save(Board board, Path path) throws IOException {
-        BoardDTO dto = BoardAdapter.toDto(board);
-        mapper.writeValue(path.toFile(), dto);
+    public void save(BoardAdapter.MapData data, Path out) throws IOException {
+        mapper.writeValue(out.toFile(),
+            BoardAdapter.toDto(data.size(), data.snakes(), data.ladders()));
     }
 
     @Override
-    public Board load(Path path) throws IOException {
-        BoardDTO dto = mapper.readValue(path.toFile(), BoardDTO.class);
+    public BoardAdapter.MapData load(Path in) throws IOException {
+        BoardDTO dto = mapper.readValue(in.toFile(), BoardDTO.class);
         return BoardAdapter.fromDto(dto);
     }
 }
