@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2003;
 
 import edu.ntnu.idatt2003.ui.view.SnlPage;
+import edu.ntnu.idatt2003.utils.Errors;
 
 public class Main  {
 
@@ -14,5 +15,7 @@ public class Main  {
 
     public static void main(String[] args) {
         SnlPage.launch(args);
+        Thread.setDefaultUncaughtExceptionHandler((t, e) ->
+        Errors.handle("Unexpected problem – please restart the game.", (Exception) e));
     }
 }

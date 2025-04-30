@@ -4,6 +4,7 @@ import edu.ntnu.idatt2003.gateway.GameGateway;
 import edu.ntnu.idatt2003.gateway.SnlGateway;
 import edu.ntnu.idatt2003.gateway.SnlGatewayFactory;
 import edu.ntnu.idatt2003.ui.controller.SnlPageController;
+import edu.ntnu.idatt2003.utils.Dialogs;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -92,11 +93,8 @@ public class SnlPage extends Application {
   }
 
   public void alertUserAboutUnfinishedSetup() {
-    Alert alert = new Alert(Alert.AlertType.WARNING);
-    alert.setTitle("Incomplete Setup");
-    alert.setHeaderText("Game setup is incomplete");
-    alert.setContentText("Please complete the game setup by selecting a board and adding at least one player before starting the game.");
-    alert.showAndWait();
+    Dialogs.warn("Incomplete game setup",
+    "Please complete the game setup by selecting a board and adding at least one player before starting the game.");
   }
 
   public void disableStartButton() {

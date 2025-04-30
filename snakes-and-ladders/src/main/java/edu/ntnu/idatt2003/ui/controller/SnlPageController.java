@@ -6,6 +6,7 @@ import edu.ntnu.idatt2003.ui.view.BoardView;
 import edu.ntnu.idatt2003.ui.view.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.view.SettingsPage;
 import edu.ntnu.idatt2003.ui.view.SnlPage;
+import edu.ntnu.idatt2003.utils.Dialogs;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Modality;
@@ -92,8 +93,7 @@ public class SnlPageController {
         view.getResetGameButton().setOnAction(e -> {
             gameGateway.newGame(gameGateway.boardSize());
             refreshUi();
-            new Alert(Alert.AlertType.INFORMATION,
-                      "Game has been reset. Pick players and start again.").showAndWait();
+            Dialogs.info("Reset game", "Game has been reset. Pick players and start again.");
         });
     }
 
@@ -127,11 +127,7 @@ public class SnlPageController {
     }
 
     private void showResetConfirmation() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game Reset");
-        alert.setHeaderText(null);
-        alert.setContentText("The game has been reset successfully. Please choose a board to continue.");
-        alert.showAndWait();
+        Dialogs.info("Game reset", "The game has been reset successfully. Please choose a board to continue");
     }
 
     private Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {

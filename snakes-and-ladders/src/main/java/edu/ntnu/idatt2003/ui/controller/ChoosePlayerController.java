@@ -7,6 +7,8 @@ import edu.ntnu.idatt2003.gateway.GameGateway;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
 import edu.ntnu.idatt2003.ui.view.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.view.LoadedPlayersPage;
+import edu.ntnu.idatt2003.utils.Dialogs;
+import edu.ntnu.idatt2003.utils.Errors;
 import edu.ntnu.idatt2003.utils.csv.PlayerCsv;
 
 import java.util.ArrayList;
@@ -54,7 +56,7 @@ public class ChoosePlayerController implements BasePopupController {
                       || token == null || token.isEmpty();
 
       if (invalid) {
-          alert("Please choose a valid name, birthday and token.");
+          alert("Invalid setup", "Please choose a valid name, birthday and token.");
           return;
       }
 
@@ -114,7 +116,7 @@ public class ChoosePlayerController implements BasePopupController {
                                    .toList();
           PlayerCsv.save(rows, out.toPath());
       } catch (IOException ex) {
-          alert("Could not save players: " + ex.getMessage());
+          alert("Invalid player save", "Could not save players: " + ex.getMessage());
       }
   }
 
@@ -143,7 +145,7 @@ public class ChoosePlayerController implements BasePopupController {
         pop.showAndWait();
 
     } catch (IOException ex) {
-        alert("Could not load players: " + ex.getMessage());
+        Errors.handle("Could not load players from file.", ex);
     }
 }
 
@@ -202,8 +204,8 @@ public class ChoosePlayerController implements BasePopupController {
     ((Stage) view.getContinueButton().getScene().getWindow()).close();
   }
 
-  private static void alert(String message) {
-    new Alert(Alert.AlertType.WARNING, message).showAndWait();
+  private static void alert(String header, String message) {
+    Dialogs.warn(header, message);
   }
     
 }

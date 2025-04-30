@@ -2,6 +2,7 @@ package edu.ntnu.idatt2003.ui.view;
 
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
 import edu.ntnu.idatt2003.ui.fx.OverlayParams;
+import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -87,8 +88,7 @@ public class BoardView {
 
     public void announceWinner(String name) {
         disableRollButton();
-        new Alert(Alert.AlertType.INFORMATION,
-                  "Congratulations, " + name + "! You won the game").showAndWait();
+        Dialogs.info("Winner!", "Congratulations, " + name + "! You won the game");
     }
 
     /* ------------------------------------------------------------------
