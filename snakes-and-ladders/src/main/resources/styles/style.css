@@ -51,6 +51,10 @@
     -fx-spacing: 5px;
     -fx-alignment: center;
     -fx-background-color: transparent;
+    -fx-pref-width: 220;
+    -fx-min-width: 200;
+    -fx-alignment: CENTER;
+    -fx-spacing: 18;
 }
 
 /* Dice Box */

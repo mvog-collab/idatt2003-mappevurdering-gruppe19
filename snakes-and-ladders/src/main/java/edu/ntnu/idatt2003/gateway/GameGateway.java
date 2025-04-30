@@ -2,10 +2,10 @@ package edu.ntnu.idatt2003.gateway;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-import edu.ntnu.idatt2003.ui.OverlayParams;
-import edu.ntnu.idatt2003.utils.BoardAdapter;
+import edu.ntnu.idatt2003.gateway.view.PlayerView;
+import edu.ntnu.idatt2003.persistence.BoardAdapter;
+import edu.ntnu.idatt2003.ui.fx.OverlayParams;
 
 public interface GameGateway {
 
@@ -23,4 +23,5 @@ public interface GameGateway {
   int                boardSize();
   List<OverlayParams> boardOverlays();
   List<PlayerView>    players();            // name, token, tileId, isTurn
+  List<Integer> lastDiceValues();
 }
