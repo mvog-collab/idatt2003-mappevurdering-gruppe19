@@ -1,0 +1,31 @@
+package edu.ntnu.idatt2003.persistence;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import edu.games.engine.model.Player;
+import edu.games.engine.model.Token;
+import edu.ntnu.idatt2003.model.dto.PlayerDTO;
+
+public final class PlayerAdapter {
+
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
+
+    private PlayerAdapter() { }
+
+    public static PlayerDTO toDto(Player player) {
+        return new PlayerDTO(
+                player.getName(),
+                player.getToken().name(),
+                dateFormatter.format(player.getBirtday())
+        );
+    }
+
+    public static Player fromDto(PlayerDTO dto) {
+        return new Player(
+                dto.name(),
+                Token.valueOf(dto.token()),
+                LocalDate.parse(dto.birthday(), dateFormatter)
+        );
+    }
+}
