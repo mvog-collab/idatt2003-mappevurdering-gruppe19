@@ -1,5 +1,6 @@
 package edu.games.engine.rule;
 
+import java.util.List;
 import java.util.Map;
 
 import edu.games.engine.board.Board;
@@ -22,25 +23,21 @@ public final class SnlRuleEngine implements RuleEngine {
     }
   
     @Override
-    public boolean apply(Board board, Player player, int rolled) {
-      int playerPosition = player.getCurrentTile().id();
-      Integer tail = snakes.get(playerPosition);
-      Integer top  = ladders.get(playerPosition);
-      if (tail != null || top != null) {
-        int dest = tail != null ? tail : top;
-        String type = tail != null ? "snake" : "ladder";
+    public boolean apply(Board board, Player player, List<Integer> dice) {
 
-        Log.rules().info(() ->
-            "%s hits a %s: %d -> %d"
-            .formatted(player.getName(), type, playerPosition, dest));
-        LinearBoard linearBoard = (LinearBoard) board;              // safe: SnL uses linear
-        player.moveTo(linearBoard.tile(dest));
-      }
-  
-      return switch (extraTurn) {
-        case NONE            -> false;
-        case EVEN_BUT_NOT_12 -> rolled % 2 == 0 && rolled != 12;
-        case ON_SIX          -> rolled == 6;
-      };
+        int sum = dice.stream().mapToInt(Integer::intValue).sum();
+        boolean doubleTurn = dice.size() == 2 && dice.get(0).equals(dice.get(1));
+
+        if (sum == 12) return false;
+
+        if (sum > 0) {
+            int position = player.getCurrentTile().id();
+            Integer to = snakes.get(position);
+            if (to == null) to = ladders.get(position);
+            if (to != null) player.moveTo(((LinearBoard) board).tile(to));
+        }
+
+        /* c) Ekstra tur kun på «doubles» (ikke 12) ------------------------- */
+        return doubleTurn;
     }
   }
