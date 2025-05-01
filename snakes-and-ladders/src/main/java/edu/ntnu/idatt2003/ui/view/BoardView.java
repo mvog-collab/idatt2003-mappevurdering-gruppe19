@@ -10,7 +10,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -27,6 +26,8 @@ import java.util.*;
 public class BoardView {
 
     private static final int TILE_SIZE = 50;
+    private static final double START_OFFSET_X = -40;
+    private static final double START_OFFSET_Y =  0;
 
     private int width;
     private int height;
@@ -43,7 +44,8 @@ public class BoardView {
     private final Button rollButton  = new Button("Roll dice");
     private final Button againButton = new Button("Play again");
 
-    private ImageView die1Img, die2Img;
+    private ImageView die1Img;
+    private ImageView die2Img;
     private static final int DIE_SIDE = 50; 
 
     private VBox playersPanel;
@@ -296,7 +298,8 @@ public class BoardView {
 
     /* ---------- tile helpers ---------- */
     private void placeTokenOnTile(int id, ImageView token) {
-        int viewId = Math.min(id == 0 ? 1 : id, boardSize);
+        Platform.runLater(() -> placeTokenOnStart(id, token));
+        int viewId = Math.min(id, boardSize);                // id==0 håndtert over
         StackPane tile = tileUI.get(viewId);
         if (tile == null) return;
 
@@ -306,6 +309,18 @@ public class BoardView {
         Point2D c = tileCenter(tile);
         token.setLayoutX(c.getX() - token.getFitWidth()  / 2);
         token.setLayoutY(c.getY() - token.getFitHeight() / 2);
+    }
+
+    private void placeTokenOnStart(int id, ImageView token) {
+        if (id == 0) {
+            StackPane tile1 = tileUI.get(1);
+            Point2D c = tileCenter(tile1);
+    
+            token.setLayoutX(c.getX() + START_OFFSET_X - token.getFitWidth()  / 2);
+            token.setLayoutY(c.getY() + START_OFFSET_Y - token.getFitHeight() / 2);
+            if (!tokenPane.getChildren().contains(token))
+                tokenPane.getChildren().add(token);
+        }
     }
 
     private Point2D tileCenter(StackPane tile) {
