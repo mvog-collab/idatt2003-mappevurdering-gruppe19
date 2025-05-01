@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import edu.games.engine.board.Board;
-import edu.games.engine.board.LinearTile;
 import edu.games.engine.board.Tile;
 import edu.games.engine.dice.Dice;
 import edu.games.engine.model.Game;
@@ -31,30 +30,32 @@ public final class DefaultGame implements Game {
         players.forEach(p -> p.moveTo(board.start()));
     }
 
-    @Override 
-    public int playTurn() {
-        if (winner != null) return 0;                // already finished
-        Player currentPlayer = currentPlayer();
-    
-        int rolledValue = dice.roll();
-        Tile destinationTile = board.move(currentPlayer.getCurrentTile(), rolledValue);
-        Log.game().info(() ->
-            "%s moves from %d to %d"
-            .formatted(currentPlayer.getName(),
-                      currentPlayer.getCurrentTile().id(),
-                      ((LinearTile) destinationTile).id()));
-        currentPlayer.moveTo(destinationTile);
-    
-        boolean extra = rules.apply(board, currentPlayer, rolledValue);
-        if (!extra) {
-          currentIndex = (currentIndex + 1) % players.size();
-        }
+  @Override
+  public int playTurn() {
+      if (winner != null) return 0;
 
-        if (board.isEnd(destinationTile)) {
-            winner = currentPlayer;
-        }
-        return rolledValue;
+      Player currentPlayer = currentPlayer();
+      int rolledValue = dice.roll();
+
+      int moveSteps = (rolledValue == 12) ? 0 : rolledValue;
+      if (moveSteps > 0) {
+          Tile destinationTile = board.move(currentPlayer.getCurrentTile(), rolledValue);
+          currentPlayer.moveTo(destinationTile);
       }
+
+      boolean extraTurn = rules.apply(board, currentPlayer, dice.lastValues());
+
+      bumpIfOccupied(currentPlayer);
+
+      if (!extraTurn) {
+          currentIndex = (currentIndex + 1) % players.size();
+      }
+
+      if (board.isEnd(currentPlayer.getCurrentTile())) {
+          winner = currentPlayer;
+      }
+      return rolledValue;
+  }
     
       @Override 
       public Player currentPlayer() {
@@ -69,6 +70,21 @@ public final class DefaultGame implements Game {
       @Override 
       public List<Player> players() { 
         return players;
+      }
+
+      private void bumpIfOccupied(Player moved) {
+
+        Tile dest = moved.getCurrentTile();
+    
+        players.stream()
+               .filter(p -> p != moved)
+               .filter(p -> p.getCurrentTile().equals(dest))
+               .forEach(p -> {
+                   p.moveTo(board.start());
+                   Log.game().info(() -> 
+                       "%s bumps %s back to start"
+                       .formatted(moved.getName(), p.getName()));
+               });
       }
 
       public void setCurrentPlayerIndex(int idx) {
