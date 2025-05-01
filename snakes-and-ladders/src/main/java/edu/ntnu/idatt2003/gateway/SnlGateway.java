@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
 
-import edu.games.engine.*;
 import edu.games.engine.board.Board;
 import edu.games.engine.board.LinearBoard;
 import edu.games.engine.board.LinearTile;
@@ -78,6 +77,15 @@ public final class SnlGateway implements GameGateway {
     RuleEngine  rules = new SnlRuleEngine(data.snakes(), data.ladders(), ruleConfig.extraTurn());
     Dice dice = new RandomDice(2);
     game = new DefaultGame(board, rules, new ArrayList<>(), dice);
+  }
+
+  @Override
+  public void resetGame() {
+      if (game == null) return;
+      game.winner().ifPresent(w -> {});
+      game.players().forEach(p -> p.moveTo(game.board().start()));
+
+      game.setCurrentPlayerIndex(0);
   }
 
   @Override

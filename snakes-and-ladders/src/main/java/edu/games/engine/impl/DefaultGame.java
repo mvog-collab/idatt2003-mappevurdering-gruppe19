@@ -71,6 +71,11 @@ public final class DefaultGame implements Game {
         return players;
       }
 
+      public void setCurrentPlayerIndex(int idx) {
+        if (players.isEmpty()) return;
+        currentIndex = Math.floorMod(idx, players.size());
+      }
+
       public Board board() {
         return board;
       }

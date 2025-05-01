@@ -1,6 +1,5 @@
 package edu.ntnu.idatt2003.gateway;
 
-import edu.games.engine.*;
 import edu.games.engine.board.factory.JsonBoardLoader;
 import edu.games.engine.board.factory.LinearBoardFactory;
 import edu.games.engine.dice.factory.DiceFactory;
