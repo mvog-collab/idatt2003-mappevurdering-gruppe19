@@ -8,7 +8,6 @@ import edu.ntnu.idatt2003.ui.view.SettingsPage;
 import edu.ntnu.idatt2003.ui.view.SnlPage;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -61,7 +60,7 @@ public class SnlPageController {
             var root = page.getView();
             new ChoosePlayerController(page, gameGateway);
 
-            createModalPopup("Choose players", root, 800, 700).showAndWait();
+            createModalPopup("Choose players", root, 1000, 800).showAndWait();
             refreshUi();
         });
     }
@@ -93,7 +92,8 @@ public class SnlPageController {
         view.getResetGameButton().setOnAction(e -> {
             gameGateway.newGame(gameGateway.boardSize());
             refreshUi();
-            Dialogs.info("Reset game", "Game has been reset. Pick players and start again.");
+            
+            showResetConfirmation();
         });
     }
 
@@ -122,7 +122,7 @@ public class SnlPageController {
 
     private void refreshUi() {
         boolean ready = gameGateway.players().size() >= 2;
-        view.getChoosePlayerButton().setDisable(false);
+        updateUIAfterReset();
         view.getStartButton().setDisable(!ready);
     }
 

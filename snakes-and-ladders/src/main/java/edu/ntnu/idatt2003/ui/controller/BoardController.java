@@ -21,11 +21,11 @@ public class BoardController {
         int startId        = current.tileId();
 
         int rolled = gameGateway.rollDice();
-        int d1 = gameGateway.lastDiceValues().get(0);   // ≈ legg ev. til en  getter i gateway
+        int d1 = gameGateway.lastDiceValues().get(0);
         int d2 = gameGateway.lastDiceValues().get(1);
         view.showDice(d1, d2);
     
-        int destId  = startId + rolled;                 // animation only (gateway will adjust)
+        int destId  = startId + rolled;
     
         view.animateMove(current.token(), startId, destId, () -> {
           refreshTokens();
@@ -38,7 +38,7 @@ public class BoardController {
       }
 
     public void resetGame() {
-        gameGateway.newGame(gameGateway.boardSize());
+        gameGateway.resetGame();
         refreshTokens();
     }
 

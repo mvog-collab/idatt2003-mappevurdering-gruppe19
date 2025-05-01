@@ -11,6 +11,7 @@ public interface GameGateway {
 
   void newGame(int boardSize);
   void newGame(BoardAdapter.MapData data);
+  void resetGame();
   void addPlayer(String name, String token, LocalDate birthday);
   void loadPlayers(List<String[]> rows);
   void savePlayers(java.nio.file.Path out) throws java.io.IOException;

@@ -80,6 +80,15 @@ public final class SnlGateway implements GameGateway {
   }
 
   @Override
+  public void resetGame() {
+      if (game == null) return;
+      game.winner().ifPresent(w -> {});
+      game.players().forEach(p -> p.moveTo(game.board().start()));
+
+      game.setCurrentPlayerIndex(0);
+  }
+
+  @Override
   public void addPlayer(String name, String token, LocalDate birthday) {
     Objects.requireNonNull(game,"call newGame first");
     Player newPlayer = new Player(name, Objects.requireNonNull(TOKEN_MAP.get(token)), birthday); // add throw for TOKEN_MAP
