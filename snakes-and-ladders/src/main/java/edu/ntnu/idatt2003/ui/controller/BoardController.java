@@ -17,28 +17,30 @@ public class BoardController {
 
     public void playTurn() {
         view.disableRollButton();
+    
         PlayerView current = playerWithTurn().orElseThrow();
-        int startId        = current.tileId();
-
+        String token   = current.token();
+        int    startId = current.tileId();
+    
         int rolled = gameGateway.rollDice();
-        int d1 = gameGateway.lastDiceValues().get(0);
-        int d2 = gameGateway.lastDiceValues().get(1);
-        view.showDice(d1, d2);
+        var dice   = gameGateway.lastDiceValues();
+        view.showDice(dice.get(0), dice.get(1));
     
-        int destId  = startId + rolled;
+        int pathEndId = Math.min(startId + rolled, gameGateway.boardSize());
     
-        view.animateMove(current.token(), startId, destId, () -> {
-          refreshTokens();
-          if (gameGateway.hasWinner()){
-              view.announceWinner(current.name());
-              return;
+        view.animateMove(token, startId, pathEndId, () -> {
+            refreshTokens();
+            if (gameGateway.hasWinner()) {
+                view.announceWinner(current.name());
+            } else {
+                view.enableRollButton();
             }
-            view.enableRollButton();
         });
-      }
+    }
 
     public void resetGame() {
         gameGateway.resetGame();
+        view.enableRollButton();
         refreshTokens();
     }
 
