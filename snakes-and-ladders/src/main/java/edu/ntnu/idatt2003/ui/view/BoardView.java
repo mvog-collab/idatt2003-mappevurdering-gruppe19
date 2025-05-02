@@ -198,6 +198,10 @@ public class BoardView {
         String imgDir = ResourcePaths.IMAGE_DIR;
         die1Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "2.png")));
         die2Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "5.png")));
+
+        die1Img.setRotate(-5);
+        die2Img.setRotate(25);
+
         for (ImageView iv : List.of(die1Img, die2Img)) {
             iv.setFitWidth(DIE_SIDE);
             iv.setFitHeight(DIE_SIDE);
