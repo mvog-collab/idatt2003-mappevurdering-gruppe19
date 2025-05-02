@@ -1,4 +1,3 @@
-package edu.ntnu.idatt2003.ui.controller;
 // package edu.ntnu.idatt2003.controllers;
 
 // import edu.ntnu.idatt2003.ui.SettingsPage;
