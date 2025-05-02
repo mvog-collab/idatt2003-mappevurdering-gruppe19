@@ -23,7 +23,6 @@ public final class LinearBoard implements Board {
       }
     }
   
-    /** convenience ctor used by adapters that already have tiles */
     public LinearBoard(Map<Integer, LinearTile> tiles) { 
         this.tiles.putAll(tiles); 
     }

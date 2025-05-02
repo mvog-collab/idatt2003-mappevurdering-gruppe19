@@ -8,9 +8,7 @@ import edu.games.engine.board.Tile;
 import edu.games.engine.model.LudoColor;
 import edu.games.engine.model.Player;
 
-// ----------------------------------------------------------------------------
-// LudoRuleEngine – minimal SRP implementation
-// ----------------------------------------------------------------------------
+
 public final class LudoRuleEngine implements RuleEngine {
 
     private final LudoPath path;
@@ -20,18 +18,15 @@ public final class LudoRuleEngine implements RuleEngine {
     @Override
     public boolean apply(Board board, Player player, List<Integer> dice) {
 
-        int roll   = dice.getFirst();      // single die
+        int roll   = dice.getFirst();
         boolean again = roll == 6;
 
-        /* 1) yard rule -------------------------------------------------- */
         if (player.getCurrentTile() == null && roll != 6) return false;
 
-        /* 2) move ------------------------------------------------------- */
         LudoColor col = LudoColor.valueOf(player.getToken().name());
         Tile dest     = path.next(player.getCurrentTile(), roll, col);
         player.moveTo(dest);
 
-        /* 3) capture is handled by DefaultGame.bumpIfOccupied() --------- */
         return again;
     }
 }

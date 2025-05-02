@@ -16,7 +16,6 @@ public final class LudoRingTile implements LudoTile {
         return id;
     }
 
-    /* package‑private setters used by LudoPath while wiring the graph */
     public void next(LudoTile next)         {
         this.next = next;
     }
@@ -30,7 +29,6 @@ public final class LudoRingTile implements LudoTile {
         return goalEntry != null && ownerSquare(owner) ? goalEntry : next;
     }
 
-    /** true if this square is the owner’s entry into goal lane */
     private boolean ownerSquare(LudoColor owner) {
         return switch (owner) {
             case BLUE   -> id == 0;

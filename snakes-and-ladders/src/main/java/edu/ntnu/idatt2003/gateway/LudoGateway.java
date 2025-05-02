@@ -26,16 +26,14 @@ import edu.ntnu.idatt2003.utils.Log;
 
 public final class LudoGateway implements GameGateway {
 
-    /* ------------------------------------------------------------------
-       Dependencies (identical pattern to SnlGateway)
-    ------------------------------------------------------------------ */
+
     private final DiceFactory   diceFactory;
     private final PlayerStore   playerStore;
     private final OverlayProvider overlayProvider;
 
     private final Map<Integer, List<OverlayParams>> overlayCache = new HashMap<>();
     private final RuleConfig ruleConfig = new RuleConfig(RuleConfig.ExtraTurnPolicy.ON_SIX);
-    private       List<Integer> lastDice = List.of(1);      // one die
+    private       List<Integer> lastDice = List.of(1);
 
     private DefaultGame game;
 
@@ -45,9 +43,6 @@ public final class LudoGateway implements GameGateway {
         "RED",    Token.RED,
         "PURPLE", Token.PURPLE);
 
-    /* ------------------------------------------------------------------
-       ctor – supply concrete factories; keep one static factory method
-    ------------------------------------------------------------------ */
     public LudoGateway(DiceFactory diceFactory,
                        PlayerStore playerStore,
                        OverlayProvider overlayProvider) {
@@ -56,17 +51,13 @@ public final class LudoGateway implements GameGateway {
         this.overlayProvider = overlayProvider;
     }
 
-    /** convenience for UI: build with sensible defaults */
     public static LudoGateway createDefault() {
         return new LudoGateway(
-                new edu.games.engine.dice.factory.RandomDiceFactory(1), // one die
+                new edu.games.engine.dice.factory.RandomDiceFactory(1),
                 new CsvPlayerStore(),
                 new JsonOverlayProvider("/overlays/"));
     }
 
-    /* ------------------------------------------------------------------
-       GameGateway – COMMANDS
-    ------------------------------------------------------------------ */
     @Override
     public void newGame(int ignored) {
         LudoPath path = new LudoPath();
@@ -76,7 +67,6 @@ public final class LudoGateway implements GameGateway {
         game = new DefaultGame(board, rules, new ArrayList<>(), dice);
     }
 
-    /** Not supported – keep to satisfy interface but delegate to default */
     @Override
     public void newGame(BoardAdapter.MapData data) {
       newGame(0);
@@ -85,7 +75,7 @@ public final class LudoGateway implements GameGateway {
     @Override
     public void resetGame() {
         if (game == null) return;
-        game.players().forEach(p -> p.moveTo(null));        // yard
+        game.players().forEach(p -> p.moveTo(null));
         game.setCurrentPlayerIndex(0);
     }
 
@@ -93,7 +83,7 @@ public final class LudoGateway implements GameGateway {
     public void addPlayer(String name, String token, LocalDate birthday) {
         Objects.requireNonNull(game,"Call newGame before adding players");
         Player p = new Player(name, TOKEN_MAP.get(token), birthday);
-        p.moveTo(null);                                     // starts in yard
+        p.moveTo(null);
         game.players().add(p);
     }
 
@@ -115,9 +105,6 @@ public final class LudoGateway implements GameGateway {
         return sum;
     }
 
-    /* ------------------------------------------------------------------
-       GameGateway – QUERIES
-    ------------------------------------------------------------------ */
     @Override
     public boolean hasWinner()         {
       return game.winner().isPresent();
@@ -128,11 +115,10 @@ public final class LudoGateway implements GameGateway {
       return game.currentPlayer().getName();
     }
 
-    /** board is fixed (52+goal) → return 57 so UI can size dice‑path safely */
     @Override
     public int boardSize() {
       return 57;
-    }         // 0 start + 51 ring + 6 goal
+    }
 
     @Override
     public List<OverlayParams> boardOverlays() {
