@@ -14,13 +14,10 @@ import javafx.stage.Stage;
 
 public class HomePage extends Application {
 
+
   @Override
   public void start(Stage stage) {
     show(stage);
-  }
-
-  public static void main(String[] args) {
-    launch(args);
   }
 
   public void show(Stage stage) {
@@ -35,8 +32,10 @@ public class HomePage extends Application {
 
     laddersBtn.setOnMouseClicked((MouseEvent e) -> {
       try {
-        new SnlPage().start(new Stage());
-        ((Stage) ((ImageView) e.getSource()).getScene().getWindow()).close(); // Lukk startvinduet
+
+        SnlPage snlPage = new SnlPage();
+        stage.setScene(snlPage.getScene());
+
       } catch (Exception ex) {
         ex.printStackTrace();
       }
