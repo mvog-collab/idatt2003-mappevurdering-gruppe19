@@ -39,8 +39,8 @@ public final class LinearBoard implements Board {
           throw new IllegalArgumentException("steps < 0");
       }
       LinearTile tile = cast(from);
-      for (int i = 0; i < steps && tile.next != null; i++) {
-        tile = tile.next;
+      for (int i = 0; i < steps && tile.next() != null; i++) {
+        tile = tile.next();
       }
       return tile;
     }
@@ -58,6 +58,6 @@ public final class LinearBoard implements Board {
 
     @Override
     public boolean isEnd(Tile tile) {
-      return cast(tile).next == null;
+      return cast(tile).next() == null;
     }
   }

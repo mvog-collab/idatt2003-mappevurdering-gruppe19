@@ -17,7 +17,7 @@ public class BoardSizePage {
   private Button continueButton;
   private Button saveBoardButton;
   
-  public VBox getBoardSizeView(){
+  public VBox getBoardSizeView() {
     Label title = new Label("Choose Board");
     VBox titleBox = new VBox(title);
 

@@ -4,7 +4,7 @@ public class LinearTile implements Tile {
     private final int id;
     LinearTile next;
 
-        public LinearTile (int id) {
+    public LinearTile (int id) {
         this.id = id;
     }
 
@@ -12,4 +12,9 @@ public class LinearTile implements Tile {
     public int id() {
         return id;
     }
+
+    public LinearTile next() {
+        return next;
+    }
+
 }
