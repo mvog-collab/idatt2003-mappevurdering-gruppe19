@@ -1,26 +1,21 @@
 package edu.ntnu.idatt2003.ui.view;
 
 import edu.ntnu.idatt2003.gateway.GameGateway;
-import edu.ntnu.idatt2003.gateway.SnlGateway;
 import edu.ntnu.idatt2003.gateway.SnlGatewayFactory;
 import edu.ntnu.idatt2003.ui.controller.SnlPageController;
 import edu.ntnu.idatt2003.utils.Dialogs;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.layout.*;
 
-public class SnlPage extends Application {
+public class SnlPage {
 
+  private Scene scene;
   private Button startButton;
   private Button choosePlayerButton;
   private Button chooseBoardButton;
@@ -29,10 +24,17 @@ public class SnlPage extends Application {
   private ChoosePlayerPage choosePlayerPage;
   private BoardSizePage boardSizePage;
 
-  @Override
-  public void start(Stage primaryStage) throws Exception {
+  public SnlPage() {
+    buildUI();
+  }
 
+  public Scene getScene() {
+    return scene;
+  }
+
+  private void buildUI() {
     GameGateway gameGateway = SnlGatewayFactory.createDefault();
+
     Label title = new Label("Snakes & Ladders");
     VBox titleBox = new VBox(title);
 
@@ -44,9 +46,9 @@ public class SnlPage extends Application {
     settingsButton = new Button();
     settingsButton.setGraphic(new ImageView(new Image("images/settings.png")));
     resetGameButton = new Button("Reset game");
-    VBox menu = new VBox(chooseBoardButton, choosePlayerButton, startButton, resetGameButton);
 
-    SnlPageController startPageController = new SnlPageController(this, gameGateway);
+    VBox menu = new VBox(chooseBoardButton, choosePlayerButton, startButton, resetGameButton);
+    new SnlPageController(this, gameGateway);
 
     Image snakeAndLadderImage = new Image(getClass().getResource("/images/snakeAndLadder.png").toExternalForm());
     ImageView imageView = new ImageView(snakeAndLadderImage);
@@ -55,10 +57,8 @@ public class SnlPage extends Application {
     imageView.setPreserveRatio(true);
 
     StackPane image = new StackPane(imageView);
-
     VBox leftSide = new VBox(titleBox, image);
 
-    /* Button menu styling */
     menu.setSpacing(50);
     menu.getStyleClass().add("menu-start-buttons");
     menu.setAlignment(Pos.CENTER_RIGHT);
@@ -69,8 +69,6 @@ public class SnlPage extends Application {
     resetGameButton.getStyleClass().add("exit-button");
     settingsButton.getStyleClass().add("icon-button");
 
-
-    /* Main Start page */
     HBox mainStartPage = new HBox(leftSide, menu);
     mainStartPage.getStyleClass().add("page-background");
 
@@ -78,23 +76,16 @@ public class SnlPage extends Application {
     StackPane.setAlignment(settingsButton, Pos.TOP_RIGHT);
     StackPane.setMargin(settingsButton, new Insets(10));
 
-
-    /* Label title styling */
     title.getStyleClass().add("start-page-title");
     title.setAlignment(Pos.CENTER_LEFT);
 
-    /* Scene */
-    Scene scene = new Scene(layout, 1000, 700);
-
+    scene = new Scene(layout, 1000, 700);
     scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-    primaryStage.setTitle("Snakes and ladders");
-    primaryStage.setScene(scene);
-    primaryStage.show();
   }
 
   public void alertUserAboutUnfinishedSetup() {
     Dialogs.warn("Incomplete game setup",
-    "Please complete the game setup by selecting a board and adding at least one player before starting the game.");
+        "Please complete the game setup by selecting a board and adding at least one player before starting the game.");
   }
 
   public void disableStartButton() {
@@ -102,7 +93,7 @@ public class SnlPage extends Application {
   }
 
   public void enableStartButton() {
-      startButton.setDisable(false);
+    startButton.setDisable(false);
   }
 
   public void disableChoosePlayerButton() {
@@ -110,7 +101,7 @@ public class SnlPage extends Application {
   }
 
   public void enableChoosePlayerButton() {
-      choosePlayerButton.setDisable(false);
+    choosePlayerButton.setDisable(false);
   }
 
   public void disableChooseBoardButton() {
@@ -124,27 +115,28 @@ public class SnlPage extends Application {
   public Button getStartButton() {
     return startButton;
   }
-  
+
   public Button getChoosePlayerButton() {
     return choosePlayerButton;
   }
-  
+
   public Button getChooseBoardButton() {
     return chooseBoardButton;
   }
 
   public Button getSettingsButton() {
-    return settingsButton; }
+    return settingsButton;
+  }
 
-  public Button getResetGameButton() { return resetGameButton; }
-  
+  public Button getResetGameButton() {
+    return resetGameButton;
+  }
+
   public ChoosePlayerPage getChoosePlayerPage() {
     return choosePlayerPage;
   }
-  
+
   public BoardSizePage getBoardSizePage() {
     return boardSizePage;
   }
-  
-  public static void main(String[] args) {launch(args);}
 }

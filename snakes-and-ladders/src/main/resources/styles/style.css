@@ -547,3 +547,11 @@
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+
+.home-page-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Comic Sans MS";
+}
+
