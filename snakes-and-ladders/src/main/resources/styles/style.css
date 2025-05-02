@@ -547,3 +547,16 @@
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+
+.menu-button-image {
+        -fx-cursor: hand;
+        -fx-effect: dropshadow(gaussian, black, 5, 0.2, 0, 2);
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+        -fx-transition: all 0.2s ease-in-out;
+}
+
+.menu-button-image:hover {
+        -fx-scale-x: 1.1;
+        -fx-scale-y: 1.1;
+}
