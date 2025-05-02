@@ -30,7 +30,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>edu.ntnu.idatt2003.ui.view.SnlPage</mainClass>
+          <mainClass>edu.ntnu.idatt2003.ui.view.LudoBoardView</mainClass>
           <modules>
             <module>javafx-controls</module>
             <module>javafx-graphics</module>
