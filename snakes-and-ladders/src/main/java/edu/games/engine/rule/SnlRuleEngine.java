@@ -37,7 +37,6 @@ public final class SnlRuleEngine implements RuleEngine {
             if (to != null) player.moveTo(((LinearBoard) board).tile(to));
         }
 
-        /* c) Ekstra tur kun på «doubles» (ikke 12) ------------------------- */
         return doubleTurn;
     }
   }
