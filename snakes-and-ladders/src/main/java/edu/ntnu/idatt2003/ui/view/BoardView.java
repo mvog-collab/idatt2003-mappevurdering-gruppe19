@@ -15,9 +15,13 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -48,7 +52,7 @@ public class BoardView {
     private ImageView die2Img;
     private static final int DIE_SIDE = 50; 
 
-    private VBox playersPanel;
+    private FlowPane playersPanel;
     private final HBox root;
 
     public BoardView(int boardSize) {
@@ -150,57 +154,87 @@ public class BoardView {
      *  private helpers – UI construction / effects
      * ------------------------------------------------------------------ */
 
-    private void buildBoardStatic(int boardSize, List<OverlayParams> overlays) {
+     private void buildBoardStatic(int boardSize, List<OverlayParams> overlays) {
         setWidthHeight(boardSize);
-
+    
+        double boardWidth  = width * TILE_SIZE;
+        double boardHeight = height * TILE_SIZE;
+    
         GridPane boardGrid = new GridPane();
-        boardGrid.setPrefSize(TILE_SIZE * width, TILE_SIZE * height);
-
-        overlayPane.setPickOnBounds(false);
-        overlayPane.setPrefSize(boardGrid.getPrefWidth(), boardGrid.getPrefHeight());
-        tokenPane.setPickOnBounds(false);
-        tokenPane.setPrefSize(boardGrid.getPrefWidth(), boardGrid.getPrefHeight());
-
+        boardGrid.getStyleClass().add("board-container");
+        boardGrid.setPrefSize(boardWidth, boardHeight);
+        boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    
+        overlayPane.setPrefSize(boardWidth, boardHeight);
+        overlayPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        overlayPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    
+        tokenPane.setPrefSize(boardWidth, boardHeight);
+        tokenPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        tokenPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    
         StackPane boardContainer = new StackPane(boardGrid, overlayPane, tokenPane);
-        boardContainer.setMaxSize(boardGrid.getPrefWidth(), boardGrid.getPrefHeight());
-        HBox.setMargin(boardContainer, new Insets(0, 0, 0, 30));
-
-        VBox playersBox = new VBox();
-        playersBox.getStyleClass().add("players-box");
-        this.playersPanel = playersBox; 
-
-        HBox diceBox = new HBox(10);                      // liten luft mellom terningene
-        diceBox.setPrefSize(220, 120);
+        boardContainer.setPrefSize(boardWidth, boardHeight);
+        boardContainer.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        boardContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    
+        // Spillere
+        FlowPane playersBox = new FlowPane();
+        playersBox.setHgap(15);
+        playersBox.setVgap(15);
+        playersBox.setPrefWrapLength(300);
+        this.playersPanel = playersBox;
+    
+        // DiceBox (også fast størrelse)
+        HBox diceBox = new HBox(10);
         diceBox.setAlignment(Pos.CENTER);
+        diceBox.setPrefSize(300, 300); // Fast størrelse
+        diceBox.setMinSize(300, 300);
+        diceBox.setMaxSize(300, 300);
         diceBox.getStyleClass().add("dice-box");
-
+    
+        // Dice images
         String imgDir = ResourcePaths.IMAGE_DIR;
-        die1Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
-        die2Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
+        die1Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "2.png")));
+        die2Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "5.png")));
         for (ImageView iv : List.of(die1Img, die2Img)) {
             iv.setFitWidth(DIE_SIDE);
             iv.setFitHeight(DIE_SIDE);
         }
         diceBox.getChildren().addAll(die1Img, die2Img);
-        diceBox.setPrefSize(280, 285);
-        diceBox.getStyleClass().add("dice-box");
-
-        HBox diceContainer = new HBox(diceBox);
-        diceContainer.getStyleClass().add("dice-box-container");
-
+    
+        // Buttons
+        rollButton.getStyleClass().add("roll-dice-button");
+        againButton.getStyleClass().add("play-again-button");
+    
         HBox buttons = new HBox(rollButton, againButton);
-        buttons.getStyleClass().add("button-box");
-
-        VBox gameControl = new VBox(playersBox, diceContainer, buttons);
+        buttons.setSpacing(10);
+        buttons.setAlignment(Pos.CENTER);
+    
+        // Kontrollpanel med fast bredde
+        VBox gameControl = new VBox(playersBox, diceBox, buttons);
+        gameControl.setSpacing(20);
+        gameControl.setAlignment(Pos.TOP_CENTER);
+        gameControl.setPrefWidth(400);
+        gameControl.setMinWidth(400);
+        gameControl.setMaxWidth(400);
         gameControl.getStyleClass().add("game-control");
+    
+        // Layout: alt sentrert, fast størrelse
+        BorderPane main = new BorderPane();
+        main.setCenter(boardContainer);
+        main.setRight(gameControl);
+        main.setPadding(new Insets(20));
+        BorderPane.setAlignment(boardContainer, Pos.CENTER);
+        BorderPane.setMargin(boardContainer, new Insets(0, 20, 0, 0));
 
-        HBox main = new HBox(boardContainer, gameControl);
-        main.setAlignment(Pos.CENTER);
         main.getStyleClass().add("main-box");
-
+    
         root.getChildren().setAll(main);
+        root.setAlignment(Pos.CENTER);
         root.getStyleClass().add("page-background");
-
+    
         buildTiles(boardGrid);
         Platform.runLater(() -> addOverlays(overlays));
     }
@@ -253,13 +287,18 @@ public class BoardView {
     /* ---------- token & player helpers ---------- */
     private VBox createPlayerBox(PlayerView playerView) {
         VBox box = new VBox();
-        box.setAlignment(Pos.CENTER); box.setSpacing(5);
+        box.setAlignment(Pos.CENTER); 
+        box.setSpacing(5);
         box.getStyleClass().add("display-player-box");
+        box.setPrefWidth(120);
+        box.setMinWidth(100);
+        box.setMaxWidth(150);
+        box.setPrefHeight(50);
 
         ImageView tokenImg = createTokenImage(playerView.token());
         Label turnLbl = new Label("\uD83C\uDFB2 Your turn!");
-        tokenImg.setFitWidth(70);     // var 100
-        tokenImg.setFitHeight(70);
+        tokenImg.setFitWidth(50);
+        tokenImg.setFitHeight(50);
         turnLbl.getStyleClass().add("turn-indicator"); turnLbl.setVisible(playerView.hasTurn());
         Label nameLbl = new Label(playerView.name()); nameLbl.getStyleClass().add("player-name");
 
