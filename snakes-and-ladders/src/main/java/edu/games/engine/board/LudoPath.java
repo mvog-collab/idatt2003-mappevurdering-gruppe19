@@ -42,17 +42,30 @@ public final class LudoPath implements MovementPath {
 
     @Override public Tile start() { return null; }
 
-    @Override public Tile next(Tile from,int steps) {
-        throw new UnsupportedOperationException("Use next(Tile,int,LudoColor)");
-    }
+    @Override
+    public Tile next(Tile from, int steps, LudoColor owner) {
+        LudoTile tile;
+        if (from == null) {
 
-    public Tile next(Tile from,int steps,LudoColor owner) {
-        if (from == null) {          // token enters board
-            return ring.get(switch(owner){case BLUE->0; case RED->13; case GREEN->26; case PURPLE->39;});
+            tile = ring.get(switch(owner) {
+                case BLUE   -> 0;
+                case RED    -> 13;
+                case GREEN  -> 26;
+                case PURPLE -> 39;
+            });
+        } else {
+            tile = (LudoTile) from;
         }
-        LudoTile t = (LudoTile) from;
-        for (int i = 0; i < steps; i++) t = t.next(owner);
-        return t;
+
+        for (int i = 0; i < steps; i++) {
+            LudoTile next = tile.next(owner);
+            if (next == null) {
+                // we’re at the very last goal‐tile; can’t go any further
+                break;
+            }
+            tile = next;
+        }
+        return tile;
     }
 
     @Override
