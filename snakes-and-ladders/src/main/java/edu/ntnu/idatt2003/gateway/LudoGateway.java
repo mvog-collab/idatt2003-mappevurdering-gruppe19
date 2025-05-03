@@ -40,6 +40,7 @@ public final class LudoGateway implements GameGateway {
     private static final Map<String,Token> TOKEN_MAP = Map.of(
         "BLUE",   Token.BLUE,
         "GREEN",  Token.GREEN,
+        "YELLOW", Token.YELLOW,
         "RED",    Token.RED,
         "PURPLE", Token.PURPLE);
 
@@ -81,10 +82,9 @@ public final class LudoGateway implements GameGateway {
 
     @Override
     public void addPlayer(String name, String token, LocalDate birthday) {
-        Objects.requireNonNull(game,"Call newGame before adding players");
-        Player p = new Player(name, TOKEN_MAP.get(token), birthday);
-        p.moveTo(null);
-        game.players().add(p);
+        Objects.requireNonNull(game, "Call newGame before adding players");
+        Player player = new Player(name, TOKEN_MAP.get(token), birthday);
+        game.players().add(player);
     }
 
     @Override

@@ -20,7 +20,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -104,13 +103,11 @@ public class BoardView {
      public void setPlayers(List<PlayerView> players, List<OverlayParams> overlays) {
         Objects.requireNonNull(players);
     
-        /* 1. Første kall?  Bygg den statiske delen av brettet ---------------- */
         if (root.getChildren().isEmpty()) {
-            buildBoardStatic(boardSize /* ← kommer nå fra konstruktøren */,
+            buildBoardStatic(boardSize,
                              overlays);
         }
     
-        /* 2. Re-bygg sidepanelet --------------------------------------------- */
         playersPanel.getChildren().clear();
         playerBoxes.clear();
 
@@ -120,7 +117,6 @@ public class BoardView {
             playerBoxes.put(pv.token(), box);
         }
     
-        /* 3. Plasser alle brikker på riktig rute ------------------------------ */
         tokenPane.getChildren().clear();
         tokenUI.clear();
         for (PlayerView pv : players) {
@@ -129,7 +125,6 @@ public class BoardView {
             placeTokenOnTile(pv.tileId(), iv);
         }
     
-        /* 4. Marker hvem som har tur ----------------------------------------- */
         players.forEach(this::updateTurnIndicator);
     }
 

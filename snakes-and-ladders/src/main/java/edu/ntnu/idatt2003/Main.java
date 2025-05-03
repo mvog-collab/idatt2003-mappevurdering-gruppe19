@@ -1,7 +1,6 @@
 package edu.ntnu.idatt2003;
 
 import edu.ntnu.idatt2003.ui.view.HomePage;
-import edu.ntnu.idatt2003.ui.view.SnlPage;
 import edu.ntnu.idatt2003.utils.Errors;
 
 public class Main  {

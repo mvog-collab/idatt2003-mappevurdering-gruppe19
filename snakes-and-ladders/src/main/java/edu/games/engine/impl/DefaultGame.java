@@ -38,9 +38,12 @@ public final class DefaultGame implements Game {
       int rolledValue = dice.roll();
 
       int moveSteps = (rolledValue == 12) ? 0 : rolledValue;
+
       if (moveSteps > 0) {
           Tile destinationTile = board.move(currentPlayer.getCurrentTile(), rolledValue);
-          currentPlayer.moveTo(destinationTile);
+          if (destinationTile != null) {
+            currentPlayer.moveTo(destinationTile);
+          }
       }
 
       boolean extraTurn = rules.apply(board, currentPlayer, dice.lastValues());
@@ -73,12 +76,13 @@ public final class DefaultGame implements Game {
       }
 
       private void bumpIfOccupied(Player moved) {
-
         Tile dest = moved.getCurrentTile();
+
+        if (dest == null) return;
     
         players.stream()
                .filter(p -> p != moved)
-               .filter(p -> p.getCurrentTile().equals(dest))
+               .filter(p -> p.getCurrentTile() != null && dest.equals(p.getCurrentTile()))
                .forEach(p -> {
                    p.moveTo(board.start());
                    Log.game().info(() -> 
