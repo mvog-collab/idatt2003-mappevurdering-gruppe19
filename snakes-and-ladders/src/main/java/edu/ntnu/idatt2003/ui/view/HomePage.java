@@ -56,7 +56,12 @@ public class HomePage extends Application {
     ludoBtn.setFitHeight(250);
     ludoBtn.getStyleClass().add("menu-button-image");
     ludoBtn.setOnMouseClicked((MouseEvent e) -> {
-      // TODO: Koble til Ludo
+      try {
+        LudoPage ludoPage = new LudoPage();
+        stage.setScene(ludoPage.getScene());
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
     });
     ludoBtn.setOnMouseEntered(e -> {
       ludoBtn.setScaleX(1.1);
@@ -66,6 +71,7 @@ public class HomePage extends Application {
       ludoBtn.setScaleX(1.0);
       ludoBtn.setScaleY(1.0);
     });
+
 
     HBox buttonBox = new HBox(40, laddersBtn, ludoBtn);
     buttonBox.setAlignment(Pos.CENTER);
