@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.ui.view;
 
+import edu.ntnu.idatt2003.utils.ResourcePaths;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class ChoosePlayerPage {
         addedPlayersBox.setAlignment(Pos.CENTER);
 
         // --- Buttons ---
-        addPlayerButton    = new Button("Add Player");     addPlayerButton   .getStyleClass().add("confirm-button");
+        addPlayerButton    = new Button("Add Player");     addPlayerButton   .getStyleClass().add("add-player-button");
         continueButton     = new Button("Confirm");        continueButton    .getStyleClass().add("confirm-button");
         cancelButton       = new Button("Cancel");         cancelButton      .getStyleClass().add("exit-button");
         savePlayerButton   = new Button("Save Players");   savePlayerButton  .getStyleClass().add("board-size-button");
@@ -102,13 +103,11 @@ public class ChoosePlayerPage {
         );
         popupContent.setAlignment(Pos.CENTER);
         popupContent.setPadding(new Insets(20));
-        popupContent.getStyleClass().add("page-background");
 
+        root.getStyleClass().add("page-background");
         root.getChildren().setAll(popupContent);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(20);
-
-        // sluttvisning
     }
 
     private ToggleButton buildTokenButton(String token) {
@@ -130,7 +129,7 @@ public class ChoosePlayerPage {
         return root;
     }
 
-    // --- øvrige hjelpe‐metoder og getters ---
+
     public String getSelectedToken() {
         Toggle t = tokenToggleGroup.getSelectedToggle();
         return t == null ? null : t.getUserData().toString();

@@ -228,7 +228,27 @@
 }
 .confirm-button:hover {
     -fx-background-color: linear-gradient(to bottom, #66BB6A 0%, #1B5E20 100%);
-    -fx-effect: dropshadow(gaussian, rgba(0,150,0,0.5), 12, 0.3, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(0,150,0,0.5), 15, 0.3, 0, 3);
+}
+
+.add-player-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 110;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+    -fx-border-color: #131353;
+    -fx-border-width: 3px;
+    -fx-background-insets: 0;
+
+    -fx-background-color: linear-gradient(to bottom, #2196F3 0%, #1E88E5 100%);
+    -fx-effect: dropshadow(gaussian, rgba(30,100,200,0.4), 15, 0.2, 0, 2);
+    -fx-cursor: hand;
+}
+
+.add-player-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #42A5F5 0%, #1565C0 100%);
+    -fx-effect: dropshadow(gaussian, rgba(30,120,200,0.5), 12, 0.3, 0, 3);
 }
 
 /* Popup Background */
@@ -554,4 +574,5 @@
     -fx-text-fill: white;
     -fx-font-family: "Comic Sans MS";
 }
+
 
