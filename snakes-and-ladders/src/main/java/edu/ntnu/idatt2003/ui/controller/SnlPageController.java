@@ -7,6 +7,7 @@ import edu.ntnu.idatt2003.ui.view.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.view.SettingsPage;
 import edu.ntnu.idatt2003.ui.view.SnlPage;
 import edu.ntnu.idatt2003.utils.Dialogs;
+import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -136,7 +137,12 @@ public class SnlPageController {
         popupStage.setTitle(title);
 
         Scene scene = new Scene(root, width, height);
-        
+
+        scene.getStylesheets().add(
+            getClass().getResource(ResourcePaths.STYLE_SHEET)
+                .toExternalForm()
+        );
+
         scene.getRoot().requestFocus();
 
         popupStage.setScene(scene);
