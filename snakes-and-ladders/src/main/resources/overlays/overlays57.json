@@ -1,0 +1,30 @@
+[
+    {
+      "imagePath": "/images/blueStar.png",
+      "offsetX":  0,
+      "offsetY":  0,
+      "fitWidth": 20,
+      "startTileId":  1
+    },
+    {
+      "imagePath": "/images/redStar.png",
+      "offsetX":  0,
+      "offsetY":  0,
+      "fitWidth": 20,
+      "startTileId": 14
+    },
+    {
+      "imagePath": "/images/greenStar.png",
+      "offsetX":  0,
+      "offsetY":  0,
+      "fitWidth": 20,
+      "startTileId": 27
+    },
+    {
+      "imagePath": "/images/yellowStar.png",
+      "offsetX":  0,
+      "offsetY":  0,
+      "fitWidth": 20,
+      "startTileId": 40
+    }
+  ]

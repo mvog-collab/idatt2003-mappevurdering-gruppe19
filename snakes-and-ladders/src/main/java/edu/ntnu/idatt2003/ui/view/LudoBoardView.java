@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.games.engine.model.LudoColor;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
+import edu.ntnu.idatt2003.ui.fx.OverlayParams;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.application.Platform;
@@ -15,6 +17,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -30,6 +33,7 @@ public class LudoBoardView {
   private final Button againButton = new Button("Play again");
   private ImageView dieImg;
 
+  private final Pane  overlayPane = new Pane();
   private final Pane tokenPane = new Pane();
   private final GridPane tileGrid = new GridPane();
 
@@ -92,8 +96,17 @@ public class LudoBoardView {
     tileGrid.setMouseTransparent(true);
     tileGrid.setOpacity(0);
 
-    StackPane board = new StackPane(boardImg, tileGrid, tokenPane);
+    overlayPane.setMinSize(boardSize, boardSize);
+    overlayPane.setMaxSize(boardSize, boardSize);
 
+    StackPane board = new StackPane(
+        boardImg,
+        tileGrid,
+        overlayPane,
+        tokenPane
+    );
+
+    // DiceBox
     HBox diceBox = new HBox(10);
     diceBox.setAlignment(Pos.CENTER);
     diceBox.setPrefSize(300, 300);
@@ -125,37 +138,90 @@ public class LudoBoardView {
     BorderPane.setAlignment(board, Pos.CENTER);
     BorderPane.setMargin(board, new Insets(0, 20, 0, 0));
     main.getStyleClass().add("main-box");
-
     board.setStyle("-fx-border-color: blue; -fx-border-width: 2;");
     tokenPane.setStyle("-fx-border-color: red; -fx-border-width: 2;");
 
     Platform.runLater(() -> {
-      Bounds paneBounds = tokenPane.getBoundsInParent();
-      System.out.println("tokenPane size: " + paneBounds.getWidth() + "×" + paneBounds.getHeight());
+        Bounds imgBounds   = boardImg.getBoundsInParent();
+        Bounds paneBounds  = tokenPane.getBoundsInParent();
+        System.out.println("boardImg:   " + imgBounds.getWidth() + "×" + imgBounds.getHeight()
+                          + " @ " + imgBounds.getMinX() + "," + imgBounds.getMinY());
+        System.out.println("tokenPane:  " + paneBounds.getWidth() + "×" + paneBounds.getHeight()
+                          + " @ " + paneBounds.getMinX() + "," + paneBounds.getMinY());
+        for (Map.Entry<Integer, Point2D> e : coords.entrySet()) {
+          int id = e.getKey();
+          Point2D pt = e.getValue();
+    
+          Label label = new Label(String.valueOf(id));
+          label.setStyle("-fx-font-size: 10px; -fx-text-fill: black; -fx-background-color: rgba(255,255,255,0.7);");
+    
+          label.setLayoutX(pt.getX() - 6);
+          label.setLayoutY(pt.getY() - 6);
+    
+          overlayPane.getChildren().add(label);
+        }
     });
+
 
     root.getChildren().setAll(main);
     root.setAlignment(Pos.CENTER);
     root.getStyleClass().add("page-background");
   }
 
+  public void setOverlays(List<OverlayParams> overlays) {
+    addOverlays(overlays);
+  }
+
+  private void addOverlays(List<OverlayParams> overlays) {
+    overlayPane.getChildren().clear();
+
+    for (OverlayParams p : overlays) {
+
+      Point2D center = coords.get(p.getStartTileId());
+      if (center == null) continue;
+
+      ImageView iv = new ImageView(
+        new Image(getClass().getResourceAsStream(p.getImagePath()))
+      );
+      iv.setFitWidth(p.getFitWidth());
+      iv.setPreserveRatio(true);
+
+      iv.setLayoutX(center.getX() + p.getOffsetX() - iv.getFitWidth()/2);
+      iv.setLayoutY(center.getY() + p.getOffsetY() - iv.getBoundsInParent().getHeight()/2);
+
+      overlayPane.getChildren().add(iv);
+    }
+  }
+
   private Map<Integer, Point2D> buildCoordinates() {
     Map<Integer, Point2D> map = new HashMap<>();
-    int id = 1;
-    // Ring (52)
-    for (int c = 0; c < 6; c++) map.put(id++, pt(6,c));
-    for (int r = 5; r >= 0; r--) map.put(id++, pt(r,6));
-    for (int c = 7; c < 13; c++) map.put(id++, pt(0,c));
-    for (int r = 1; r < 7; r++) map.put(id++, pt(r,13));
-    for (int c = 12; c >= 7; c--) map.put(id++, pt(7,c));
-    for (int r = 8; r < 14; r++) map.put(id++, pt(r,6));
-    for (int c = 5; c >= 0; c--) map.put(id++, pt(13,c));
-    for (int r = 12; r >= 7; r--) map.put(id++, pt(r,0));
-    // Goals (4×6)
-    for (int c = 1; c <= 5; c++) map.put(id++, pt(7,c));
-    for (int r = 1; r <= 5; r++) map.put(id++, pt(r,7));
-    for (int c = 9; c <= 13; c++) map.put(id++, pt(7,c));
-    for (int r = 9; r <= 13; r++) map.put(id++, pt(r,7));
+  
+    int[][] tileMap = {
+      { 0,  0,  0,  0,  0,  0, 24, 25, 26, 0, 0,  0,  0,  0,  0 },
+      { 0,  0,  0,  0,  0,  0, 23, 65, 27, 0, 0,  0,  0,  0,  0 },
+      { 0,  0,  0,  0,  0,  0, 22, 66, 28, 0, 0,  0,  0,  0,  0 },
+      { 0,  0,  0,  0,  0,  0, 21, 67,  29,  0, 0,  0,  0,  0,  0 },
+      { 0,  0,  0,  0,  0,  0, 20, 68,  30,  0, 0,  0,  0,  0,  0 },
+      { 0,  0,  0,  0,  0,  0, 19,  69, 31, 0, 0, 0,  0,  0,  0 },
+      { 13,  14,  15,  16,  17,  18,  0,  70, 0, 32, 33, 34, 35, 36, 37 },
+      { 12,  59,  60,  61,  62,  63,  64, 0,  76,  75, 74,  73,  72,  71, 38 },
+      { 11,  10,  9,  8, 7, 6, 0, 58,  0, 44, 43, 42, 41,  40, 39 },
+      { 0,  0,  0,  0,  0,  0, 5, 57, 45, 0, 0, 0, 0, 0, 0 },
+      { 0,  0,  0,  0,  0,  0, 4, 56,  46,  0,  0,  0,  0,  0, 0 },
+      { 0,  0,  0,  0,  0,  0, 3, 55,  47,  0,  0,  0,  0,  0, 0 },
+      { 0,  0,  0,  0,  0,  0, 2, 54,  48,  0,  0,  0,  0,  0, 0 },
+      { 0,  0,  0,  0,  0,  0, 1, 53, 49, 0, 0, 0,  0,  0, 0 },
+      { 0,  0,  0,  0,  0,  0, 52,  51,  50,  0,  0,  0,  0,  0, 0 } 
+    };
+  
+    for (int row = 0; row < tileMap.length; row++) {
+      for (int col = 0; col < tileMap[row].length; col++) {
+        int id = tileMap[row][col];
+        if (id > 0)
+          map.put(id, pt(row, col));
+      }
+    }
+  
     return map;
   }
 
@@ -165,47 +231,51 @@ public class LudoBoardView {
     return new Point2D(x, y);
   }
 
-  // Places all four tokens for a player at appropriate coords
-  private void placeTokens(String tokenName, int tileId) {
-    List<ImageView> views = tokenUi.get(tokenName);
-    List<Point2D> home = spawnCoords.get(tokenName);
-    if (views == null || home == null) return;
-
-    if (tileId == 0) {
-      // All in house
-      for (int i = 0; i < views.size(); i++) {
-        Point2D p = home.get(i);
-        ImageView iv = views.get(i);
-        iv.setLayoutX(p.getX() - iv.getFitWidth() / 2);
-        iv.setLayoutY(p.getY() - iv.getFitHeight() / 2);
-      }
-    } else {
-      // One moves, others stay in house
-      for (int i = 0; i < views.size(); i++) {
-        Point2D p = (i == 0) ? coords.get(tileId) : home.get(i);
-        ImageView iv = views.get(i);
-        iv.setLayoutX(p.getX() - iv.getFitWidth() / 2);
-        iv.setLayoutY(p.getY() - iv.getFitHeight() / 2);
-      }
+  private void placeToken(int tileId, ImageView token) {
+    // Get token color for reference only
+    String tokenName = null;
+    for (Map.Entry<String, ImageView> entry : tokenUi.entrySet()) {
+        if (entry.getValue() == token) {
+            tokenName = entry.getKey();
+            break;
+        }
     }
-  }
-
-  public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
-    List<ImageView> views = tokenUi.get(tokenName);
-    if (views == null || views.isEmpty()) {
-      if (onFinished != null) onFinished.run();
-      return;
+    
+    Point2D target = coords.get(tileId);
+    
+    if (target == null) {
+        if (tileId <= 0) {
+            return;
+        }
+        return;
     }
-    // animate the first token only
-    ImageView first = views.get(0);
-    new Thread(() -> {
-      for (int i = startId + 1; i <= endId; i++) {
-        int id = i;
-        try { Thread.sleep(200); } catch (InterruptedException ignored) {}
-        Platform.runLater(() -> placeTokens(tokenName, id));
+
+    // Add token to the pane if it's not already there
+    if (!tokenPane.getChildren().contains(token)) {
+        tokenPane.getChildren().add(token);
+    }
+    
+    // Position token centered on target
+    token.setLayoutX(target.getX() - token.getFitWidth() / 2);
+    token.setLayoutY(target.getY() - token.getFitHeight() / 2);
+}
+
+  public void animateMoveAlongPath(String tokenName, List<Integer> path, Runnable onFinished) {
+      ImageView token = tokenUi.get(tokenName);
+      if (token == null) {
+          if (onFinished != null) Platform.runLater(onFinished);
+          return;
       }
-      if (onFinished != null) Platform.runLater(onFinished);
-    }).start();
+
+      new Thread(() -> {
+          try {
+              for (Integer id : path) {
+                  Thread.sleep(200); 
+                  Platform.runLater(() -> placeToken(id, token));
+              }
+          } catch (InterruptedException ignored) {}
+          if (onFinished != null) Platform.runLater(onFinished);
+      }).start();
   }
 
   public void setPlayers(List<PlayerView> players) {

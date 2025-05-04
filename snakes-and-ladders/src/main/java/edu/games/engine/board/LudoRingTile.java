@@ -26,15 +26,21 @@ public final class LudoRingTile implements LudoTile {
 
     @Override
     public LudoTile next(LudoColor owner) {
-        return goalEntry != null && ownerSquare(owner) ? goalEntry : next;
+        // Only redirect to goal path if we're AT the entry point
+        // but NOT when we're landing on it for the first time
+        return next;
     }
 
-    private boolean ownerSquare(LudoColor owner) {
-        return switch (owner) {
-            case BLUE   -> id == 0;
-            case RED    -> id == 13;
-            case GREEN  -> id == 26;
-            case PURPLE -> id == 39;
+    // Add a new method to check if we should enter the goal path
+    public boolean shouldEnterGoalPath(int currentId, LudoColor owner) {
+        // Check if we're passing the entry point (not just landing on it)
+        int entryPoint = switch (owner) {
+            case BLUE -> 1;
+            case RED -> 14;
+            case GREEN -> 27;
+            case PURPLE -> 40;
         };
+        
+        return id() == entryPoint && currentId != entryPoint;
     }
 }

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import edu.games.engine.board.LudoPath;
+import edu.games.engine.board.Tile;
 import edu.games.engine.board.LudoBoard;
 import edu.games.engine.dice.Dice;
 import edu.games.engine.dice.factory.DiceFactory;
@@ -13,6 +14,7 @@ import edu.games.engine.impl.DefaultGame;
 import edu.games.engine.impl.CsvPlayerStore;
 import edu.games.engine.impl.overlay.JsonOverlayProvider;
 import edu.games.engine.impl.overlay.OverlayProvider;
+import edu.games.engine.model.LudoColor;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
 import edu.games.engine.rule.LudoRuleEngine;
@@ -125,18 +127,31 @@ public final class LudoGateway implements GameGateway {
         return overlayCache.computeIfAbsent(boardSize(), overlayProvider::overlaysForBoard);
     }
 
+    //Chat GBT
     @Override
     public List<PlayerView> players() {
         if (game.players().isEmpty()) return List.of();
         Token turnToken = game.currentPlayer().getToken();
-
+        
         return game.players().stream()
-                   .map(p -> new PlayerView(p.getName(),
-                                            p.getToken().name(),
-                                            p.getCurrentTile()==null?0:p.getCurrentTile().id(),
-                                            p.getBirtday(),
-                                            p.getToken()==turnToken))
-                   .toList();
+            .map(p -> {
+                LudoBoard board = (LudoBoard) game.board();
+                LudoColor color = LudoColor.valueOf(p.getToken().name());
+
+                int tileId;
+                if (p.getCurrentTile() == null) {
+                    Tile start = board.getStartTile(color);
+                    tileId = (start == null) ? 0 : start.id();  // 0 = "in house"
+                } else {
+                    tileId = p.getCurrentTile().id();
+                    System.out.println("Player " + p.getName() + " (" + p.getToken().name() + 
+                                    ") is on tile with ID: " + tileId);
+                }
+
+                return new PlayerView(p.getName(), p.getToken().name(), tileId, p.getBirtday(), 
+                                    p.getToken() == turnToken);
+            })
+            .toList();
     }
 
     @Override
