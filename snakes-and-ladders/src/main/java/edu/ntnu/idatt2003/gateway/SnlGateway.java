@@ -82,8 +82,8 @@ public final class SnlGateway implements GameGateway {
   @Override
   public void resetGame() {
       if (game == null) return;
-      game.winner().ifPresent(w -> {});
       game.players().forEach(p -> p.moveTo(game.board().start()));
+      game.setWinner(null);
 
       game.setCurrentPlayerIndex(0);
   }
@@ -121,7 +121,7 @@ public final class SnlGateway implements GameGateway {
   }
 
   @Override 
-  public boolean hasWinner() { 
+  public boolean hasWinner() {
     return game.winner().isPresent(); 
   }
 
