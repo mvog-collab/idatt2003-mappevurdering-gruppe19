@@ -43,8 +43,7 @@ public final class LudoGateway implements GameGateway {
         "BLUE",   Token.BLUE,
         "GREEN",  Token.GREEN,
         "YELLOW", Token.YELLOW,
-        "RED",    Token.RED,
-        "PURPLE", Token.PURPLE);
+        "RED",    Token.RED);
 
     public LudoGateway(DiceFactory diceFactory,
                        PlayerStore playerStore,

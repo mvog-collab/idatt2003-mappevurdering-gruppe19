@@ -27,7 +27,7 @@ public final class LudoPath implements MovementPath {
             LudoColor.BLUE, 53, 
             LudoColor.RED, 59,  
             LudoColor.GREEN, 65,
-            LudoColor.PURPLE, 71
+            LudoColor.YELLOW, 71
         );
     
         for (LudoColor c : LudoColor.values()) {
@@ -47,7 +47,7 @@ public final class LudoPath implements MovementPath {
                 case BLUE   -> 0;
                 case RED    -> 13;
                 case GREEN  -> 26;
-                case PURPLE -> 39;
+                case YELLOW -> 39;
             };
     
             // Set the starting tile
@@ -126,7 +126,7 @@ public final class LudoPath implements MovementPath {
             case BLUE -> 1;
             case RED -> 14;
             case GREEN -> 27;
-            case PURPLE -> 40;
+            case YELLOW -> 40;
         };
     }
 

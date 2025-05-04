@@ -27,13 +27,17 @@ public class ChoosePlayerPage {
     private ToggleGroup tokenToggleGroup;
     private Map<String, ToggleButton> tokenButtons = new HashMap<>();
 
-    private static final String[] TOKEN_NAMES = { "BLUE","GREEN","YELLOW","RED","PURPLE" };
+    private final String[] TOKEN_NAMES;
 
-    public ChoosePlayerPage() {
+    public ChoosePlayerPage(String[] TOKEN_NAMES) {
         root = new VBox();
+        this.TOKEN_NAMES = TOKEN_NAMES;
         buildUI();
     }
 
+    public ChoosePlayerPage() {
+        this(new String[] { "BLUE","GREEN","YELLOW","RED","PURPLE" });
+    }
     private void buildUI() {
         // --- Title ---
         Label title = new Label("Add Players");
