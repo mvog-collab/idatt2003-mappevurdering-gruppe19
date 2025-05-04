@@ -4,23 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
-import edu.games.engine.model.LudoColor;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
 import edu.ntnu.idatt2003.ui.fx.OverlayParams;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 import javafx.application.Platform;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 public class LudoBoardView {
 
@@ -32,8 +34,12 @@ public class LudoBoardView {
   private final Button rollButton = new Button("Roll dice");
   private final Button againButton = new Button("Play again");
   private ImageView dieImg;
+  private Label statusLabel;
+  
+  private List<PlayerView> players = new ArrayList<>();
+  private int lastRoll = 0;
 
-  private final Pane  overlayPane = new Pane();
+  private final Pane overlayPane = new Pane();
   private final Pane tokenPane = new Pane();
   private final GridPane tileGrid = new GridPane();
 
@@ -48,6 +54,9 @@ public class LudoBoardView {
       "BLUE",   List.of(pt(10,1), pt(10,4), pt(13,1), pt(13,4)),
       "PURPLE", List.of(pt(10,10), pt(10,13), pt(13,10), pt(13,13))
   );
+  
+  // Callback for piece selection
+  private Consumer<Integer> pieceSelectedCallback;
 
   public LudoBoardView() {
     buildBoardStatic();
@@ -67,6 +76,14 @@ public class LudoBoardView {
   public void announceWinner(String name) {
     disableRollButton();
     Dialogs.info("Winner!", "Congratulations, " + name + "! You won the game");
+  }
+  
+  public void setPieceSelectedCallback(Consumer<Integer> callback) {
+    this.pieceSelectedCallback = callback;
+  }
+  
+  public int getLastRoll() {
+    return lastRoll;
   }
 
   private void buildBoardStatic() {
@@ -118,6 +135,16 @@ public class LudoBoardView {
     dieImg.setFitWidth(DIE_SIDE);
     dieImg.setFitHeight(DIE_SIDE);
     diceBox.getChildren().add(dieImg);
+    
+    // Status label
+    statusLabel = new Label("Roll the dice to start");
+    statusLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+    statusLabel.setTextFill(Color.WHITE);
+    statusLabel.setMaxWidth(Double.MAX_VALUE);
+    statusLabel.setAlignment(Pos.CENTER);
+    statusLabel.setPadding(new Insets(10));
+    statusLabel.setBackground(new Background(new BackgroundFill(
+        Color.rgb(70, 70, 170, 0.8), new CornerRadii(5), Insets.EMPTY)));
 
     rollButton.getStyleClass().add("roll-dice-button");
     againButton.getStyleClass().add("play-again-button");
@@ -125,7 +152,7 @@ public class LudoBoardView {
     buttons.setSpacing(10);
     buttons.setAlignment(Pos.CENTER);
 
-    VBox gameControl = new VBox(diceBox, buttons);
+    VBox gameControl = new VBox(statusLabel, diceBox, buttons);
     gameControl.setSpacing(20);
     gameControl.setAlignment(Pos.TOP_CENTER);
     gameControl.setPrefWidth(400);
@@ -142,12 +169,6 @@ public class LudoBoardView {
     tokenPane.setStyle("-fx-border-color: red; -fx-border-width: 2;");
 
     Platform.runLater(() -> {
-        Bounds imgBounds   = boardImg.getBoundsInParent();
-        Bounds paneBounds  = tokenPane.getBoundsInParent();
-        System.out.println("boardImg:   " + imgBounds.getWidth() + "×" + imgBounds.getHeight()
-                          + " @ " + imgBounds.getMinX() + "," + imgBounds.getMinY());
-        System.out.println("tokenPane:  " + paneBounds.getWidth() + "×" + paneBounds.getHeight()
-                          + " @ " + paneBounds.getMinX() + "," + paneBounds.getMinY());
         for (Map.Entry<Integer, Point2D> e : coords.entrySet()) {
           int id = e.getKey();
           Point2D pt = e.getValue();
@@ -231,71 +252,210 @@ public class LudoBoardView {
     return new Point2D(x, y);
   }
 
-  private void placeToken(int tileId, ImageView token) {
-    // Get token color for reference only
-    String tokenName = null;
-    for (Map.Entry<String, ImageView> entry : tokenUi.entrySet()) {
-        if (entry.getValue() == token) {
-            tokenName = entry.getKey();
-            break;
+  // Place a specific piece at the given tile ID
+  private void placePiece(String tokenName, int pieceIndex, int tileId) {
+    List<ImageView> tokens = tokenUi.get(tokenName);
+    if (tokens == null || pieceIndex >= tokens.size()) return;
+    
+    ImageView token = tokens.get(pieceIndex);
+    
+    if (tileId <= 0) {
+        // Place at home position
+        List<Point2D> homePositions = spawnCoords.get(tokenName);
+        if (homePositions != null && pieceIndex < homePositions.size()) {
+            Point2D pos = homePositions.get(pieceIndex);
+            
+            token.setLayoutX(pos.getX() - token.getFitWidth() / 2);
+            token.setLayoutY(pos.getY() - token.getFitHeight() / 2);
+            
+            if (!tokenPane.getChildren().contains(token)) {
+                tokenPane.getChildren().add(token);
+            }
+        }
+    } else {
+        // Place on board
+        Point2D target = coords.get(tileId);
+        if (target == null) return;
+        
+        // Add an offset based on piece index to avoid exact overlap
+        double offsetX = (pieceIndex % 2) * 8 - 4;
+        double offsetY = (pieceIndex / 2) * 8 - 4;
+        
+        token.setLayoutX(target.getX() + offsetX - token.getFitWidth() / 2);
+        token.setLayoutY(target.getY() + offsetY - token.getFitHeight() / 2);
+        
+        if (!tokenPane.getChildren().contains(token)) {
+            tokenPane.getChildren().add(token);
         }
     }
-    
-    Point2D target = coords.get(tileId);
-    
-    if (target == null) {
-        if (tileId <= 0) {
-            return;
-        }
-        return;
-    }
-
-    // Add token to the pane if it's not already there
-    if (!tokenPane.getChildren().contains(token)) {
-        tokenPane.getChildren().add(token);
-    }
-    
-    // Position token centered on target
-    token.setLayoutX(target.getX() - token.getFitWidth() / 2);
-    token.setLayoutY(target.getY() - token.getFitHeight() / 2);
-}
-
-  public void animateMoveAlongPath(String tokenName, List<Integer> path, Runnable onFinished) {
-      ImageView token = tokenUi.get(tokenName);
-      if (token == null) {
-          if (onFinished != null) Platform.runLater(onFinished);
-          return;
-      }
-
-      new Thread(() -> {
-          try {
-              for (Integer id : path) {
-                  Thread.sleep(200); 
-                  Platform.runLater(() -> placeToken(id, token));
-              }
-          } catch (InterruptedException ignored) {}
-          if (onFinished != null) Platform.runLater(onFinished);
-      }).start();
   }
 
+  // Method to update the display with new player data
   public void setPlayers(List<PlayerView> players) {
+    this.players = new ArrayList<>(players);
     tokenPane.getChildren().clear();
     tokenUi.clear();
+    
     for (PlayerView pv : players) {
-      String tokenKey = pv.token(); // uppercase
-      List<ImageView> views = new ArrayList<>();
-      for (int i = 0; i < 4; i++) {
-        String imgFile = tokenKey.toLowerCase() + "Piece.png";
-        ImageView iv = new ImageView(
-            new Image(getClass().getResourceAsStream(
-                ResourcePaths.IMAGE_DIR + imgFile)));
-        iv.setFitWidth(TOKEN_SIZE);
-        iv.setFitHeight(TOKEN_SIZE);
-        views.add(iv);
-        tokenPane.getChildren().add(iv);
-      }
-      tokenUi.put(tokenKey, views);
-      placeTokens(tokenKey, pv.tileId());
+        String tokenKey = pv.token(); // uppercase
+        List<ImageView> views = new ArrayList<>();
+        
+        // Create 4 pieces for each player
+        for (int i = 0; i < pv.piecePositions().size(); i++) {
+            String imgFile = tokenKey.toLowerCase() + "Piece.png";
+            ImageView iv = new ImageView(
+                new Image(getClass().getResourceAsStream(
+                    ResourcePaths.IMAGE_DIR + imgFile)));
+            iv.setFitWidth(TOKEN_SIZE);
+            iv.setFitHeight(TOKEN_SIZE);
+            
+            // Add click handler for piece selection
+            final int pieceIndex = i;
+            iv.setOnMouseClicked(e -> onPieceClicked(tokenKey, pieceIndex));
+            
+            // Highlight active piece
+            if (pv.activePieceIndex() == i) {
+                iv.setEffect(new DropShadow(10, Color.GOLD));
+            }
+            
+            views.add(iv);
+            tokenPane.getChildren().add(iv);
+        }
+        
+        tokenUi.put(tokenKey, views);
+        
+        // Place all pieces according to their positions
+        for (int i = 0; i < pv.piecePositions().size(); i++) {
+            int tileId = pv.piecePositions().get(i);
+            placePiece(tokenKey, i, tileId);
+        }
+    }
+    
+    // Update status message for the current player
+    updateStatusForCurrentPlayer();
+  }
+  
+  private void updateStatusForCurrentPlayer() {
+    PlayerView currentPlayer = players.stream()
+        .filter(PlayerView::hasTurn)
+        .findFirst()
+        .orElse(null);
+        
+    if (currentPlayer != null) {
+        statusLabel.setText(currentPlayer.name() + "'s turn");
+    } else {
+        statusLabel.setText("Roll the dice to start");
+    }
+  }
+
+  private void onPieceClicked(String tokenKey, int pieceIndex) {
+    // Only respond to clicks from the current player's pieces
+    PlayerView currentPlayer = players.stream()
+        .filter(PlayerView::hasTurn)
+        .findFirst()
+        .orElse(null);
+        
+    if (currentPlayer == null || !currentPlayer.token().equals(tokenKey)) {
+        return;
+    }
+    
+    // If piece is at home and last roll wasn't 6, don't allow selection
+    if (pieceIndex < currentPlayer.piecePositions().size()) {
+        int position = currentPlayer.piecePositions().get(pieceIndex);
+        if (position <= 0 && lastRoll != 6) {
+            showAlert("Invalid move", "You need to roll a 6 to move a piece from home.");
+            return;
+        }
+    }
+    
+    // Tell the controller that this piece was selected
+    if (pieceSelectedCallback != null) {
+        pieceSelectedCallback.accept(pieceIndex);
+    }
+  }
+
+  // Display a message in the status area
+  public void showStatusMessage(String message) {
+    statusLabel.setText(message);
+  }
+  
+  // Show an alert dialog
+  public void showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+  }
+
+  // Method to animate a specific piece along a path
+  public void animateMoveAlongPath(String tokenName, int pieceIndex, List<Integer> path, Runnable onFinished) {
+    List<ImageView> tokens = tokenUi.get(tokenName);
+    if (tokens == null || pieceIndex >= tokens.size() || path.isEmpty()) {
+        if (onFinished != null) Platform.runLater(onFinished);
+        return;
+    }
+    
+    ImageView token = tokens.get(pieceIndex);
+    
+    // Handle empty or single-item paths
+    if (path.size() <= 1) {
+        if (onFinished != null) Platform.runLater(onFinished);
+        return;
+    }
+    
+    new Thread(() -> {
+        try {
+            // Skip the first element as it's the current position
+            for (int i = 1; i < path.size(); i++) {
+                int id = path.get(i);
+                Thread.sleep(200);
+                
+                Platform.runLater(() -> {
+                    // Calculate offset based on piece index
+                    double offsetX = (pieceIndex % 2) * 8 - 4;
+                    double offsetY = (pieceIndex / 2) * 8 - 4;
+                    
+                    // Get target position
+                    Point2D target = coords.get(id);
+                    if (target != null) {
+                        token.setLayoutX(target.getX() + offsetX - token.getFitWidth() / 2);
+                        token.setLayoutY(target.getY() + offsetY - token.getFitHeight() / 2);
+                    }
+                });
+            }
+        } catch (InterruptedException ignored) {}
+        
+        if (onFinished != null) Platform.runLater(onFinished);
+    }).start();
+  }
+
+  private void placePieceWithAnimation(String tokenName, int pieceIndex, int tileId) {
+    List<ImageView> tokens = tokenUi.get(tokenName);
+    if (tokens == null || pieceIndex >= tokens.size()) return;
+    
+    ImageView token = tokens.get(pieceIndex);
+    
+    if (tileId <= 0) {
+        // Handle home positions
+        List<Point2D> homePositions = spawnCoords.get(tokenName);
+        if (homePositions != null && pieceIndex < homePositions.size()) {
+            Point2D pos = homePositions.get(pieceIndex);
+            
+            token.setLayoutX(pos.getX() - token.getFitWidth() / 2);
+            token.setLayoutY(pos.getY() - token.getFitHeight() / 2);
+        }
+    } else {
+        // Handle board positions with animation
+        Point2D target = coords.get(tileId);
+        if (target == null) return;
+        
+        // Add an offset based on piece index to avoid exact overlap
+        double offsetX = (pieceIndex % 2) * 8 - 4;
+        double offsetY = (pieceIndex / 2) * 8 - 4;
+        
+        token.setLayoutX(target.getX() + offsetX - token.getFitWidth() / 2);
+        token.setLayoutY(target.getY() + offsetY - token.getFitHeight() / 2);
     }
   }
 
@@ -304,5 +464,6 @@ public class LudoBoardView {
     dieImg.setImage(new Image(
         getClass().getResourceAsStream(dir + d1 + ".png")));
     dieImg.setRotate(Math.random() * 360);
+    lastRoll = d1;
   }
 }
