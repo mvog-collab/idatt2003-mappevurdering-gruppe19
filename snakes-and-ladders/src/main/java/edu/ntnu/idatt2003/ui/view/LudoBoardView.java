@@ -33,7 +33,7 @@ public class LudoBoardView {
   private final Button againButton = new Button("Play again");
   private ImageView dieImg;
 
-  private final Pane  overlayPane = new Pane();
+  private final Pane overlayPane = new Pane();
   private final Pane tokenPane = new Pane();
   private final GridPane tileGrid = new GridPane();
 
@@ -231,16 +231,8 @@ public class LudoBoardView {
     return new Point2D(x, y);
   }
 
+  // Place a specific token at the given tile ID
   private void placeToken(int tileId, ImageView token) {
-    // Get token color for reference only
-    String tokenName = null;
-    for (Map.Entry<String, ImageView> entry : tokenUi.entrySet()) {
-        if (entry.getValue() == token) {
-            tokenName = entry.getKey();
-            break;
-        }
-    }
-    
     Point2D target = coords.get(tileId);
     
     if (target == null) {
@@ -258,14 +250,60 @@ public class LudoBoardView {
     // Position token centered on target
     token.setLayoutX(target.getX() - token.getFitWidth() / 2);
     token.setLayoutY(target.getY() - token.getFitHeight() / 2);
-}
+  }
+
+  // Place all tokens for a player at the given tile ID or at home positions
+  private void placeTokens(String tokenName, int tileId) {
+    List<ImageView> tokens = tokenUi.get(tokenName);
+    if (tokens == null || tokens.isEmpty()) return;
+    
+    if (tileId <= 0) {
+        // Place tokens in home positions
+        List<Point2D> homePositions = spawnCoords.get(tokenName);
+        if (homePositions == null) return;
+        
+        for (int i = 0; i < Math.min(tokens.size(), homePositions.size()); i++) {
+            Point2D pos = homePositions.get(i);
+            ImageView token = tokens.get(i);
+            
+            token.setLayoutX(pos.getX() - token.getFitWidth() / 2);
+            token.setLayoutY(pos.getY() - token.getFitHeight() / 2);
+            
+            if (!tokenPane.getChildren().contains(token)) {
+                tokenPane.getChildren().add(token);
+            }
+        }
+    } else {
+        // Place first token on the board, others at home
+        placeToken(tileId, tokens.get(0));
+        
+        // Place other tokens at home
+        List<Point2D> homePositions = spawnCoords.get(tokenName);
+        if (homePositions == null) return;
+        
+        for (int i = 1; i < Math.min(tokens.size(), homePositions.size()); i++) {
+            Point2D pos = homePositions.get(i);
+            ImageView token = tokens.get(i);
+            
+            token.setLayoutX(pos.getX() - token.getFitWidth() / 2);
+            token.setLayoutY(pos.getY() - token.getFitHeight() / 2);
+            
+            if (!tokenPane.getChildren().contains(token)) {
+                tokenPane.getChildren().add(token);
+            }
+        }
+    }
+  }
 
   public void animateMoveAlongPath(String tokenName, List<Integer> path, Runnable onFinished) {
-      ImageView token = tokenUi.get(tokenName);
-      if (token == null) {
+      List<ImageView> tokens = tokenUi.get(tokenName);
+      if (tokens == null || tokens.isEmpty()) {
           if (onFinished != null) Platform.runLater(onFinished);
           return;
       }
+
+      // Use the first token for movement
+      ImageView token = tokens.get(0);
 
       new Thread(() -> {
           try {
