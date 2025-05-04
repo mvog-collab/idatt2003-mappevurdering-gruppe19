@@ -30,15 +30,18 @@ public class BoardController {
         view.showDice(dice.get(0), dice.get(1));
     
         int pathEndId = Math.min(startId + rolled, gameGateway.boardSize());
-    
-        view.animateMove(token, startId, pathEndId, () -> {
-            refreshTokens();
-            if (gameGateway.hasWinner()) {
-                view.announceWinner(current.name());
-            } else {
-                view.enableRollButton();
-            }
-        });
+
+        if (rolled != 12) {
+            view.animateMove(token, startId, pathEndId, () -> {
+                refreshTokens();
+                if (gameGateway.hasWinner()) {
+                    view.announceWinner(current.name());
+                } else {
+                    view.enableRollButton();
+                }
+            });
+        }
+        view.enableRollButton();
     }
 
     public void resetGame() {
