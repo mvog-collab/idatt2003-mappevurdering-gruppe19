@@ -109,14 +109,14 @@ public final class LudoBoardController {
             case GREEN -> 27;
             case RED -> 14;
             case BLUE -> 1;
-            case PURPLE -> 40;
+            case YELLOW -> 40;
         };
         
         int goalBaseId = switch (color) {
             case BLUE -> 53;
             case RED -> 59;
             case GREEN -> 65;
-            case PURPLE -> 71;
+            case YELLOW -> 71;
         };
         
         // Case 1: Both start and end are on the main ring

@@ -56,14 +56,7 @@ public class SnlPageController {
     }
 
     private void setupChoosePlayerButton() {
-        view.getChoosePlayerButton().setOnAction(e -> {
-            ChoosePlayerPage page = new ChoosePlayerPage();
-            var root = page.getView();
-            new ChoosePlayerController(page, gameGateway);
-
-            createModalPopup("Choose players", root, 1000, 800).showAndWait();
-            refreshUi();
-        });
+        view.getChoosePlayerButton().setOnAction(e -> showPlayerDialog());
     }
 
     private void setupStartButton() {

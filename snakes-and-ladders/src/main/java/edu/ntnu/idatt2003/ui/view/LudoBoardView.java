@@ -46,7 +46,7 @@ public class LudoBoardView {
       "RED",    List.of(pt(1,1), pt(1,4), pt(4,1), pt(4,4)),
       "GREEN",  List.of(pt(1,10), pt(1,13), pt(4,10), pt(4,13)),
       "BLUE",   List.of(pt(10,1), pt(10,4), pt(13,1), pt(13,4)),
-      "PURPLE", List.of(pt(10,10), pt(10,13), pt(13,10), pt(13,13))
+      "YELLOW", List.of(pt(10,10), pt(10,13), pt(13,10), pt(13,13))
   );
 
   public LudoBoardView() {
