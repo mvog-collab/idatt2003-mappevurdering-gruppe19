@@ -17,11 +17,11 @@ public class SnlPageController {
     private final SnlPage view;
     private final GameGateway gameGateway;
 
-    public SnlPageController(SnlPage view, GameGateway gamegGateway) {
+    public SnlPageController(SnlPage view, GameGateway gameGateway) {
         this.view = view;
-        this.gameGateway = gamegGateway;
+        this.gameGateway = gameGateway;
 
-        gamegGateway.newGame(90); 
+        gameGateway.newGame(90);
         initializeButtonHandlers();
     }
 
@@ -82,7 +82,6 @@ public class SnlPageController {
             board.setPlayers(gameGateway.players(), gameGateway.boardOverlays());
 
             board.getRollButton() .setOnAction(evt -> boardController.playTurn());
-            board.getAgainButton().setOnAction(evt -> boardController.resetGame());
 
             Stage stage = (Stage) view.getStartButton().getScene().getWindow();
             stage.setScene(board.start());

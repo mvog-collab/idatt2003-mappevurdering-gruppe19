@@ -13,6 +13,9 @@ public class BoardController {
     public BoardController(BoardView boardView, GameGateway gameGateway) {
         this.view = boardView;
         this.gameGateway = gameGateway;
+
+        view.getRollButton().setOnAction(e -> playTurn());
+        view.getPlayAgainButton().setOnAction(e -> resetGame());
     }
 
     public void playTurn() {
