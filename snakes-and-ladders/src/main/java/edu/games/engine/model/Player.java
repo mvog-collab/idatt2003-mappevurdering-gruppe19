@@ -37,7 +37,7 @@ public final class Player {
     }
 
     public void moveTo(Tile tile) {
-        this.currentTile = Objects.requireNonNull(tile);
+        this.currentTile = tile;
     }
 
     @Override 
