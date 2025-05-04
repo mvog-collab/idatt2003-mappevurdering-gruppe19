@@ -27,7 +27,6 @@ public final class DefaultGame implements Game {
         this.rules = Objects.requireNonNull(rules);
         this.dice = Objects.requireNonNull(dice);
         this.players = new ArrayList<>(players);
-        players.forEach(p -> p.moveTo(board.start()));
     }
 
   @Override
