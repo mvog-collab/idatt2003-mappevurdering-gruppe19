@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.ui.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,21 +26,28 @@ public class LudoBoardView {
 
   private static final int DIE_SIDE = 50;
   private static final int TOKEN_SIZE = 30;
-  private final HBox root = new HBox();
+  private static final int TILE_PX = 35;
 
+  private final HBox root = new HBox();
   private final Button rollButton = new Button("Roll dice");
   private final Button againButton = new Button("Play again");
-
   private ImageView dieImg;
 
   private final Pane  overlayPane = new Pane();
-  private final Pane  tokenPane   = new Pane();
+  private final Pane tokenPane = new Pane();
   private final GridPane tileGrid = new GridPane();
-  private final Map<Integer, StackPane> tileUi = new HashMap<>();
-  private static final int TILE_PX = 35;
 
-  private final Map<String, ImageView> tokenUi = new HashMap<>();
-  private final Map<Integer, Point2D> coords   = buildCoordinates();   // init én gang
+  // Holds each player's list of token ImageViews by uppercase token name
+  private final Map<String, List<ImageView>> tokenUi = new HashMap<>();
+  // Coordinates for board tiles (1..52 ring + goals)
+  private final Map<Integer, Point2D> coords = buildCoordinates();
+  // Four spawn coordinates for tokens still in house (tileId == 0)
+  private final Map<String, List<Point2D>> spawnCoords = Map.of(
+      "RED",    List.of(pt(1,1), pt(1,4), pt(4,1), pt(4,4)),
+      "GREEN",  List.of(pt(1,10), pt(1,13), pt(4,10), pt(4,13)),
+      "BLUE",   List.of(pt(10,1), pt(10,4), pt(13,1), pt(13,4)),
+      "PURPLE", List.of(pt(10,10), pt(10,13), pt(13,10), pt(13,13))
+  );
 
   public LudoBoardView() {
     buildBoardStatic();
@@ -52,22 +60,10 @@ public class LudoBoardView {
     return scene;
   }
 
-  public Button getRollButton() {
-    return rollButton;
-  }
-
-  public Button getAgainButton() {
-    return againButton;
-  }
-
-  public void disableRollButton() {
-    rollButton.setDisable(true);
-  }
-
-  public void enableRollButton() {
-    rollButton.setDisable(false);
-  }
-
+  public Button getRollButton() { return rollButton; }
+  public Button getAgainButton() { return againButton; }
+  public void disableRollButton() { rollButton.setDisable(true); }
+  public void enableRollButton() { rollButton.setDisable(false); }
   public void announceWinner(String name) {
     disableRollButton();
     Dialogs.info("Winner!", "Congratulations, " + name + "! You won the game");
@@ -75,7 +71,7 @@ public class LudoBoardView {
 
   private void buildBoardStatic() {
     ImageView boardImg = new ImageView(
-            new Image(getClass().getResourceAsStream("/images/ludoBoard.jpg")));
+        new Image(getClass().getResourceAsStream("/images/ludoBoard.jpg")));
     boardImg.setPreserveRatio(true);
     boardImg.setFitWidth(15 * TILE_PX);
 
@@ -89,13 +85,14 @@ public class LudoBoardView {
     tokenPane.setMinSize(boardSize, boardSize);
     tokenPane.setMaxSize(boardSize, boardSize);
 
-    for (int r = 0; r < 15; r++)
-        for (int c = 0; c < 15; c++) {
-            StackPane tile = new StackPane();
-            tile.setMinSize(TILE_PX, TILE_PX);
-            tile.setPrefSize(TILE_PX, TILE_PX);
-            tileGrid.add(tile, c, r);
-        }
+    for (int r = 0; r < 15; r++) {
+      for (int c = 0; c < 15; c++) {
+        StackPane tile = new StackPane();
+        tile.setMinSize(TILE_PX, TILE_PX);
+        tile.setPrefSize(TILE_PX, TILE_PX);
+        tileGrid.add(tile, c, r);
+      }
+    }
     tileGrid.setMouseTransparent(true);
     tileGrid.setOpacity(0);
 
@@ -116,15 +113,14 @@ public class LudoBoardView {
     diceBox.getStyleClass().add("dice-box");
 
     String imgDir = ResourcePaths.IMAGE_DIR;
-    dieImg = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
+    dieImg = new ImageView(new Image(
+        getClass().getResourceAsStream(imgDir + "1.png")));
     dieImg.setFitWidth(DIE_SIDE);
     dieImg.setFitHeight(DIE_SIDE);
     diceBox.getChildren().add(dieImg);
 
-    // Buttons
     rollButton.getStyleClass().add("roll-dice-button");
     againButton.getStyleClass().add("play-again-button");
-
     HBox buttons = new HBox(rollButton, againButton);
     buttons.setSpacing(10);
     buttons.setAlignment(Pos.CENTER);
@@ -141,7 +137,6 @@ public class LudoBoardView {
     main.setPadding(new Insets(20));
     BorderPane.setAlignment(board, Pos.CENTER);
     BorderPane.setMargin(board, new Insets(0, 20, 0, 0));
-
     main.getStyleClass().add("main-box");
     board.setStyle("-fx-border-color: blue; -fx-border-width: 2;");
     tokenPane.setStyle("-fx-border-color: red; -fx-border-width: 2;");
@@ -284,27 +279,30 @@ public class LudoBoardView {
   }
 
   public void setPlayers(List<PlayerView> players) {
-    // clear existing tokens
     tokenPane.getChildren().clear();
     tokenUi.clear();
-    // for each player, create an ImageView and position it
     for (PlayerView pv : players) {
-      String tokenName = pv.token().toLowerCase();
-      ImageView iv = new ImageView(
-        new Image(getClass().getResourceAsStream(
-          ResourcePaths.IMAGE_DIR + tokenName + "Piece.png"))
-      );
-      iv.setFitWidth(TOKEN_SIZE);
-      iv.setFitHeight(TOKEN_SIZE);
-      tokenUi.put(pv.token(), iv);
-      // initial placement
-      placeToken(pv.tileId(), iv);
+      String tokenKey = pv.token(); // uppercase
+      List<ImageView> views = new ArrayList<>();
+      for (int i = 0; i < 4; i++) {
+        String imgFile = tokenKey.toLowerCase() + "Piece.png";
+        ImageView iv = new ImageView(
+            new Image(getClass().getResourceAsStream(
+                ResourcePaths.IMAGE_DIR + imgFile)));
+        iv.setFitWidth(TOKEN_SIZE);
+        iv.setFitHeight(TOKEN_SIZE);
+        views.add(iv);
+        tokenPane.getChildren().add(iv);
+      }
+      tokenUi.put(tokenKey, views);
+      placeTokens(tokenKey, pv.tileId());
     }
   }
 
   public void showDice(int d1) {
     String dir = ResourcePaths.IMAGE_DIR;
-    dieImg.setImage(new Image(getClass().getResourceAsStream(dir + d1 + ".png")));
+    dieImg.setImage(new Image(
+        getClass().getResourceAsStream(dir + d1 + ".png")));
     dieImg.setRotate(Math.random() * 360);
   }
 }
