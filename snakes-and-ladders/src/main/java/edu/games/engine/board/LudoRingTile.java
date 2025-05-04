@@ -1,6 +1,7 @@
 package edu.games.engine.board;
 
 import edu.games.engine.model.LudoColor;
+import java.time.Year;
 
 public final class LudoRingTile implements LudoTile {
     private final int id;
@@ -38,7 +39,7 @@ public final class LudoRingTile implements LudoTile {
             case BLUE -> 1;
             case RED -> 14;
             case GREEN -> 27;
-            case PURPLE -> 40;
+            case YELLOW -> 40;
         };
         
         return id() == entryPoint && currentId != entryPoint;

@@ -45,7 +45,7 @@ public class BoardView {
     private final Pane   tokenPane   = new Pane();
 
     private final Button rollButton  = new Button("Roll dice");
-    private final Button againButton = new Button("Play again");
+    private final Button playAgainButton = new Button("Play again");
 
     private ImageView die1Img;
     private ImageView die2Img;
@@ -79,8 +79,8 @@ public class BoardView {
         return rollButton; 
     }
 
-    public Button getAgainButton() {
-        return againButton; 
+    public Button getPlayAgainButton() {
+        return playAgainButton;
     }
 
     public void disableRollButton() {
@@ -205,9 +205,9 @@ public class BoardView {
     
         // Buttons
         rollButton.getStyleClass().add("roll-dice-button");
-        againButton.getStyleClass().add("play-again-button");
+        playAgainButton.getStyleClass().add("play-again-button");
     
-        HBox buttons = new HBox(rollButton, againButton);
+        HBox buttons = new HBox(rollButton, playAgainButton);
         buttons.setSpacing(10);
         buttons.setAlignment(Pos.CENTER);
     

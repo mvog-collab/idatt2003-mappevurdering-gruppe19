@@ -29,7 +29,8 @@ public final class LudoPageController {
     /* --------------------- helpers --------------------- */
 
     private void showPlayerDialog() {
-        ChoosePlayerPage p = new ChoosePlayerPage();
+        String[] ludoTokens = { "BLUE", "GREEN", "RED", "YELLOW" };
+        ChoosePlayerPage p = new ChoosePlayerPage(ludoTokens);
         new ChoosePlayerController(p, gameGateway);
         createModalPopup("Players", p.getView(), 1000, 800).showAndWait();
     }

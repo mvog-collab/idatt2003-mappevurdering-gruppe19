@@ -180,7 +180,7 @@ public final class LudoBoardController {
                 case BLUE -> 1;
                 case RED -> 14;
                 case GREEN -> 27;
-                case PURPLE -> 40;
+                case YELLOW -> 40;
             };
             
             if (endPosition > 0) {
@@ -248,8 +248,20 @@ public final class LudoBoardController {
             return path;
         }
         
-        // Add start position
-        path.add(startId);
+        // Get color-specific goal path parameters
+        int entryPoint = switch (color) {
+            case GREEN -> 27;
+            case RED -> 14;
+            case BLUE -> 1;
+            case YELLOW -> 40;
+        };
+        
+        int goalBaseId = switch (color) {
+            case BLUE -> 53;
+            case RED -> 59;
+            case GREEN -> 65;
+            case YELLOW -> 71;
+        };
         
         // Check if on main ring
         if (startId <= 52 && endId <= 52) {
@@ -316,7 +328,7 @@ public final class LudoBoardController {
             case BLUE -> 1;
             case RED -> 14;
             case GREEN -> 27;
-            case PURPLE -> 40;
+            case YELLOW -> 40;
         };
     }
     
@@ -325,7 +337,7 @@ public final class LudoBoardController {
             case BLUE -> 53;
             case RED -> 59;
             case GREEN -> 65;
-            case PURPLE -> 71;
+            case YELLOW -> 71;
         };
     }
 

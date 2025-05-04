@@ -95,7 +95,12 @@ public final class DefaultGame implements Game {
         currentIndex = Math.floorMod(idx, players.size());
       }
 
-      public Board board() {
+  public void setWinner(Player winner) {
+    this.winner = winner;
+  }
+
+
+  public Board board() {
         return board;
       }
 
