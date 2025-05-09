@@ -4,84 +4,84 @@
         "startTileId": 75,
         "imagePath": "/images/LadderUp.png",
         "offsetX": 47,
-        "offsetY": 0,
+        "offsetY": -60,
         "fitWidth": 130
       },
       {
         "startTileId": 35,
         "imagePath": "/images/LadderLeft.png",
         "offsetX": 0,
-        "offsetY": 0,
+        "offsetY": -80,
         "fitWidth": 140
       },
       {
         "startTileId": 47,
         "imagePath": "/images/LadderRight.png",
         "offsetX": 0,
-        "offsetY": 0,
-        "fitWidth": 140
+        "offsetY": -70,
+        "fitWidth": 130
       },
       {
         "startTileId": 8,
         "imagePath": "/images/LadderLeft.png",
-        "offsetX": 0,
-        "offsetY": -50,
+        "offsetX": -10,
+        "offsetY": -130,
         "fitWidth": 150
       },
       {
         "startTileId": 106,
         "imagePath": "/images/LadderLeft.png",
         "offsetX": 0,
-        "offsetY": 0,
+        "offsetY": -70,
         "fitWidth": 150
       },
       {
         "startTileId": 59,
         "imagePath": "/images/LadderUp.png",
-        "offsetX": 0,
-        "offsetY": 100,
+        "offsetX": 9,
+        "offsetY": 10,
         "fitWidth": 200
       },
       {
         "startTileId": 69,
         "imagePath": "/images/SnakeUp.png",
-        "offsetX": -30,
-        "offsetY": -80,
+        "offsetX": -50,
+        "offsetY": -190,
         "fitWidth": 220
       },
       {
         "startTileId": 6,
         "imagePath": "/images/SnakeUp.png",
         "offsetX": 10,
-        "offsetY": -45,
+        "offsetY": -135,
         "fitWidth": 150
       },
       {
         "startTileId": 37,
         "imagePath": "/images/SnakeLeft.png",
-        "offsetX": 10,
-        "offsetY": 10,
+        "offsetX": 20,
+        "offsetY": -80,
         "fitWidth": 120
       },
       {
         "startTileId": 64,
         "imagePath": "/images/SnakeLeft.png",
-        "offsetX": 0,
-        "offsetY": 0,
+        "offsetX": -8,
+        "offsetY": -50,
         "fitWidth": 90
       },
       {
         "startTileId": 78,
         "imagePath": "/images/SnakeRight.png",
         "offsetX": 10,
-        "offsetY": 10,
+        "offsetY": -110,
         "fitWidth": 120
       },
       {
         "startTileId": 92,
         "imagePath": "/images/SnakeLeft.png",
-        "offsetX": -200,
-        "offsetY": -20,
+        "offsetX": -210,
+        "offsetY": -110,
         "fitWidth": 100
       }
     ]

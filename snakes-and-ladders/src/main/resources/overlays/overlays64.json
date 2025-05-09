@@ -3,43 +3,43 @@
       {
         "startTileId": 31,
         "imagePath": "/images/LadderLeft.png",
-        "offsetX": 90,
-        "offsetY": -100,
+        "offsetX": 100,
+        "offsetY": -220,
         "fitWidth": 160
       },
       {
         "startTileId": 25,
         "imagePath": "/images/LadderRight.png",
-        "offsetX": 0,
-        "offsetY": 0,
+        "offsetX": -5,
+        "offsetY": -110,
         "fitWidth": 120
       },
       {
         "startTileId": 12,
         "imagePath": "/images/LadderUp.png",
         "offsetX": 0,
-        "offsetY": 0,
+        "offsetY": -110,
         "fitWidth": 150
       },
       {
         "startTileId": 30,
         "imagePath": "/images/SnakeUp.png",
-        "offsetX": -30,
-        "offsetY": 0,
+        "offsetX": -25,
+        "offsetY": -125,
         "fitWidth": 220
       },
       {
         "startTileId": 20,
         "imagePath": "/images/SnakeLeft.png",
         "offsetX": 20,
-        "offsetY": 20,
+        "offsetY": -100,
         "fitWidth": 120
       },
       {
         "startTileId": 51,
         "imagePath": "/images/SnakeRight.png",
-        "offsetX": 60,
-        "offsetY": 10,
+        "offsetX": 100,
+        "offsetY": -60,
         "fitWidth": 120
       }
     ]
