@@ -1,26 +1,24 @@
 package edu.ntnu.idatt2003.ui.ludo.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import edu.games.engine.model.BoardGame.PlayerMoveData;
 import edu.games.engine.model.Player;
-import edu.ntnu.idatt2003.ui.common.view.AbstractGameView;
 import edu.ntnu.idatt2003.gateway.GameGateway;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
+import edu.ntnu.idatt2003.ui.common.view.AbstractGameView;
+import edu.ntnu.idatt2003.ui.common.view.GameView;
+import edu.ntnu.idatt2003.ui.fx.OverlayParams;
 import edu.ntnu.idatt2003.ui.service.animation.AnimationService;
 import edu.ntnu.idatt2003.ui.service.board.LudoBoardUIService;
 import edu.ntnu.idatt2003.ui.service.dice.DiceService;
 import edu.ntnu.idatt2003.ui.service.player.PlayerUIService;
 import edu.ntnu.idatt2003.ui.shared.view.ViewServiceFactory;
-import edu.ntnu.idatt2003.ui.common.view.GameView;
-import edu.ntnu.idatt2003.ui.fx.OverlayParams;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -37,466 +35,470 @@ import javafx.scene.layout.VBox;
 
 public class LudoBoardView extends AbstractGameView implements GameView {
 
-    // Services
-    private final LudoBoardUIService boardUIService;
-    private final PlayerUIService playerUIService;
-    private AnimationService animationService;
-    private final DiceService diceService;
-    
-    // UI Components
-    private final BorderPane mainLayout;
-    private final HBox root;
-    private final Pane boardPane;
-    private final Pane tokenPane;
-    private final Pane overlayPane;
-    private final VBox controlPanel;
-    private final HBox diceContainer;
-    private final Label statusLabel;
-    
-    // State
-    private Consumer<Integer> pieceSelectedCallback;
-    private boolean hasActiveAnimation = false;
-    private List<PlayerView> players = new ArrayList<>();
-    private int lastRoll = 0;
-    private final Map<String, List<ImageView>> tokenImages = new HashMap<>();
-    
-    public LudoBoardView(LudoBoardUIService boardUIService,
-                        PlayerUIService playerUIService,
-                        AnimationService animationService,
-                        DiceService diceService) {
-        
-        this.boardUIService = boardUIService;
-        this.playerUIService = playerUIService;
-        this.animationService = animationService;
-        this.diceService = diceService;
-        
-        // Initialize UI components
-        this.root = new HBox();
-        this.mainLayout = new BorderPane();
-        this.boardPane = new Pane();
-        this.tokenPane = new Pane();
-        this.overlayPane = new Pane();
-        this.controlPanel = new VBox(20);
-        this.diceContainer = new HBox(10);
-        this.statusLabel = new Label("Roll the dice to start");
-        
-        // Create buttons
-        this.rollButton = new Button("Roll dice");
-        this.playAgainButton = new Button("Play again");
-        
-        // Build the UI
-        buildUI();
-    }
+  // Services
+  private final LudoBoardUIService boardUIService;
+  private final PlayerUIService playerUIService;
+  private AnimationService animationService;
+  private final DiceService diceService;
 
-    public LudoBoardView() {
-      this(
-          new LudoBoardUIService(),
-          ViewServiceFactory.createPlayerUIService("LUDO"),
-          null, // Will be initialized properly after we have coordinates
-          ViewServiceFactory.createDiceService("LUDO")
-      );
-      
-      // Complete initialization after we have coordinates
-      Map<Integer, Point2D> coordinates = boardUIService.getTileCoordinates();
-      AnimationService newAnimationService = ViewServiceFactory.createAnimationService(
-          "LUDO", coordinates, tokenPane);
-      
-      // Replace the null animation service with the proper one
-      this.animationService = newAnimationService;
+  // UI Components
+  private final BorderPane mainLayout;
+  private final HBox root;
+  private final Pane boardPane;
+  private final Pane tokenPane;
+  private final Pane overlayPane;
+  private final VBox controlPanel;
+  private final HBox diceContainer;
+  private final Label statusLabel;
+
+  // State
+  private Consumer<Integer> pieceSelectedCallback;
+  private boolean hasActiveAnimation = false;
+  private List<PlayerView> players = new ArrayList<>();
+  private int lastRoll = 0;
+  private final Map<String, List<ImageView>> tokenImages = new HashMap<>();
+
+  public LudoBoardView(
+      LudoBoardUIService boardUIService,
+      PlayerUIService playerUIService,
+      AnimationService animationService,
+      DiceService diceService) {
+
+    this.boardUIService = boardUIService;
+    this.playerUIService = playerUIService;
+    this.animationService = animationService;
+    this.diceService = diceService;
+
+    // Initialize UI components
+    this.root = new HBox();
+    this.mainLayout = new BorderPane();
+    this.boardPane = new Pane();
+    this.tokenPane = new Pane();
+    this.overlayPane = new Pane();
+    this.controlPanel = new VBox(20);
+    this.diceContainer = new HBox(10);
+    this.statusLabel = new Label("Roll the dice to start");
+
+    // Create buttons
+    this.rollButton = new Button("Roll dice");
+    this.playAgainButton = new Button("Play again");
+
+    // Build the UI
+    buildUI();
   }
-    
-    private void buildUI() {
-        // Create the board area with the Ludo board
-        StackPane boardArea = boardUIService.createLudoBoardArea(boardPane, overlayPane, tokenPane);
-        
-        // Set up status label
-        statusLabel.getStyleClass().add("status-label");
-        
-        // Set up dice area
-        diceContainer.setAlignment(Pos.CENTER);
-        diceContainer.setPadding(new Insets(20));
-        diceContainer.getStyleClass().add("dice-box");
-        
-        // Initialize dice
-        diceService.initializeDice(diceContainer);
-        
-        // Set up buttons
-        rollButton.getStyleClass().add("roll-dice-button");
-        playAgainButton.getStyleClass().add("play-again-button");
-        
-        HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
-        buttonContainer.setSpacing(10);
-        buttonContainer.setAlignment(Pos.CENTER);
-        
-        // Add everything to control panel
-        controlPanel.getChildren().addAll(statusLabel, diceContainer, buttonContainer);
-        controlPanel.setSpacing(20);
-        controlPanel.setAlignment(Pos.TOP_CENTER);
-        controlPanel.setPrefWidth(400);
-        controlPanel.getStyleClass().add("game-control");
-        
-        // Set up main layout
-        mainLayout.setCenter(boardArea);
-        mainLayout.setRight(controlPanel);
-        mainLayout.setPadding(new Insets(20));
-        mainLayout.getStyleClass().add("main-box");
-        
-        // Add border padding
-        BorderPane.setMargin(boardArea, new Insets(0, 20, 0, 0));
-        
-        // Add to root
-        root.getChildren().setAll(mainLayout);
-        root.setAlignment(Pos.CENTER);
-        root.getStyleClass().add("page-background");
-    }
-    
-    @Override
-    public Scene getScene() {
-        Scene scene = new Scene(root, 1000, 700);
-        scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
-        return scene;
-    }
-    
-    @Override
-    public void setPlayers(List<PlayerView> players, List<OverlayParams> overlays) {
-        this.players = new ArrayList<>(players);
-        
-        // Clear existing tokens
-        tokenPane.getChildren().clear();
-        tokenImages.clear();
-        
-        // Create tokens for each player
-        for (PlayerView player : players) {
-            List<ImageView> pieces = playerUIService.createPlayerPieces(player);
-            tokenImages.put(player.token(), pieces);
-            
-            // Setup click handlers for pieces
-            for (int i = 0; i < pieces.size(); i++) {
-                final int pieceIndex = i;
-                ImageView piece = pieces.get(i);
-                
-                piece.setOnMouseClicked(e -> handlePieceClicked(player.token(), pieceIndex));
-                
-                // Add to token pane
-                tokenPane.getChildren().add(piece);
-            }
-            
-            // Place pieces according to their positions
-            updatePiecePositions(player);
-        }
-        
-        // Add overlays
-        boardUIService.addOverlays(overlayPane, overlays);
-        
-        // Update status label
-        updateStatusForCurrentPlayer();
-    }
-    
-    private void updatePiecePositions(PlayerView player) {
-        List<ImageView> pieces = tokenImages.get(player.token());
-        if (pieces == null) return;
-        
-        // Place each piece at its position
-        for (int i = 0; i < Math.min(player.piecePositions().size(), pieces.size()); i++) {
-            int position = player.piecePositions().get(i);
-            ImageView piece = pieces.get(i);
-            
-            // Highlight active piece if it's this player's turn
-            if (player.hasTurn() && player.activePieceIndex() == i) {
-                boardUIService.highlightActivePiece(piece);
-            } else {
-                boardUIService.removeHighlight(piece);
-            }
-            
-            // Place the piece
-            if (position <= 0) {
-                // Piece is at home
-                boardUIService.placePieceAtHome(tokenPane, piece, player.token(), i);
-            } else {
-                // Piece is on the board
-                boardUIService.placePieceOnBoard(tokenPane, piece, position, i);
-            }
-        }
-    }
-    
-    private void handlePieceClicked(String tokenName, int pieceIndex) {
-        // Only respond to clicks from the current player's pieces
-        PlayerView currentPlayer = getCurrentPlayer();
-        if (currentPlayer == null || !currentPlayer.token().equals(tokenName)) {
-            return;
-        }
-        
-        // Check if the move is valid
-        if (pieceIndex < currentPlayer.piecePositions().size()) {
-            int position = currentPlayer.piecePositions().get(pieceIndex);
-            
-            // Piece is at home and roll isn't 6
-            if (position <= 0 && lastRoll != 6) {
-                showAlert("Invalid move", "You need to roll a 6 to move a piece from home.");
-                return;
-            }
-        }
-        
-        // Tell the controller that this piece was selected
-        if (pieceSelectedCallback != null) {
-            pieceSelectedCallback.accept(pieceIndex);
-        }
-    }
-    
-    private PlayerView getCurrentPlayer() {
-        return players.stream()
-            .filter(PlayerView::hasTurn)
-            .findFirst()
-            .orElse(null);
-    }
-    
-    private void updateStatusForCurrentPlayer() {
-        PlayerView currentPlayer = getCurrentPlayer();
-        if (currentPlayer != null) {
-            statusLabel.setText(currentPlayer.name() + "'s turn");
-        } else {
-            statusLabel.setText("Roll the dice to start");
-        }
-    }
-    
-    @Override
-    protected void handleDiceRolled(Object data) {
-        if (hasActiveAnimation) return;
-        
-        int[] diceValues = diceService.parseDiceRoll(data);
-        if (diceValues.length == 0) return;
-        
-        int dieValue = diceValues[0];
-        lastRoll = dieValue;
-        
-        // Show the die
-        diceService.showDice(diceContainer, diceValues);
-        
-        // Update UI
-        disableRollButton(); // Disable until animation completes or player makes a move
-        
-        // For Ludo, after rolling, player might need to select a piece
-        PlayerView currentPlayer = getCurrentPlayer();
-        if (currentPlayer != null) {
-            // Special case: Check if no valid moves are available
-            boolean hasValidMove = checkForValidMoves(currentPlayer, dieValue);
-            
-            if (!hasValidMove) {
-                // No valid moves, proceed to next player
-                statusLabel.setText("No valid moves available. Next player's turn.");
-                enableRollButton();
-            } else if (dieValue == 6) {
-                // Player rolled a 6, which has special meaning in Ludo
-                statusLabel.setText(currentPlayer.name() + " rolled a 6! Select a piece to move.");
-            } else {
-                // Normal roll
-                statusLabel.setText(currentPlayer.name() + " rolled a " + dieValue + 
-                                   ". Select a piece to move.");
-            }
-        }
-    }
-    
-    private boolean checkForValidMoves(PlayerView player, int roll) {
-        // Check if any pieces can move
-        // For pieces at home, need a 6 to move out
-        // For pieces on board, always valid
-        return player.piecePositions().stream().anyMatch(pos -> 
-            pos > 0 || (pos <= 0 && roll == 6)
-        );
-    }
-    
-    @Override
-    protected void handlePlayerMoved(Object data) {
-        if (hasActiveAnimation) return;
-        
-        try {
-            hasActiveAnimation = true;
-            
-            if (data instanceof PlayerMoveData moveData) {
-                String tokenName = moveData.getPlayer().getToken().name();
-                int fromId = moveData.getFromTile() != null ? moveData.getFromTile().id() : 0;
-                int toId = moveData.getToTile() != null ? moveData.getToTile().id() : 0;
-                
-                // Find piece index
-                int pieceIndex = findPieceIndex(tokenName, fromId);
-                
-                // Build path
-                List<Integer> path = new ArrayList<>();
-                if (fromId > 0) path.add(fromId);
-                path.add(toId);
-                
-                // Animate the move
-                animatePlayerMove(tokenName, pieceIndex, path);
-            }
-        } finally {
-            hasActiveAnimation = false;
-            enableRollButton();
-        }
-    }
-    
-    private void animatePlayerMove(String tokenName, int pieceIndex, List<Integer> path) {
-        List<ImageView> tokens = tokenImages.get(tokenName);
-        if (tokens == null || pieceIndex >= tokens.size() || path.isEmpty()) {
-            return;
-        }
-        
-        ImageView token = tokens.get(pieceIndex);
-        
-        // Animate the move along the path
-        animationService.animateMoveAlongPath(tokenName, pieceIndex, path, this::refreshTokens);
-    }
-    
-    private int findPieceIndex(String token, int tileId) {
-        for (PlayerView player : players) {
-            if (player.token().equals(token)) {
-                // Find which piece is at the given tile
-                for (int i = 0; i < player.piecePositions().size(); i++) {
-                    if (player.piecePositions().get(i) == tileId) {
-                        return i;
-                    }
-                }
-                // If not found, use active piece or first piece
-                return player.activePieceIndex() >= 0 ? player.activePieceIndex() : 0;
-            }
-        }
-        return 0;
-    }
-    
-    @Override
-    protected void handleWinnerDeclared(Object data) {
-        if (data instanceof Player winner) {
-            announceWinner(winner.getName());
-        }
-    }
-    
-    @Override
-    protected void handleGameReset() {
-        // Clear the board
-        tokenPane.getChildren().clear();
-        tokenImages.clear();
-        
-        // Reset status
-        statusLabel.setText("Roll the dice to start");
-        
-        // Enable roll button
-        enableRollButton();
-    }
-    
-    @Override
-    protected void handleTurnChanged(Object data) {
-        if (data instanceof Player player) {
-            String tokenName = player.getToken().name();
-            
-            System.out.println("Turn changed to: " + player.getName() + " (" + tokenName + ")");
-            
-            // Update all players and their statuses
-            for (PlayerView pv : players) {
-                // Check if this is the new current player
-                boolean isCurrentPlayer = pv.token().equals(tokenName);
-                
-                // Update the UI accordingly
-                if (isCurrentPlayer) {
-                    statusLabel.setText(pv.name() + "'s turn");
-                }
-                
-                // Update piece highlights for the current player
-                updatePieceHighlights(pv, isCurrentPlayer);
-            }
-        }
-        enableRollButton();
-    }
-    
-    private void updatePieceHighlights(PlayerView player, boolean isCurrentPlayer) {
-        List<ImageView> pieces = tokenImages.get(player.token());
-        if (pieces == null) return;
-        
-        for (int i = 0; i < pieces.size(); i++) {
-            ImageView piece = pieces.get(i);
-            
-            if (isCurrentPlayer && player.activePieceIndex() == i) {
-                boardUIService.highlightActivePiece(piece);
-            } else {
-                boardUIService.removeHighlight(piece);
-            }
-        }
-    }
-    
-    private void refreshTokens() {
-        // This would need to fetch updated player positions from the model
-        // For now, we'll just refresh what we have
-        for (PlayerView player : players) {
-            updatePiecePositions(player);
-        }
-    }
-    
-    @Override
-    public void showDice(int value) {
-        diceService.showDice(diceContainer, new int[]{value});
-        lastRoll = value;
-    }
-    
-    @Override
-    public void announceWinner(String name) {
-        disableRollButton();
-        Dialogs.info("Winner!", "Congratulations, " + name + "! You won the game!");
-    }
-    
-    public void setPieceSelectedCallback(Consumer<Integer> callback) {
-        this.pieceSelectedCallback = callback;
-    }
-    
-    public void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    
-    public int getLastRoll() {
-        return lastRoll;
-    }
 
-    @Override
-    public void connectToModel(GameGateway gateway) {
-      gateway.addObserver(this);
-    }
+  public LudoBoardView() {
+    this(
+        new LudoBoardUIService(),
+        ViewServiceFactory.createPlayerUIService("LUDO"),
+        null, // Will be initialized properly after we have coordinates
+        ViewServiceFactory.createDiceService("LUDO"));
 
-    public void showStatusMessage(String message) {
-      statusLabel.setText(message);
+    // Complete initialization after we have coordinates
+    Map<Integer, Point2D> coordinates = boardUIService.getTileCoordinates();
+    AnimationService newAnimationService =
+        ViewServiceFactory.createAnimationService("LUDO", coordinates, tokenPane);
+
+    // Replace the null animation service with the proper one
+    this.animationService = newAnimationService;
   }
-  
-  public void animateMoveAlongPath(String tokenName, int pieceIndex, List<Integer> path, Runnable onFinished) {
-      if (hasActiveAnimation) {
-          if (onFinished != null) onFinished.run();
-          return;
+
+  private void buildUI() {
+    // Create the board area with the Ludo board
+    StackPane boardArea = boardUIService.createLudoBoardArea(boardPane, overlayPane, tokenPane);
+
+    // Set up status label
+    statusLabel.getStyleClass().add("status-label");
+
+    // Set up dice area
+    diceContainer.setAlignment(Pos.CENTER);
+    diceContainer.setPadding(new Insets(20));
+    diceContainer.getStyleClass().add("dice-box");
+
+    // Initialize dice
+    diceService.initializeDice(diceContainer);
+
+    // Set up buttons
+    rollButton.getStyleClass().add("roll-dice-button");
+    playAgainButton.getStyleClass().add("play-again-button");
+
+    HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
+    buttonContainer.setSpacing(10);
+    buttonContainer.setAlignment(Pos.CENTER);
+
+    // Add everything to control panel
+    controlPanel.getChildren().addAll(statusLabel, diceContainer, buttonContainer);
+    controlPanel.setSpacing(20);
+    controlPanel.setAlignment(Pos.TOP_CENTER);
+    controlPanel.setPrefWidth(400);
+    controlPanel.getStyleClass().add("game-control");
+
+    // Set up main layout
+    mainLayout.setCenter(boardArea);
+    mainLayout.setRight(controlPanel);
+    mainLayout.setPadding(new Insets(20));
+    mainLayout.getStyleClass().add("main-box");
+
+    // Add border padding
+    BorderPane.setMargin(boardArea, new Insets(0, 20, 0, 0));
+
+    // Add to root
+    root.getChildren().setAll(mainLayout);
+    root.setAlignment(Pos.CENTER);
+    root.getStyleClass().add("page-background");
+  }
+
+  @Override
+  public Scene getScene() {
+    Scene scene = new Scene(root, 1000, 700);
+    scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
+    return scene;
+  }
+
+  @Override
+  public void setPlayers(List<PlayerView> players, List<OverlayParams> overlays) {
+    this.players = new ArrayList<>(players);
+
+    // Clear existing tokens
+    tokenPane.getChildren().clear();
+    tokenImages.clear();
+
+    // Create tokens for each player
+    for (PlayerView player : players) {
+      List<ImageView> pieces = playerUIService.createPlayerPieces(player);
+      tokenImages.put(player.token(), pieces);
+
+      // Setup click handlers for pieces
+      for (int i = 0; i < pieces.size(); i++) {
+        final int pieceIndex = i;
+        ImageView piece = pieces.get(i);
+
+        piece.setOnMouseClicked(e -> handlePieceClicked(player.token(), pieceIndex));
+
+        // Add to token pane
+        tokenPane.getChildren().add(piece);
       }
-      
+
+      // Place pieces according to their positions
+      updatePiecePositions(player);
+    }
+
+    // Add overlays
+    boardUIService.addOverlays(overlayPane, overlays);
+
+    // Update status label
+    updateStatusForCurrentPlayer();
+  }
+
+  private void updatePiecePositions(PlayerView player) {
+    List<ImageView> pieces = tokenImages.get(player.token());
+    if (pieces == null) return;
+
+    // Place each piece at its position
+    for (int i = 0; i < Math.min(player.piecePositions().size(), pieces.size()); i++) {
+      int position = player.piecePositions().get(i);
+      ImageView piece = pieces.get(i);
+
+      // Highlight active piece if it's this player's turn
+      if (player.hasTurn() && player.activePieceIndex() == i) {
+        boardUIService.highlightActivePiece(piece);
+      } else {
+        boardUIService.removeHighlight(piece);
+      }
+
+      // Place the piece
+      if (position <= 0) {
+        // Piece is at home
+        boardUIService.placePieceAtHome(tokenPane, piece, player.token(), i);
+      } else {
+        // Piece is on the board
+        boardUIService.placePieceOnBoard(tokenPane, piece, position, i);
+      }
+    }
+  }
+
+  private void handlePieceClicked(String tokenName, int pieceIndex) {
+    // Only respond to clicks from the current player's pieces
+    PlayerView currentPlayer = getCurrentPlayer();
+    if (currentPlayer == null || !currentPlayer.token().equals(tokenName)) {
+      return;
+    }
+
+    // Check if the move is valid
+    if (pieceIndex < currentPlayer.piecePositions().size()) {
+      int position = currentPlayer.piecePositions().get(pieceIndex);
+
+      // Piece is at home and roll isn't 6
+      if (position <= 0 && lastRoll != 6) {
+        showAlert("Invalid move", "You need to roll a 6 to move a piece from home.");
+        return;
+      }
+    }
+
+    // Tell the controller that this piece was selected
+    if (pieceSelectedCallback != null) {
+      pieceSelectedCallback.accept(pieceIndex);
+    }
+  }
+
+  private PlayerView getCurrentPlayer() {
+    return players.stream().filter(PlayerView::hasTurn).findFirst().orElse(null);
+  }
+
+  private void updateStatusForCurrentPlayer() {
+    PlayerView currentPlayer = getCurrentPlayer();
+    if (currentPlayer != null) {
+      statusLabel.setText(currentPlayer.name() + "'s turn");
+    } else {
+      statusLabel.setText("Roll the dice to start");
+    }
+  }
+
+  @Override
+  protected void handleDiceRolled(Object data) {
+    if (hasActiveAnimation) return;
+
+    int[] diceValues = diceService.parseDiceRoll(data);
+    if (diceValues.length == 0) return;
+
+    int dieValue = diceValues[0];
+    lastRoll = dieValue;
+
+    // Show the die
+    diceService.showDice(diceContainer, diceValues);
+
+    // Update UI
+    disableRollButton(); // Disable until animation completes or player makes a move
+
+    // For Ludo, after rolling, player might need to select a piece
+    PlayerView currentPlayer = getCurrentPlayer();
+    if (currentPlayer != null) {
+      // Special case: Check if no valid moves are available
+      boolean hasValidMove = checkForValidMoves(currentPlayer, dieValue);
+
+      if (!hasValidMove) {
+        // No valid moves, proceed to next player
+        statusLabel.setText("No valid moves available. Next player's turn.");
+        enableRollButton();
+      } else if (dieValue == 6) {
+        // Player rolled a 6, which has special meaning in Ludo
+        statusLabel.setText(currentPlayer.name() + " rolled a 6! Select a piece to move.");
+      } else {
+        // Normal roll
+        statusLabel.setText(
+            currentPlayer.name() + " rolled a " + dieValue + ". Select a piece to move.");
+      }
+    }
+  }
+
+  private boolean checkForValidMoves(PlayerView player, int roll) {
+    // Check if any pieces can move
+    // For pieces at home, need a 6 to move out
+    // For pieces on board, always valid
+    return player.piecePositions().stream().anyMatch(pos -> pos > 0 || (pos <= 0 && roll == 6));
+  }
+
+  @Override
+  protected void handlePlayerMoved(Object data) {
+    if (hasActiveAnimation) return;
+
+    try {
       hasActiveAnimation = true;
-      animationService.animateMoveAlongPath(tokenName, pieceIndex, path, () -> {
+
+      if (data instanceof PlayerMoveData moveData) {
+        String tokenName = moveData.getPlayer().getToken().name();
+        int fromId = moveData.getFromTile() != null ? moveData.getFromTile().id() : 0;
+        int toId = moveData.getToTile() != null ? moveData.getToTile().id() : 0;
+
+        // Find piece index
+        int pieceIndex = findPieceIndex(tokenName, fromId);
+
+        // Build path
+        List<Integer> path = new ArrayList<>();
+        if (fromId > 0) path.add(fromId);
+        path.add(toId);
+
+        // Animate the move
+        animatePlayerMove(tokenName, pieceIndex, path);
+      }
+    } finally {
+      hasActiveAnimation = false;
+      enableRollButton();
+    }
+  }
+
+  private void animatePlayerMove(String tokenName, int pieceIndex, List<Integer> path) {
+    List<ImageView> tokens = tokenImages.get(tokenName);
+    if (tokens == null || pieceIndex >= tokens.size() || path.isEmpty()) {
+      return;
+    }
+
+    ImageView token = tokens.get(pieceIndex);
+
+    // Animate the move along the path
+    animationService.animateMoveAlongPath(tokenName, pieceIndex, path, this::refreshTokens);
+  }
+
+  private int findPieceIndex(String token, int tileId) {
+    for (PlayerView player : players) {
+      if (player.token().equals(token)) {
+        // Find which piece is at the given tile
+        for (int i = 0; i < player.piecePositions().size(); i++) {
+          if (player.piecePositions().get(i) == tileId) {
+            return i;
+          }
+        }
+        // If not found, use active piece or first piece
+        return player.activePieceIndex() >= 0 ? player.activePieceIndex() : 0;
+      }
+    }
+    return 0;
+  }
+
+  @Override
+  protected void handleWinnerDeclared(Object data) {
+    if (data instanceof Player winner) {
+      announceWinner(winner.getName());
+    }
+  }
+
+  @Override
+  protected void handleGameReset() {
+    // Clear the board
+    tokenPane.getChildren().clear();
+    tokenImages.clear();
+
+    // Reset status
+    statusLabel.setText("Roll the dice to start");
+
+    // Enable roll button
+    enableRollButton();
+  }
+
+  @Override
+  protected void handleTurnChanged(Object data) {
+    if (data instanceof Player player) {
+      String tokenName = player.getToken().name();
+
+      System.out.println("Turn changed to: " + player.getName() + " (" + tokenName + ")");
+
+      // Update all players and their statuses
+      for (PlayerView pv : players) {
+        // Check if this is the new current player
+        boolean isCurrentPlayer = pv.token().equals(tokenName);
+
+        // Update the UI accordingly
+        if (isCurrentPlayer) {
+          statusLabel.setText(pv.name() + "'s turn");
+        }
+
+        // Update piece highlights for the current player
+        updatePieceHighlights(pv, isCurrentPlayer);
+      }
+    }
+    enableRollButton();
+  }
+
+  private void updatePieceHighlights(PlayerView player, boolean isCurrentPlayer) {
+    List<ImageView> pieces = tokenImages.get(player.token());
+    if (pieces == null) return;
+
+    for (int i = 0; i < pieces.size(); i++) {
+      ImageView piece = pieces.get(i);
+
+      if (isCurrentPlayer && player.activePieceIndex() == i) {
+        boardUIService.highlightActivePiece(piece);
+      } else {
+        boardUIService.removeHighlight(piece);
+      }
+    }
+  }
+
+  private void refreshTokens() {
+    // This would need to fetch updated player positions from the model
+    // For now, we'll just refresh what we have
+    for (PlayerView player : players) {
+      updatePiecePositions(player);
+    }
+  }
+
+  @Override
+  public void showDice(int value) {
+    diceService.showDice(diceContainer, new int[] {value});
+    lastRoll = value;
+  }
+
+  @Override
+  public void announceWinner(String name) {
+    disableRollButton();
+    Dialogs.info("Winner!", "Congratulations, " + name + "! You won the game!");
+  }
+
+  public void setPieceSelectedCallback(Consumer<Integer> callback) {
+    this.pieceSelectedCallback = callback;
+  }
+
+  public void showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+  }
+
+  public int getLastRoll() {
+    return lastRoll;
+  }
+
+  @Override
+  public void connectToModel(GameGateway gateway) {
+    gateway.addObserver(this);
+  }
+
+  public void showStatusMessage(String message) {
+    statusLabel.setText(message);
+  }
+
+  public void animateMoveAlongPath(
+      String tokenName, int pieceIndex, List<Integer> path, Runnable onFinished) {
+    if (hasActiveAnimation) {
+      if (onFinished != null) onFinished.run();
+      return;
+    }
+
+    hasActiveAnimation = true;
+    animationService.animateMoveAlongPath(
+        tokenName,
+        pieceIndex,
+        path,
+        () -> {
           hasActiveAnimation = false;
           if (onFinished != null) onFinished.run();
-      });
+        });
   }
-  
+
   public void setPlayers(List<PlayerView> players) {
-      setPlayers(players, new ArrayList<>()); // Empty overlays list
+    setPlayers(players, new ArrayList<>()); // Empty overlays list
   }
-  
+
   public void setOverlays(List<OverlayParams> overlays) {
-      boardUIService.addOverlays(overlayPane, overlays);
+    boardUIService.addOverlays(overlayPane, overlays);
   }
-  
+
   public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
-      if (hasActiveAnimation) {
-          if (onFinished != null) onFinished.run();
-          return;
-      }
-      
-      hasActiveAnimation = true;
-      animationService.animateMove(tokenName, startId, endId, () -> {
+    if (hasActiveAnimation) {
+      if (onFinished != null) onFinished.run();
+      return;
+    }
+
+    hasActiveAnimation = true;
+    animationService.animateMove(
+        tokenName,
+        startId,
+        endId,
+        () -> {
           hasActiveAnimation = false;
           if (onFinished != null) onFinished.run();
-      });
+        });
   }
 }

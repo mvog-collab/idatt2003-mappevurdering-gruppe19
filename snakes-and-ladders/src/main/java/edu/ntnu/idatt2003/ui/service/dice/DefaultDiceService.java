@@ -1,68 +1,67 @@
 package edu.ntnu.idatt2003.ui.service.dice;
 
 import edu.ntnu.idatt2003.utils.ResourcePaths;
+import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.util.List;
-
 public class DefaultDiceService implements DiceService {
-    private static final int DIE_SIDE = 50;
-    private ImageView die1Img;
-    private ImageView die2Img;
-    
-    @Override
-    public void initializeDice(Pane container) {
-        // Create dice images
-        String imgDir = ResourcePaths.IMAGE_DIR;
-        die1Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
-        die2Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
-        
-        die1Img.setFitWidth(DIE_SIDE);
-        die1Img.setFitHeight(DIE_SIDE);
-        
-        die2Img.setFitWidth(DIE_SIDE);
-        die2Img.setFitHeight(DIE_SIDE);
-        
-        die1Img.setRotate(-5);
-        die2Img.setRotate(25);
-        
-        // Add to container
-        container.getChildren().addAll(die1Img, die2Img);
+  private static final int DIE_SIDE = 50;
+  private ImageView die1Img;
+  private ImageView die2Img;
+
+  @Override
+  public void initializeDice(Pane container) {
+    // Create dice images
+    String imgDir = ResourcePaths.IMAGE_DIR;
+    die1Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
+    die2Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
+
+    die1Img.setFitWidth(DIE_SIDE);
+    die1Img.setFitHeight(DIE_SIDE);
+
+    die2Img.setFitWidth(DIE_SIDE);
+    die2Img.setFitHeight(DIE_SIDE);
+
+    die1Img.setRotate(-5);
+    die2Img.setRotate(25);
+
+    // Add to container
+    container.getChildren().addAll(die1Img, die2Img);
+  }
+
+  @Override
+  public void showDice(Pane container, int[] values) {
+    String imgDir = ResourcePaths.IMAGE_DIR;
+
+    // Update first die
+    if (values.length > 0) {
+      die1Img.setImage(new Image(getClass().getResourceAsStream(imgDir + values[0] + ".png")));
+      die1Img.setRotate(Math.random() * 360);
     }
-    
-    @Override
-    public void showDice(Pane container, int[] values) {
-        String imgDir = ResourcePaths.IMAGE_DIR;
-        
-        // Update first die
-        if (values.length > 0) {
-            die1Img.setImage(new Image(getClass().getResourceAsStream(imgDir + values[0] + ".png")));
-            die1Img.setRotate(Math.random() * 360);
-        }
-        
-        // Update second die if available
-        if (values.length > 1) {
-            die2Img.setImage(new Image(getClass().getResourceAsStream(imgDir + values[1] + ".png")));
-            die2Img.setRotate(Math.random() * 360);
-        }
+
+    // Update second die if available
+    if (values.length > 1) {
+      die2Img.setImage(new Image(getClass().getResourceAsStream(imgDir + values[1] + ".png")));
+      die2Img.setRotate(Math.random() * 360);
     }
-    
-    @Override
-    public int[] parseDiceRoll(Object diceData) {
-        if (diceData instanceof List<?> diceValues) {
-            int[] result = new int[diceValues.size()];
-            
-            for (int i = 0; i < diceValues.size(); i++) {
-                if (diceValues.get(i) instanceof Integer value) {
-                    result[i] = value;
-                }
-            }
-            
-            return result;
+  }
+
+  @Override
+  public int[] parseDiceRoll(Object diceData) {
+    if (diceData instanceof List<?> diceValues) {
+      int[] result = new int[diceValues.size()];
+
+      for (int i = 0; i < diceValues.size(); i++) {
+        if (diceValues.get(i) instanceof Integer value) {
+          result[i] = value;
         }
-        
-        return new int[0];
+      }
+
+      return result;
     }
+
+    return new int[0];
+  }
 }

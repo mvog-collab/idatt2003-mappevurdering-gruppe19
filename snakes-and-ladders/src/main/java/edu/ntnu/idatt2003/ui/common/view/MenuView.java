@@ -6,12 +6,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 public interface MenuView extends BoardGameObserver {
-    Scene getScene();
-    void connectToModel(CompleteBoardGame gateway);
-    Button getStartButton();
-    Button getChoosePlayerButton();
-    Button getResetButton();
-    void enableStartButton();
-    void disableStartButton();
-    void updateStatusMessage(String message);
+  Scene getScene();
+
+  void connectToModel(CompleteBoardGame gateway);
+
+  Button getStartButton();
+
+  Button getChoosePlayerButton();
+
+  Button getResetButton();
+
+  void enableStartButton();
+
+  void disableStartButton();
+
+  void updateStatusMessage(String message);
 }

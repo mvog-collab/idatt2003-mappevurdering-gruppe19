@@ -13,16 +13,15 @@ import edu.games.engine.store.PlayerStore;
 
 public final class SnlGatewayFactory {
 
-    public static SnlGateway createDefault() {
-        JsonBoardLoader boardLoader  = new LinearBoardFactory();
-        RuleFactory     ruleFactory  = new SnlRuleFactory();
-        DiceFactory     diceFactory  = new RandomDiceFactory();
-        PlayerStore     playerStore  = new CsvPlayerStore();
-        OverlayProvider overlayProv  = new JsonOverlayProvider("/overlays/");
+  public static SnlGateway createDefault() {
+    JsonBoardLoader boardLoader = new LinearBoardFactory();
+    RuleFactory ruleFactory = new SnlRuleFactory();
+    DiceFactory diceFactory = new RandomDiceFactory();
+    PlayerStore playerStore = new CsvPlayerStore();
+    OverlayProvider overlayProv = new JsonOverlayProvider("/overlays/");
 
-        return new SnlGateway(boardLoader, ruleFactory,
-                              diceFactory,  playerStore, overlayProv);
-    }
+    return new SnlGateway(boardLoader, ruleFactory, diceFactory, playerStore, overlayProv);
+  }
 
-    private SnlGatewayFactory() { }
+  private SnlGatewayFactory() {}
 }

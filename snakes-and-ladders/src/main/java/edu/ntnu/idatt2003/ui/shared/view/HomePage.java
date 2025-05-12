@@ -21,131 +21,127 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * Main entry point for the application.
- * This class is responsible for displaying the home screen and initializing
- * the chosen game mode.
+ * Main entry point for the application. This class is responsible for displaying the home screen
+ * and initializing the chosen game mode.
  */
 public class HomePage extends Application {
 
-    // UI components
-    private Label title;
-    private ImageView laddersBtn;
-    private ImageView ludoBtn;
-    private HBox buttonBox;
-    private VBox root;
-    private Scene scene;
+  // UI components
+  private Label title;
+  private ImageView laddersBtn;
+  private ImageView ludoBtn;
+  private HBox buttonBox;
+  private VBox root;
+  private Scene scene;
 
-    @Override
-    public void start(Stage stage) {
-        show(stage);
-    }
+  @Override
+  public void start(Stage stage) {
+    show(stage);
+  }
 
-    /**
-     * Creates and displays the home screen UI
-     */
-    public void show(Stage stage) {
-        buildUI();
-        setupEventHandlers(stage);
-        
-        stage.setTitle("Retro Roll & Rise");
-        stage.setScene(scene);
-        stage.show();
-    }
-    
-    /**
-     * Builds the UI components
-     */
-    private void buildUI() {
-        // Create main title
-        title = new Label("Retro Roll & Rise");
-        title.getStyleClass().add("home-page-title");
+  /** Creates and displays the home screen UI */
+  public void show(Stage stage) {
+    buildUI();
+    setupEventHandlers(stage);
 
-        // Create game selection buttons
-        laddersBtn = createGameButton("SnakeAndLadder.png");
-        ludoBtn = createGameButton("Ludo.png");
+    stage.setTitle("Retro Roll & Rise");
+    stage.setScene(scene);
+    stage.show();
+  }
 
-        // Create layout containers
-        buttonBox = new HBox(40, laddersBtn, ludoBtn);
-        buttonBox.setAlignment(Pos.CENTER);
+  /** Builds the UI components */
+  private void buildUI() {
+    // Create main title
+    title = new Label("Retro Roll & Rise");
+    title.getStyleClass().add("home-page-title");
 
-        root = new VBox(40, title, buttonBox);
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(40));
-        root.getStyleClass().add("page-background");
+    // Create game selection buttons
+    laddersBtn = createGameButton("SnakeAndLadder.png");
+    ludoBtn = createGameButton("Ludo.png");
 
-        // Create scene
-        scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-    }
-    
-    /**
-     * Creates a styled game button with an image
-     */
-    private ImageView createGameButton(String imageName) {
-        ImageView button = new ImageView(new Image(getClass().getResourceAsStream("/images/" + imageName)));
-        button.setFitWidth(250);
-        button.setFitHeight(250);
-        button.getStyleClass().add("menu-button-image");
-        
-        // Add hover effects
-        button.setOnMouseEntered(e -> {
-            button.setScaleX(1.1);
-            button.setScaleY(1.1);
+    // Create layout containers
+    buttonBox = new HBox(40, laddersBtn, ludoBtn);
+    buttonBox.setAlignment(Pos.CENTER);
+
+    root = new VBox(40, title, buttonBox);
+    root.setAlignment(Pos.CENTER);
+    root.setPadding(new Insets(40));
+    root.getStyleClass().add("page-background");
+
+    // Create scene
+    scene = new Scene(root, 800, 600);
+    scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+  }
+
+  /** Creates a styled game button with an image */
+  private ImageView createGameButton(String imageName) {
+    ImageView button =
+        new ImageView(new Image(getClass().getResourceAsStream("/images/" + imageName)));
+    button.setFitWidth(250);
+    button.setFitHeight(250);
+    button.getStyleClass().add("menu-button-image");
+
+    // Add hover effects
+    button.setOnMouseEntered(
+        e -> {
+          button.setScaleX(1.1);
+          button.setScaleY(1.1);
         });
-        button.setOnMouseExited(e -> {
-            button.setScaleX(1.0);
-            button.setScaleY(1.0);
+    button.setOnMouseExited(
+        e -> {
+          button.setScaleX(1.0);
+          button.setScaleY(1.0);
         });
-        
-        return button;
-    }
-    
-    /**
-     * Sets up event handlers for UI components
-     */
-    private void setupEventHandlers(Stage stage) {
+
+    return button;
+  }
+
+  /** Sets up event handlers for UI components */
+  private void setupEventHandlers(Stage stage) {
     // Snakes & Ladders button click handler
-    laddersBtn.setOnMouseClicked((MouseEvent e) -> {
-        try {
+    laddersBtn.setOnMouseClicked(
+        (MouseEvent e) -> {
+          try {
             // Create gateway and connect to view using observer pattern
             GameGateway snlGateway = SnlGatewayFactory.createDefault();
             SnlPage snlPage = new SnlPage();
-            
+
             // Cast to CompleteBoardGame since SnlGateway implements it
             CompleteBoardGame completeBoardGame = (CompleteBoardGame) snlGateway;
-            
+
             // Connect view to observe the model
             snlPage.connectToModel(completeBoardGame);
-            
+
             // Create controller
             new SnlPageController(snlPage, completeBoardGame);
-            
+
             stage.setScene(snlPage.getScene());
-        } catch (Exception ex) {
+          } catch (Exception ex) {
             ex.printStackTrace();
-        }
-    });
+          }
+        });
 
     // Ludo button click handler
-    ludoBtn.setOnMouseClicked((MouseEvent e) -> {
-        try {
+    ludoBtn.setOnMouseClicked(
+        (MouseEvent e) -> {
+          try {
             // Create gateway and connect to view using observer pattern
             GameGateway ludoGateway = LudoGateway.createDefault();
             LudoPage ludoPage = new LudoPage();
-            
-            // Cast to CompleteBoardGame since LudoGateway implements it 
+
+            // Cast to CompleteBoardGame since LudoGateway implements it
             CompleteBoardGame completeBoardGame = (CompleteBoardGame) ludoGateway;
-            
+
             // Connect view to observe the model
             ludoPage.connectToModel(completeBoardGame);
-            
+
             // Create controller
             new LudoPageController(ludoPage, completeBoardGame);
-            
+
             stage.setScene(ludoPage.getScene());
-        } catch (Exception ex) {
+          } catch (Exception ex) {
             ex.printStackTrace();
-        }
-    });
-}
+          }
+        });
+  }
 }
