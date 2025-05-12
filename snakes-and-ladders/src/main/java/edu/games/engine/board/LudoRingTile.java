@@ -1,47 +1,47 @@
 package edu.games.engine.board;
 
 import edu.games.engine.model.LudoColor;
-import java.time.Year;
 
 public final class LudoRingTile implements LudoTile {
-    private final int id;
-    private LudoTile next;
-    private LudoTile goalEntry;
+  private final int id;
+  private LudoTile next;
+  private LudoTile goalEntry;
 
-    public LudoRingTile(int id) {
-        this.id = id;
-    }
+  public LudoRingTile(int id) {
+    this.id = id;
+  }
 
-    @Override 
-    public int id() {
-        return id;
-    }
+  @Override
+  public int id() {
+    return id;
+  }
 
-    public void next(LudoTile next)         {
-        this.next = next;
-    }
+  public void next(LudoTile next) {
+    this.next = next;
+  }
 
-    public void goalEntry(LudoTile goalEntry)    {
-        this.goalEntry = goalEntry;
-    }
+  public void goalEntry(LudoTile goalEntry) {
+    this.goalEntry = goalEntry;
+  }
 
-    @Override
-    public LudoTile next(LudoColor owner) {
-        // Only redirect to goal path if we're AT the entry point
-        // but NOT when we're landing on it for the first time
-        return next;
-    }
+  @Override
+  public LudoTile next(LudoColor owner) {
+    // Only redirect to goal path if we're AT the entry point
+    // but NOT when we're landing on it for the first time
+    return next;
+  }
 
-    // Add a new method to check if we should enter the goal path
-    public boolean shouldEnterGoalPath(int currentId, LudoColor owner) {
-        // Check if we're passing the entry point (not just landing on it)
-        int entryPoint = switch (owner) {
-            case BLUE -> 1;
-            case RED -> 14;
-            case GREEN -> 27;
-            case YELLOW -> 40;
+  // Add a new method to check if we should enter the goal path
+  public boolean shouldEnterGoalPath(int currentId, LudoColor owner) {
+    // Check if we're passing the entry point (not just landing on it)
+    int entryPoint =
+        switch (owner) {
+          case BLUE -> 1;
+          case RED -> 14;
+          case GREEN -> 27;
+          case YELLOW -> 40;
         };
-        
-        return id() == entryPoint && currentId != entryPoint;
-    }
+
+    return id() == entryPoint && currentId != entryPoint;
+  }
 }

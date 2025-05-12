@@ -46,7 +46,7 @@ public class LoadedPlayersPage {
     return view;
   }
 
-  public Button getaddSelectedButton() {
+  public Button getAddSelectedButton() {
     return addSelectedButton;
   }
 

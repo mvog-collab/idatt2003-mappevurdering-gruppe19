@@ -5,19 +5,18 @@ import edu.games.engine.dice.RandomDice;
 
 public class RandomDiceFactory implements DiceFactory {
 
-    private final int dice;
+  private final int dice;
 
-    public RandomDiceFactory() {
-        this.dice = 2;
-    }
+  public RandomDiceFactory() {
+    this.dice = 2;
+  }
 
-    public RandomDiceFactory(int dice) {
-        this.dice = dice;
-    }
+  public RandomDiceFactory(int dice) {
+    this.dice = dice;
+  }
 
-    @Override
-    public Dice create() {
-        return new RandomDice(dice);
-    }
-    
+  @Override
+  public Dice create() {
+    return new RandomDice(dice);
+  }
 }

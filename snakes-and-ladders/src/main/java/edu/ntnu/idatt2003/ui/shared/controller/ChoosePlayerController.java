@@ -90,7 +90,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
       Stage pop = createModalPopup("Players", loadedPlayersPage.getView(), 550, 450);
 
       loadedPlayersPage
-          .getaddSelectedButton()
+          .getAddSelectedButton()
           .setOnAction(
               ev -> {
                 gateway.loadPlayers(loadedPlayersPage.getSelectedRows());

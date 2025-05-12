@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Game {
-    int playTurn();
-    Player currentPlayer();
-    Optional<Player> winner();
-    List<Player> players();
+  int playTurn();
+
+  Player currentPlayer();
+
+  Optional<Player> winner();
+
+  List<Player> players();
 }
