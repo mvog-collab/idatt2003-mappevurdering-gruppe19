@@ -5,8 +5,8 @@ import edu.games.engine.board.LinearBoard;
 
 public class LinearBoardFactory implements JsonBoardLoader {
 
-    @Override
-    public Board create(int size) {
-        return new LinearBoard(size);
-    }
+  @Override
+  public Board create(int size) {
+    return new LinearBoard(size);
+  }
 }

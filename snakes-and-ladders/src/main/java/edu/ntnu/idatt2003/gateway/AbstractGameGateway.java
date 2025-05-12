@@ -73,6 +73,13 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   }
 
   @Override
+  public void clearPlayers() {
+    if (game != null) {
+      game.players().clear();
+    }
+  }
+
+  @Override
   public List<OverlayParams> boardOverlays() {
     int size = boardSize();
     return overlayCache.computeIfAbsent(size, this::loadOverlays);

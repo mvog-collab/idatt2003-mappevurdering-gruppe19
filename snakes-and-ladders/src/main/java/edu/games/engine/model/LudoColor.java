@@ -1,8 +1,8 @@
 package edu.games.engine.model;
 
 public enum LudoColor {
-    GREEN,
-    RED,
-    BLUE,
-    YELLOW
+  GREEN,
+  RED,
+  BLUE,
+  YELLOW
 }
