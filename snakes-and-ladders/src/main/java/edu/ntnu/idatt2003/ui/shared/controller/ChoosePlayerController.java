@@ -87,18 +87,19 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
       List<String[]> rows = PlayerCsv.load(in.toPath());
 
       LoadedPlayersPage loadedPlayersPage = new LoadedPlayersPage(rows);
-      Stage pop = createModalPopup("Players", loadedPlayersPage.getView(), 550, 450);
+      Stage popup = createModalPopup("Players", loadedPlayersPage.getView(), 650, 550);
 
       loadedPlayersPage
           .getAddSelectedButton()
           .setOnAction(
               ev -> {
+                gateway.clearPlayers();
                 gateway.loadPlayers(loadedPlayersPage.getSelectedRows());
-                pop.close();
+                popup.close();
               });
-      loadedPlayersPage.getCancelButton().setOnAction(ev -> pop.close());
+      loadedPlayersPage.getCancelButton().setOnAction(ev -> popup.close());
 
-      pop.showAndWait();
+      popup.showAndWait();
     } catch (IOException ex) {
       Errors.handle("Could not load players from file.", ex);
     }
