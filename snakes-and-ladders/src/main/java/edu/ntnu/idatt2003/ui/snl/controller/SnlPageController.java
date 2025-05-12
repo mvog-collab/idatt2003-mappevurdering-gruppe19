@@ -1,7 +1,7 @@
 package edu.ntnu.idatt2003.ui.snl.controller;
 
-import edu.ntnu.idatt2003.ui.common.controller.AbstractPageController;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
+import edu.ntnu.idatt2003.ui.common.controller.AbstractPageController;
 import edu.ntnu.idatt2003.ui.shared.controller.ChoosePlayerController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.snl.view.BoardSizePage;
@@ -15,102 +15,105 @@ import javafx.stage.Stage;
 
 public class SnlPageController extends AbstractPageController<SnlPage> {
 
-    public SnlPageController(SnlPage view, CompleteBoardGame gateway) {
-        super(view, gateway);
+  public SnlPageController(SnlPage view, CompleteBoardGame gateway) {
+    super(view, gateway);
 
-        // Connect view to observe the model
-        view.connectToModel(gateway);
-        
-        gateway.newGame(90);
-        initializeEventHandlers();
-    }
+    // Connect view to observe the model
+    view.connectToModel(gateway);
 
-    private void showPlayerDialog() {
-        ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
-        // Connect player page to observe model
-        choosePlayerPage.connectToModel(gateway);
-        
-        new ChoosePlayerController(choosePlayerPage, gateway);
-        createModalPopup("Players", choosePlayerPage.getView(), 800, 700).showAndWait();
-        
-        // No need to manually refresh - observer pattern will handle UI updates
-    }
+    gateway.newGame(90);
+    initializeEventHandlers();
+  }
 
-    private void setupChooseBoardButton() {
-        view.getChooseBoardButton().setOnAction(e -> {
-            BoardSizePage page = new BoardSizePage();
-            var root = page.getBoardSizeView();
-            new BoardSizeController(page, (CompleteBoardGame)gateway);
-            createModalPopup("Choose board size", root, 600, 500)
-                    .showAndWait();
-            view.enableChoosePlayerButton();
-        });
-    }
+  private void showPlayerDialog() {
+    ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
+    // Connect player page to observe model
+    choosePlayerPage.connectToModel(gateway);
 
-    private void setupChoosePlayerButton() {
-        view.getChoosePlayerButton().setOnAction(e -> showPlayerDialog());
-    }
+    new ChoosePlayerController(choosePlayerPage, gateway);
+    createModalPopup("Players", choosePlayerPage.getView(), 800, 700).showAndWait();
 
-    private void setupStartButton() {
-        view.getStartButton().setOnAction(e -> {
-            if (gateway.players().size() < 2) {
+    // No need to manually refresh - observer pattern will handle UI updates
+  }
+
+  private void setupChooseBoardButton() {
+    view.getChooseBoardButton()
+        .setOnAction(
+            e -> {
+              BoardSizePage page = new BoardSizePage();
+              var root = page.getBoardSizeView();
+              new BoardSizeController(page, (CompleteBoardGame) gateway);
+              createModalPopup("Choose board size", root, 600, 500).showAndWait();
+              view.enableChoosePlayerButton();
+            });
+  }
+
+  private void setupChoosePlayerButton() {
+    view.getChoosePlayerButton().setOnAction(e -> showPlayerDialog());
+  }
+
+  private void setupStartButton() {
+    view.getStartButton()
+        .setOnAction(
+            e -> {
+              if (gateway.players().size() < 2) {
                 view.alertUserAboutUnfinishedSetup();
                 return;
-            }
-    
-            int boardSize = gateway.boardSize();
-    
-            BoardView board = new BoardView(boardSize);
-            
-            // Connect view to observe the model
-            board.connectToModel(gateway);
-            
-            BoardController boardController = new BoardController(board, gateway);
-    
-            // Initial UI setup
-            board.setPlayers(gateway.players(), gateway.boardOverlays());
-    
-            Stage stage = (Stage) view.getStartButton().getScene().getWindow();
-            stage.setScene(board.getScene());
-        });
-    }
+              }
 
-    private void setupResetGameButton() {
-        view.getResetButton().setOnAction(e -> {
-            gateway.newGame(gateway.boardSize());
-            // No need to manually refresh UI - observer pattern will handle it
-            showResetConfirmation();
-        });
-    }
+              int boardSize = gateway.boardSize();
 
-    private void showResetConfirmation() {
-        Dialogs.info("Game reset", "The game has been reset successfully. Please choose a board to continue");
-    }
+              BoardView board = new BoardView(boardSize);
 
-    @Override
-    protected Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {
-        Stage popupStage = new Stage();
-        popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.setTitle(title);
+              // Connect view to observe the model
+              board.connectToModel(gateway);
 
-        Scene scene = new Scene(root, width, height);
+              BoardController boardController = new BoardController(board, gateway);
 
-        scene.getStylesheets().add(
-            getClass().getResource(ResourcePaths.STYLE_SHEET)
-                .toExternalForm()
-        );
+              // Initial UI setup
+              board.setPlayers(gateway.players(), gateway.boardOverlays());
 
-        scene.getRoot().requestFocus();
+              Stage stage = (Stage) view.getStartButton().getScene().getWindow();
+              stage.setScene(board.getScene());
+            });
+  }
 
-        popupStage.setScene(scene);
-        return popupStage;
-    }
+  private void setupResetGameButton() {
+    view.getResetButton()
+        .setOnAction(
+            e -> {
+              gateway.newGame(gateway.boardSize());
+              // No need to manually refresh UI - observer pattern will handle it
+              showResetConfirmation();
+            });
+  }
 
-    @Override
-    protected void initializeEventHandlers() {
-        setupChooseBoardButton();
-        setupChoosePlayerButton();
-        setupStartButton();
-        setupResetGameButton();
-    }
+  private void showResetConfirmation() {
+    Dialogs.info(
+        "Game reset", "The game has been reset successfully. Please choose a board to continue");
+  }
+
+  @Override
+  protected Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {
+    Stage popupStage = new Stage();
+    popupStage.initModality(Modality.APPLICATION_MODAL);
+    popupStage.setTitle(title);
+
+    Scene scene = new Scene(root, width, height);
+
+    scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
+
+    scene.getRoot().requestFocus();
+
+    popupStage.setScene(scene);
+    return popupStage;
+  }
+
+  @Override
+  protected void initializeEventHandlers() {
+    setupChooseBoardButton();
+    setupChoosePlayerButton();
+    setupStartButton();
+    setupResetGameButton();
+  }
 }

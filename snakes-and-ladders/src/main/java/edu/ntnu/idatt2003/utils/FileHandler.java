@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 public interface FileHandler<T> {
 
-    void save(T object, Path path) throws IOException;
-    T    load(Path path)           throws IOException;
+  void save(T object, Path path) throws IOException;
+
+  T load(Path path) throws IOException;
 }

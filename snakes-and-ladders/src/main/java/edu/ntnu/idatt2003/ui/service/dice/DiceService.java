@@ -3,7 +3,9 @@ package edu.ntnu.idatt2003.ui.service.dice;
 import javafx.scene.layout.Pane;
 
 public interface DiceService {
-    void initializeDice(Pane container);
-    void showDice(Pane container, int[] values);
-    int[] parseDiceRoll(Object diceData);
+  void initializeDice(Pane container);
+
+  void showDice(Pane container, int[] values);
+
+  int[] parseDiceRoll(Object diceData);
 }
