@@ -27,6 +27,7 @@ public class LoadedPlayersPage {
     for (String[] row : rows) {
       CheckBox checkBox = new CheckBox("%s  (%s, %s)".formatted(row[0], row[1], row[2]));
       checkBox.setUserData(row);
+      checkBox.getStyleClass().add("loaded-player");
       playerBoxes.add(checkBox);
       playersListBox.getChildren().add(checkBox);
     }
@@ -34,6 +35,8 @@ public class LoadedPlayersPage {
 
     HBox buttons = new HBox(20, cancelButton, addSelectedButton);
     buttons.setAlignment(Pos.CENTER);
+    addSelectedButton.getStyleClass().add("confirm-button");
+    cancelButton.getStyleClass().add("exit-button");
 
     view.getChildren().addAll(title, new Separator(), playersListBox, buttons);
     view.setPadding(new Insets(30));

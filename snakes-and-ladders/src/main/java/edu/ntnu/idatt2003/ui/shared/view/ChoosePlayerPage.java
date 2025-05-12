@@ -237,7 +237,10 @@ public class ChoosePlayerPage implements BoardGameObserver {
 
   public void disableToken(String token) {
     ToggleButton btn = tokenButtons.get(token);
-    if (btn != null) btn.setDisable(true);
+    if (btn != null) {
+      btn.setDisable(true);
+      btn.setSelected(false);
+    }
   }
 
   public Button getAddPlayerButton() {
