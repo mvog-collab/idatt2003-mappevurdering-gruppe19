@@ -10,5 +10,7 @@ public interface PlayerManagement extends GameGateway {
 
   void loadPlayers(List<String[]> rows);
 
+  void clearPlayers();
+
   void savePlayers(Path out) throws IOException;
 }
