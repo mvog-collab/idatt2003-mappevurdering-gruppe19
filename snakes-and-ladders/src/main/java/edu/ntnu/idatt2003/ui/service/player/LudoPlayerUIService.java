@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class LudoPlayerUIService implements PlayerUIService {
-  private static final int TOKEN_SIZE = 30;
+  private static final int TOKEN_SIZE = 35;
 
   @Override
   public Node createPlayerBox(PlayerView player, boolean hasTurn) {

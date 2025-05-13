@@ -473,7 +473,9 @@ public class LudoBoardView extends AbstractGameView implements GameView {
         path,
         () -> {
           hasActiveAnimation = false;
-          if (onFinished != null) onFinished.run();
+          if (onFinished != null) {
+            onFinished.run();
+          }
         });
   }
 
