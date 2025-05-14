@@ -46,7 +46,6 @@ public abstract class AbstractMenuView implements MenuView {
   }
 
   protected void handleGameReset() {
-    disableChoosePlayerButton();
     disableStartButton();
   }
 

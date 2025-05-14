@@ -83,6 +83,7 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
         .setOnAction(
             e -> {
               gateway.newGame(gateway.boardSize());
+              view.disableChoosePlayerButton();
               // No need to manually refresh UI - observer pattern will handle it
               showResetConfirmation();
             });
