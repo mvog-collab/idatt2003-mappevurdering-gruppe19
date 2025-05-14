@@ -14,6 +14,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   private int lastRolledValue = 0;
   private int selectedPieceIndex = -1;
   private boolean waitingForPieceSelection = false;
+  private static final int GOAL_LENGTH = 5;
 
   public LudoBoardController(LudoBoardView view, CompleteBoardGame gateway) {
     super(view, gateway);
@@ -34,6 +35,8 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       return;
     }
 
+    LudoColor color = LudoColor.valueOf(current.token());
+
     // Roll the dice
     lastRolledValue = gateway.rollDice();
     view.showDice(lastRolledValue);
@@ -41,7 +44,8 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
     // Check player pieces
     boolean hasHomePieces = current.piecePositions().stream().anyMatch(pos -> pos <= 0);
-    boolean hasBoardPieces = current.piecePositions().stream().anyMatch(pos -> pos > 0);
+    boolean hasBoardPieces =
+        current.piecePositions().stream().anyMatch(pos -> pos > 0 && !isPieceFinished(pos, color));
 
     // Special case handling for rolling a 6
     if (lastRolledValue == 6) {
@@ -61,7 +65,6 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
         if (boardPieceIndices.size() == 1) {
           selectedPieceIndex = boardPieceIndices.get(0);
           processSelectedPiece();
-          return;
         }
         return;
       } else {
@@ -83,7 +86,6 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
         selectedPieceIndex = boardPieceIndices.get(0);
         processSelectedPiece();
       }
-      return;
     } else {
       // Player has no valid moves (only home pieces and didn't roll a 6)
       System.out.println("No valid moves");
@@ -112,7 +114,6 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
       // Add this line as a backup to ensure button is enabled
       view.enableRollButton();
-      return;
     }
   }
 
@@ -129,6 +130,11 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
         view.showAlert("Invalid move", "You need to roll a 6 to move a piece from home.");
         return;
       }
+      LudoColor color = LudoColor.valueOf(current.token());
+      if (isPieceFinished(position, color)) {
+        view.showAlert("Piece finished", "That piece has already reached the goal.");
+        return;
+      }
     }
 
     selectedPieceIndex = pieceIndex;
@@ -137,6 +143,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
   // Fix for the processSelectedPiece method in LudoBoardController.java
   private void processSelectedPiece() {
+    view.disableRollButton();
     waitingForPieceSelection = false;
 
     PlayerView current = getCurrentPlayer();
@@ -361,19 +368,24 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
   // Helper methods
 
+  private boolean isPieceFinished(int pos, LudoColor color) {
+    return pos == getGoalBaseId(color) + GOAL_LENGTH;
+  }
+
   private PlayerView getCurrentPlayer() {
     return gateway.players().stream().filter(PlayerView::hasTurn).findFirst().orElse(null);
   }
 
   private List<Integer> getBoardPieceIndices(PlayerView player) {
     List<Integer> indices = new ArrayList<>();
+    LudoColor color = LudoColor.valueOf(player.token());
 
     for (int i = 0; i < player.piecePositions().size(); i++) {
-      if (player.piecePositions().get(i) > 0) {
+      int pos = player.piecePositions().get(i);
+      if (pos > 0 && !isPieceFinished(pos, color)) {
         indices.add(i);
       }
     }
-
     return indices;
   }
 }
