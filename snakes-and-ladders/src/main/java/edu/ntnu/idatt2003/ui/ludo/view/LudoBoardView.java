@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -485,6 +486,16 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   public void setOverlays(List<OverlayParams> overlays) {
     boardUIService.addOverlays(overlayPane, overlays);
+  }
+
+  @Override
+  public void enableRollButton() {
+    Platform.runLater(
+        () -> {
+          if (!hasActiveAnimation) {
+            rollButton.setDisable(false);
+          }
+        });
   }
 
   public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
