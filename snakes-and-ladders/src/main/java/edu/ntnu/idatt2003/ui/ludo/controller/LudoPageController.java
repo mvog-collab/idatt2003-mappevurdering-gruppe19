@@ -24,9 +24,10 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
 
   private void showPlayerDialog() {
     String[] ludoTokens = {"BLUE", "GREEN", "RED", "YELLOW"};
-    ChoosePlayerPage p = new ChoosePlayerPage(ludoTokens);
-    new ChoosePlayerController(p, gateway);
-    createModalPopup("Players", p.getView(), 1000, 800).showAndWait();
+    ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage(ludoTokens);
+    choosePlayerPage.connectToModel(gateway);
+    new ChoosePlayerController(choosePlayerPage, gateway);
+    createModalPopup("Players", choosePlayerPage.getView(), 1000, 800).showAndWait();
   }
 
   private void startGame() {

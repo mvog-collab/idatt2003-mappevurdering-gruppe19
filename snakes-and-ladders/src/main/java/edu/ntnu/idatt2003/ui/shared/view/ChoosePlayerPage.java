@@ -106,13 +106,13 @@ public class ChoosePlayerPage implements BoardGameObserver {
   }
 
   /** Creates a player box UI component for a player */
-  private VBox createPlayerBox(PlayerView pv) {
-    int years = java.time.Period.between(pv.birthday(), LocalDate.now()).getYears();
+  private VBox createPlayerBox(PlayerView player) {
+    int yearsOld = java.time.Period.between(player.birthday(), LocalDate.now()).getYears();
 
-    Label name = new Label(pv.name());
+    Label name = new Label(player.name());
     name.getStyleClass().add("player-name");
 
-    Label age = new Label(years + " yrs");
+    Label age = new Label(yearsOld + " yrs");
     age.getStyleClass().add("player-age");
 
     VBox box = new VBox(name, age);

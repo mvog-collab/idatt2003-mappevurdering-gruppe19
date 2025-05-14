@@ -365,14 +365,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   @Override
   protected void handleGameReset() {
-    // Clear the board
-    tokenPane.getChildren().clear();
-    tokenImages.clear();
-
-    // Reset status
+    setPlayers(gateway.players(), gateway.boardOverlays());
     statusLabel.setText("Roll the dice to start");
-
-    // Enable roll button
     enableRollButton();
   }
 

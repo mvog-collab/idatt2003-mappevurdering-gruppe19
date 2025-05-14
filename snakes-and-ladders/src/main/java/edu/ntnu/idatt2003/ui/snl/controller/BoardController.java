@@ -10,9 +10,6 @@ public class BoardController extends AbstractGameController<BoardView> {
 
   public BoardController(BoardView boardView, CompleteBoardGame gateway) {
     super(boardView, gateway);
-
-    view.getRollButton().setOnAction(e -> playTurn());
-    view.getPlayAgainButton().setOnAction(e -> resetGame());
   }
 
   @Override
@@ -84,10 +81,6 @@ public class BoardController extends AbstractGameController<BoardView> {
     } else {
       view.enableRollButton();
     }
-  }
-
-  public void resetGame() {
-    gateway.resetGame();
   }
 
   private void refreshTokens() {

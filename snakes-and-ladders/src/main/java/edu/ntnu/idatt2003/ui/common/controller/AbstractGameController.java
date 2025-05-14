@@ -26,7 +26,7 @@ public abstract class AbstractGameController<V extends GameView> extends Abstrac
   }
 
   protected void handleResetGame() {
-    // gateway.resetGame();
+    gateway.resetGame();
   }
 
   // Game-specific logic to be implemented by subclasses
