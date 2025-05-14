@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2003.ui.common.view;
 
 import edu.games.engine.observer.BoardGameEvent;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 
 public abstract class AbstractGameView extends AbstractView implements GameView {
@@ -51,11 +52,11 @@ public abstract class AbstractGameView extends AbstractView implements GameView 
 
   @Override
   public void disableRollButton() {
-    rollButton.setDisable(true);
+    Platform.runLater(() -> rollButton.setDisable(true));
   }
 
   @Override
   public void enableRollButton() {
-    rollButton.setDisable(false);
+    Platform.runLater(() -> rollButton.setDisable(false));
   }
 }
