@@ -4,7 +4,6 @@ import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractGameController;
 import edu.ntnu.idatt2003.ui.snl.view.BoardView;
-import java.util.Optional;
 
 public class BoardController extends AbstractGameController<BoardView> {
 
@@ -35,49 +34,7 @@ public class BoardController extends AbstractGameController<BoardView> {
       int startId = player.tileId();
       int pathEndId = Math.min(startId + rolled, gateway.boardSize());
 
-      view.animateMove(
-          token,
-          startId,
-          pathEndId,
-          () -> {
-            refreshTokens();
-            if (gateway.hasWinner()) {
-              view.announceWinner(player.name());
-            } else {
-              view.enableRollButton();
-            }
-          });
-    } else {
-      view.enableRollButton();
-    }
-  }
-
-  public void playTurn() {
-    view.disableRollButton();
-
-    PlayerView current = playerWithTurn().orElseThrow();
-    String token = current.token();
-    int startId = current.tileId();
-
-    int rolled = gateway.rollDice();
-    var dice = gateway.lastDiceValues();
-    view.showDice(dice.get(0), dice.get(1));
-
-    int pathEndId = Math.min(startId + rolled, gateway.boardSize());
-
-    if (rolled != 12) {
-      view.animateMove(
-          token,
-          startId,
-          pathEndId,
-          () -> {
-            refreshTokens();
-            if (gateway.hasWinner()) {
-              view.announceWinner(current.name());
-            } else {
-              view.enableRollButton();
-            }
-          });
+      view.animateMove(token, startId, pathEndId, this::refreshTokens);
     } else {
       view.enableRollButton();
     }
@@ -85,10 +42,6 @@ public class BoardController extends AbstractGameController<BoardView> {
 
   private void refreshTokens() {
     view.setPlayers(gateway.players(), gateway.boardOverlays());
-  }
-
-  private Optional<PlayerView> playerWithTurn() {
-    return gateway.players().stream().filter(PlayerView::hasTurn).findFirst();
   }
 
   private PlayerView getCurrentPlayer() {
