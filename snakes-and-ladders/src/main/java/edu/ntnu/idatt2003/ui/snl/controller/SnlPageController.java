@@ -1,7 +1,9 @@
 package edu.ntnu.idatt2003.ui.snl.controller;
 
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
+import edu.ntnu.idatt2003.gateway.SnlGateway;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractPageController;
+import edu.ntnu.idatt2003.ui.service.board.SnlBoardUIService;
 import edu.ntnu.idatt2003.ui.shared.controller.ChoosePlayerController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.snl.view.BoardSizePage;
@@ -9,6 +11,7 @@ import edu.ntnu.idatt2003.ui.snl.view.BoardView;
 import edu.ntnu.idatt2003.ui.snl.view.SnlPage;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.UiDialogs;
+import java.util.Map;
 import javafx.stage.Stage;
 
 public class SnlPageController extends AbstractPageController<SnlPage> {
@@ -61,11 +64,26 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
 
               int boardSize = gateway.boardSize();
 
+              Map<Integer, Integer> snakes = Map.of();
+              Map<Integer, Integer> ladders = Map.of();
+
+              if (gateway instanceof SnlGateway snlGateway) {
+                snakes = snlGateway.getSnakes();
+                ladders = snlGateway.getLadders();
+              }
+
               BoardView board = new BoardView(boardSize);
 
               // Connect view to observe the model
               board.connectToModel(gateway);
 
+              if (board.getBoardUIService() instanceof SnlBoardUIService snlBoardUIService) {
+                snlBoardUIService.applySpecialTileStyling(
+                    snakes,
+                    ladders,
+                    board.getOverlayPane(),
+                    false); // CHANGE FOR JSON BOARD LOADING
+              }
               BoardController boardController = new BoardController(board, gateway);
 
               // Initial UI setup
@@ -73,6 +91,9 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
 
               Stage stage = (Stage) view.getStartButton().getScene().getWindow();
               stage.setScene(board.getScene());
+
+              // board.applySpecialStylingWhenReady(
+              //     snakes, ladders, false); // CHANGE FOR JSON BOARD LOADING
             });
   }
 

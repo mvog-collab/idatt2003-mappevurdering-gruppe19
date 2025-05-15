@@ -8,12 +8,14 @@ import edu.ntnu.idatt2003.ui.common.view.AbstractGameView;
 import edu.ntnu.idatt2003.ui.fx.OverlayParams;
 import edu.ntnu.idatt2003.ui.service.animation.AnimationService;
 import edu.ntnu.idatt2003.ui.service.board.BoardUIService;
+import edu.ntnu.idatt2003.ui.service.board.SnlBoardUIService;
 import edu.ntnu.idatt2003.ui.service.dice.DiceService;
 import edu.ntnu.idatt2003.ui.service.player.PlayerUIService;
 import edu.ntnu.idatt2003.ui.shared.view.ViewServiceFactory;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
 import java.util.*;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -344,6 +346,21 @@ public class BoardView extends AbstractGameView {
     gateway.addObserver(this);
   }
 
+  @Override
+  public void enableRollButton() {
+    Platform.runLater(
+        () -> {
+          if (!hasActiveAnimation) {
+            rollButton.setDisable(false);
+          }
+        });
+  }
+
+  @Override
+  public void disableRollButton() {
+    Platform.runLater(() -> rollButton.setDisable(true));
+  }
+
   public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
     if (hasActiveAnimation) {
       if (onFinished != null) onFinished.run();
@@ -361,7 +378,31 @@ public class BoardView extends AbstractGameView {
         });
   }
 
+  public void applySpecialStylingWhenReady(
+      Map<Integer, Integer> snakes, Map<Integer, Integer> ladders, boolean isCustom) {
+    // Store the data for application when the stage is shown
+    final Map<Integer, Integer> finalSnakes = new HashMap<>(snakes);
+    final Map<Integer, Integer> finalLadders = new HashMap<>(ladders);
+
+    Platform.runLater(
+        () -> {
+          if (boardUIService instanceof SnlBoardUIService snlBoardUIService) {
+
+            snlBoardUIService.applySpecialTileStyling(
+                finalSnakes, finalLadders, overlayPane, isCustom);
+          }
+        });
+  }
+
   public void showDice(int value1, int value2) {
     diceService.showDice(diceContainer, new int[] {value1, value2});
+  }
+
+  public BoardUIService getBoardUIService() {
+    return boardUIService;
+  }
+
+  public Pane getOverlayPane() {
+    return overlayPane;
   }
 }
