@@ -18,6 +18,7 @@ import edu.games.engine.rule.SnlRuleEngine;
 import edu.games.engine.rule.factory.RuleFactory;
 import edu.games.engine.store.PlayerStore;
 import edu.games.engine.strategy.GameStrategy;
+import edu.games.engine.strategy.SnlGameStrategy;
 import edu.games.engine.strategy.factory.GameStrategyFactory;
 import edu.ntnu.idatt2003.gateway.event.PlayerMoveData;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
@@ -26,6 +27,7 @@ import edu.ntnu.idatt2003.persistence.BoardFactory;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class SnlGateway extends AbstractGameGateway {
@@ -157,5 +159,22 @@ public final class SnlGateway extends AbstractGameGateway {
   @Override
   protected Token mapStringToToken(String token) {
     return TokenMapperFactory.getSnlToken(token);
+  }
+
+  /** Returns the snake positions (source tile -> destination tile) */
+  public Map<Integer, Integer> getSnakes() {
+    if (gameStrategy instanceof SnlGameStrategy strategy) {
+      return strategy.getSnakes();
+    }
+    return Map.of();
+  }
+
+  /** Returns the ladder positions (source tile -> destination tile) */
+  public Map<Integer, Integer> getLadders() {
+    if (gameStrategy instanceof SnlGameStrategy strategy) {
+      return strategy.getLadders();
+    }
+
+    return Map.of();
   }
 }
