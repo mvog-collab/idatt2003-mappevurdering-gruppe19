@@ -116,4 +116,12 @@ public class SnlGameStrategy implements GameStrategy {
               });
     }
   }
+
+  public Map<Integer, Integer> getSnakes() {
+    return Map.copyOf(snakes); // Return immutable copy
+  }
+
+  public Map<Integer, Integer> getLadders() {
+    return Map.copyOf(ladders); // Return immutable copy
+  }
 }
