@@ -42,6 +42,9 @@ public class BoardController extends AbstractGameController<BoardView> {
 
   private void refreshTokens() {
     view.setPlayers(gateway.players(), gateway.boardOverlays());
+    if (!gateway.hasWinner()) {
+      view.enableRollButton();
+    }
   }
 
   private PlayerView getCurrentPlayer() {
