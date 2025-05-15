@@ -6,9 +6,7 @@ import edu.ntnu.idatt2003.ui.ludo.view.LudoBoardView;
 import edu.ntnu.idatt2003.ui.ludo.view.LudoPage;
 import edu.ntnu.idatt2003.ui.shared.controller.ChoosePlayerController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
-import edu.ntnu.idatt2003.utils.ResourcePaths;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
+import edu.ntnu.idatt2003.utils.UiDialogs;
 import javafx.stage.Stage;
 
 public final class LudoPageController extends AbstractPageController<LudoPage> {
@@ -27,7 +25,7 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage(ludoTokens);
     choosePlayerPage.connectToModel(gateway);
     new ChoosePlayerController(choosePlayerPage, gateway);
-    createModalPopup("Players", choosePlayerPage.getView(), 1000, 800).showAndWait();
+    UiDialogs.createModalPopup("Players", choosePlayerPage.getView(), 1000, 800).showAndWait();
   }
 
   private void startGame() {
@@ -43,22 +41,6 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
 
     // Initial state
     boardView.showDice(1);
-  }
-
-  @Override
-  protected Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {
-    Stage popupStage = new Stage();
-    popupStage.initModality(Modality.APPLICATION_MODAL);
-    popupStage.setTitle(title);
-
-    Scene scene = new Scene(root, width, height);
-
-    scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
-
-    scene.getRoot().requestFocus();
-
-    popupStage.setScene(scene);
-    return popupStage;
   }
 
   @Override

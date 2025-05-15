@@ -7,8 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-public abstract class AbstractMenuView implements MenuView {
-  protected CompleteBoardGame gateway;
+public abstract class AbstractMenuView extends AbstractView implements MenuView {
   protected Button startButton;
   protected Button choosePlayerButton;
   protected Button chooseBoardButton;
@@ -22,7 +21,7 @@ public abstract class AbstractMenuView implements MenuView {
   }
 
   @Override
-  public void update(BoardGameEvent event) {
+  public void handleEvent(BoardGameEvent event) {
     Platform.runLater(
         () -> {
           switch (event.getType()) {
