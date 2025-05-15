@@ -11,6 +11,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 public class SnlBoardUIService implements BoardUIService {
   private static final int TILE_SIZE = 50;
@@ -78,6 +81,70 @@ public class SnlBoardUIService implements BoardUIService {
       }
       leftToRight = !leftToRight;
     }
+  }
+
+  public void applySpecialTileStyling(
+      Map<Integer, Integer> snakes,
+      Map<Integer, Integer> ladders,
+      Pane overlayPane,
+      boolean isCustom) {
+    // Clear any existing overlays first
+    overlayPane.getChildren().clear();
+
+    // Apply ladder styling
+    for (Map.Entry<Integer, Integer> entry : ladders.entrySet()) {
+      int fromId = entry.getKey();
+      int toId = entry.getValue();
+
+      // Style the source tile
+      StackPane fromTile = tiles.get(fromId);
+      if (fromTile != null) {
+        fromTile.getStyleClass().add("tile-ladder");
+      }
+
+      if (isCustom) {
+        addSimpleDirectionalArrow(fromId, toId, true, overlayPane);
+      }
+    }
+
+    // Apply snake styling
+    for (Map.Entry<Integer, Integer> entry : snakes.entrySet()) {
+      int fromId = entry.getKey();
+      int toId = entry.getValue();
+
+      // Style the source tile
+      StackPane fromTile = tiles.get(fromId);
+      if (fromTile != null) {
+        fromTile.getStyleClass().add("tile-snake");
+      }
+
+      if (isCustom) {
+        addSimpleDirectionalArrow(fromId, toId, false, overlayPane);
+      }
+    }
+  }
+
+  private void addSimpleDirectionalArrow(int fromId, int toId, boolean isLadder, Pane overlayPane) {
+    Point2D fromPos = tileCoordinates.get(fromId);
+    Point2D toPos = tileCoordinates.get(toId);
+
+    if (fromPos == null || toPos == null) return;
+
+    // Create line with ABSOLUTE positioning
+    Line line = new Line(fromPos.getX(), fromPos.getY(), toPos.getX(), toPos.getY());
+    line.setStroke(isLadder ? Color.GREEN : Color.RED);
+    line.setStrokeWidth(4); // thick and obvious
+
+    // Create large, obvious markers
+    Circle fromCircle = new Circle(fromPos.getX(), fromPos.getY(), 8);
+    fromCircle.setFill(isLadder ? Color.LIGHTGREEN : Color.PINK);
+    fromCircle.setStroke(Color.BLACK);
+
+    Circle toCircle = new Circle(toPos.getX(), toPos.getY(), 8);
+    toCircle.setFill(Color.YELLOW);
+    toCircle.setStroke(Color.BLACK);
+
+    overlayPane.getChildren().addAll(line, fromCircle, toCircle);
   }
 
   private void addTile(GridPane grid, int row, int col, int id) {
