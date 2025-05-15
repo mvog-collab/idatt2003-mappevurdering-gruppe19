@@ -32,9 +32,19 @@ public class LudoPage extends AbstractMenuView {
     // Initial button states
     startButton.setDisable(true);
 
+    Button howToButton =
+        createHowToPlayButton(
+            "How to play - Ludo",
+            """
+            - Throw a 6 to get a piece out of your home.
+            - If you land on an enemy player(s), they are sent back to their home.
+            - The first player with all pieces in the goal is the winner!
+            """);
+
     // Create layouts using the service
     VBox leftPanel = menuUIService.createLeftPanel(titleLabel, boardPreview);
-    VBox menuPanel = menuUIService.createMenuPanel(choosePlayerButton, startButton, resetButton);
+    VBox menuPanel =
+        menuUIService.createMenuPanel(howToButton, choosePlayerButton, startButton, resetButton);
     menuPanel.getChildren().add(statusLabel);
 
     HBox mainLayout = menuUIService.createMainLayout(leftPanel, menuPanel);

@@ -123,12 +123,21 @@ public class LudoBoardView extends AbstractGameView implements GameView {
     rollButton.getStyleClass().add("roll-dice-button");
     playAgainButton.getStyleClass().add("play-again-button");
 
+    Button howToButton =
+        createHowToPlayButton(
+            "How to play - Ludo",
+            """
+            - Throw a 6 to get a piece out of your home.
+            - If you land on an enemy player(s), they are sent back to their home.
+            - The first player with all pieces in the goal is the winner!
+            """);
+
     HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
     buttonContainer.setSpacing(10);
     buttonContainer.setAlignment(Pos.CENTER);
 
     // Add everything to control panel
-    controlPanel.getChildren().addAll(statusLabel, diceContainer, buttonContainer);
+    controlPanel.getChildren().addAll(howToButton, statusLabel, diceContainer, buttonContainer);
     controlPanel.setSpacing(20);
     controlPanel.setAlignment(Pos.TOP_CENTER);
     controlPanel.setPrefWidth(400);

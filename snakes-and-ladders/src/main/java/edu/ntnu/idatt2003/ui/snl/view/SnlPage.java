@@ -34,6 +34,16 @@ public class SnlPage extends AbstractMenuView {
     choosePlayerButton = menuUIService.createMenuButton("Choose players", "start-page-button");
     resetButton = menuUIService.createMenuButton("Reset game", "exit-button");
     chooseBoardButton = menuUIService.createMenuButton("Choose board", "start-page-button");
+    Button howToButton =
+        createHowToPlayButton(
+            "How to play - Snakes & Ladders",
+            """
+            - Roll the dice and be the first to the goal!
+            - If you land on an enemy player(s), they are sent back to start.
+            - Roll a pair for an extra turn.
+            - If you roll a pair of six, your turn is skipped!
+            - Be aware of the snakes and go for the ladders!
+            """);
     statusLabel = new Label("Start by choosing a board");
     statusLabel.getStyleClass().add("status-label");
 
@@ -56,9 +66,9 @@ public class SnlPage extends AbstractMenuView {
     HBox mainLayout = menuUIService.createMainLayout(leftPanel, menuPanel);
 
     // Position settings button in top-right corner
-    StackPane layout = new StackPane(mainLayout, settingsButton);
-    StackPane.setAlignment(settingsButton, Pos.TOP_RIGHT);
-    StackPane.setMargin(settingsButton, new Insets(10));
+    StackPane layout = new StackPane(mainLayout, howToButton);
+    StackPane.setAlignment(howToButton, Pos.TOP_RIGHT);
+    StackPane.setMargin(howToButton, new Insets(10));
 
     // Create scene
     scene = new Scene(layout, 1000, 700);

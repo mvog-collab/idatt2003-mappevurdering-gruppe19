@@ -8,9 +8,7 @@ import edu.ntnu.idatt2003.ui.snl.view.BoardSizePage;
 import edu.ntnu.idatt2003.ui.snl.view.BoardView;
 import edu.ntnu.idatt2003.ui.snl.view.SnlPage;
 import edu.ntnu.idatt2003.utils.Dialogs;
-import edu.ntnu.idatt2003.utils.ResourcePaths;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
+import edu.ntnu.idatt2003.utils.UiDialogs;
 import javafx.stage.Stage;
 
 public class SnlPageController extends AbstractPageController<SnlPage> {
@@ -31,7 +29,7 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
     choosePlayerPage.connectToModel(gateway);
 
     new ChoosePlayerController(choosePlayerPage, gateway);
-    createModalPopup("Players", choosePlayerPage.getView(), 800, 700).showAndWait();
+    UiDialogs.createModalPopup("Players", choosePlayerPage.getView(), 800, 700).showAndWait();
 
     // No need to manually refresh - observer pattern will handle UI updates
   }
@@ -43,7 +41,7 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
               BoardSizePage page = new BoardSizePage();
               var root = page.getBoardSizeView();
               new BoardSizeController(page, (CompleteBoardGame) gateway);
-              createModalPopup("Choose board size", root, 600, 500).showAndWait();
+              UiDialogs.createModalPopup("Choose board size", root, 600, 500).showAndWait();
               view.enableChoosePlayerButton();
             });
   }
@@ -92,22 +90,6 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
   private void showResetConfirmation() {
     Dialogs.info(
         "Game reset", "The game has been reset successfully. Please choose a board to continue");
-  }
-
-  @Override
-  protected Stage createModalPopup(String title, javafx.scene.Parent root, int width, int height) {
-    Stage popupStage = new Stage();
-    popupStage.initModality(Modality.APPLICATION_MODAL);
-    popupStage.setTitle(title);
-
-    Scene scene = new Scene(root, width, height);
-
-    scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
-
-    scene.getRoot().requestFocus();
-
-    popupStage.setScene(scene);
-    return popupStage;
   }
 
   @Override

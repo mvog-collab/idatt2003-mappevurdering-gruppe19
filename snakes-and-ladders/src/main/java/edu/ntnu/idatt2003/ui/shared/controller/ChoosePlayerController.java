@@ -6,6 +6,7 @@ import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
 import edu.ntnu.idatt2003.ui.shared.view.LoadedPlayersPage;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.Errors;
+import edu.ntnu.idatt2003.utils.UiDialogs;
 import edu.ntnu.idatt2003.utils.csv.PlayerCsv;
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +88,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
       List<String[]> rows = PlayerCsv.load(in.toPath());
 
       LoadedPlayersPage loadedPlayersPage = new LoadedPlayersPage(rows);
-      Stage popup = createModalPopup("Players", loadedPlayersPage.getView(), 650, 550);
+      Stage popup = UiDialogs.createModalPopup("Players", loadedPlayersPage.getView(), 650, 550);
 
       loadedPlayersPage
           .getAddSelectedButton()

@@ -143,11 +143,22 @@ public class BoardView extends AbstractGameView {
     rollButton.getStyleClass().add("roll-dice-button");
     playAgainButton.getStyleClass().add("play-again-button");
 
+    Button howToButton =
+        createHowToPlayButton(
+            "How to play - Snakes & Ladders",
+            """
+            - Roll the dice and be the first to the goal!
+            - If you land on an enemy player(s), they are sent back to start.
+            - Roll a pair for an extra turn.
+            - If you roll a pair of six, your turn is skipped!
+            - Be aware of the snakes and go for the ladders!
+            """);
+
     HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
     buttonContainer.setAlignment(Pos.CENTER);
 
     // Add everything to control panel
-    controlPanel.getChildren().addAll(playerPanel, diceContainer, buttonContainer);
+    controlPanel.getChildren().addAll(howToButton, playerPanel, diceContainer, buttonContainer);
     controlPanel.setAlignment(Pos.TOP_CENTER);
     controlPanel.setPrefWidth(400);
     controlPanel.getStyleClass().add("game-control");
