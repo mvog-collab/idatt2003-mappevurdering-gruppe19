@@ -4,9 +4,8 @@ import edu.games.engine.observer.BoardGameEvent;
 import edu.games.engine.observer.BoardGameObserver;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public abstract class AbstractView implements BoardGameObserver {
   protected CompleteBoardGame gateway;
@@ -26,12 +25,17 @@ public abstract class AbstractView implements BoardGameObserver {
 
   protected abstract void handleEvent(BoardGameEvent event);
 
-  // Common UI utilities
-
-  protected Button createHowToPlayButton() {
-    Button howToPlayButton = new Button();
-    howToPlayButton.setGraphic(new ImageView(new Image("images/settings.png")));
-    howToPlayButton.getStyleClass().add("icon-button");
-    return howToPlayButton;
+  protected Button createHowToPlayButton(String title, String instructions) {
+    Button btn = new Button("How to play");
+    btn.getStyleClass().add("icon-button"); // evt. egen css-klasse
+    btn.setOnAction(
+        e -> {
+          Alert alert = new Alert(Alert.AlertType.INFORMATION);
+          alert.setTitle(title);
+          alert.setHeaderText(null);
+          alert.setContentText(instructions);
+          alert.showAndWait();
+        });
+    return btn;
   }
 }
