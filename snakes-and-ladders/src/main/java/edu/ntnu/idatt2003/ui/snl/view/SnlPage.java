@@ -18,7 +18,6 @@ public class SnlPage extends AbstractMenuView {
   // Additional UI components specific to SnL
   private final Scene scene;
   private final Button chooseBoardButton;
-  private final Button settingsButton;
   private final MenuUIService menuUIService;
 
   public SnlPage() {
@@ -47,11 +46,6 @@ public class SnlPage extends AbstractMenuView {
     statusLabel = new Label("Start by choosing a board");
     statusLabel.getStyleClass().add("status-label");
 
-    // Set up settings button with icon
-    settingsButton = new Button();
-    settingsButton.setGraphic(new ImageView(new Image("images/settings.png")));
-    settingsButton.getStyleClass().add("icon-button");
-
     // Initial button states
     disableStartButton();
     disableChoosePlayerButton();
@@ -71,7 +65,7 @@ public class SnlPage extends AbstractMenuView {
     StackPane.setMargin(howToButton, new Insets(10));
 
     // Create scene
-    scene = new Scene(layout, 1000, 700);
+    scene = new Scene(layout, 1100, 700);
     scene.getStylesheets().add(getStylesheet());
   }
 
@@ -97,10 +91,6 @@ public class SnlPage extends AbstractMenuView {
 
   public Button getChooseBoardButton() {
     return chooseBoardButton;
-  }
-
-  public Button getSettingsButton() {
-    return settingsButton;
   }
 
   @Override
