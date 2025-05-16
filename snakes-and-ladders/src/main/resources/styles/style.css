@@ -35,7 +35,7 @@
     -fx-border-width: 1px;
 }
 
-/* Players Label */
+/* Labels */
 .label {
     -fx-font-size: 18px;
     -fx-text-fill: #333;
@@ -44,6 +44,18 @@
 
 .label, .popup-label, .start-page-title {
     -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 1, 0.0, 0, 1);
+}
+
+.status-label {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 18px;
+    -fx-text-fill: #000000;
+    -fx-padding: 10 20;
+    -fx-background-color: rgba(249, 204, 142, 0.707);
+    -fx-background-radius: 6;
+    -fx-border-width: 0 0 3px 0;
+    -fx-border-color: transparent transparent rgba(140, 98, 57, 0.6) transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0.3, 0, 1);
 }
 
 /* Players Box */
@@ -543,10 +555,18 @@
 }
 
 .icon-button {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(249, 204, 142, 0.707);
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2;
+    -fx-border-radius: 50;
+    -fx-background-radius: 50;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
     -fx-cursor: hand;
-    -fx-padding: 0;
-    -fx-border-radius: 0;
+    -fx-background-insets: 0;
 }
 
 .icon-button:hover {
