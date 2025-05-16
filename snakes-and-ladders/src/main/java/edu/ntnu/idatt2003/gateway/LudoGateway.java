@@ -11,9 +11,6 @@ import edu.games.engine.model.Player;
 import edu.games.engine.model.PlayerPiece;
 import edu.games.engine.model.Token;
 import edu.games.engine.observer.BoardGameEvent;
-import edu.games.engine.rule.LudoRuleEngine;
-import edu.games.engine.rule.RuleConfig;
-import edu.games.engine.rule.RuleEngine;
 import edu.games.engine.store.PlayerStore;
 import edu.games.engine.strategy.GameStrategy;
 import edu.games.engine.strategy.factory.GameStrategyFactory;
@@ -28,8 +25,6 @@ import java.util.Objects;
 
 public final class LudoGateway extends AbstractGameGateway {
   private final DiceFactory diceFactory;
-  private final RuleConfig ruleConfig = new RuleConfig(RuleConfig.ExtraTurnPolicy.ON_SIX);
-  private final GameStrategy gameStrategy;
   private int selectedPieceIndex = -1;
   private Player winner = null;
 
@@ -37,7 +32,6 @@ public final class LudoGateway extends AbstractGameGateway {
       DiceFactory diceFactory, PlayerStore playerStore, OverlayProvider overlayProvider) {
     super(playerStore, overlayProvider);
     this.diceFactory = diceFactory;
-    this.gameStrategy = GameStrategyFactory.createLudoStrategy();
   }
 
   public static LudoGateway createDefault() {
@@ -51,12 +45,12 @@ public final class LudoGateway extends AbstractGameGateway {
   public void newGame(int ignored) {
     LudoPath path = new LudoPath();
     LudoBoard board = new LudoBoard(path);
-    RuleEngine rules = new LudoRuleEngine(path);
-    GameStrategy strategy = GameStrategyFactory.createLudoStrategy();
+    GameStrategy ludoStrategy = GameStrategyFactory.createLudoStrategy(path);
     Dice dice = diceFactory.create();
-    game = new DefaultGame(board, rules, strategy, new ArrayList<>(), dice);
+    game = new DefaultGame(board, ludoStrategy, new ArrayList<>(), dice);
     winner = null;
-    gameStrategy.initializeGame(game);
+
+    ludoStrategy.initializeGame(game);
 
     notifyObservers(
         new BoardGameEvent(
@@ -129,6 +123,8 @@ public final class LudoGateway extends AbstractGameGateway {
   private int handlePieceMovement(Player currentPlayer, int rollValue) {
     PlayerPiece selectedPiece = currentPlayer.getPiece(selectedPieceIndex);
     Tile initialTile = selectedPiece.getCurrentTile();
+
+    GameStrategy gameStrategy = game.getStrategy();
 
     // Use strategy to determine destination
     Tile destinationTile =

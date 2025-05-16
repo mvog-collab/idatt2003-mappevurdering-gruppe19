@@ -26,7 +26,7 @@ public abstract class AbstractView implements BoardGameObserver {
   protected abstract void handleEvent(BoardGameEvent event);
 
   protected Button createHowToPlayButton(String title, String instructions) {
-    Button btn = new Button("How to play");
+    Button btn = new Button("?");
     btn.getStyleClass().add("icon-button");
     btn.setOnAction(
         e -> {

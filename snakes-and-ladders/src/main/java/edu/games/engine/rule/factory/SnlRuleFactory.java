@@ -9,6 +9,6 @@ public class SnlRuleFactory implements RuleFactory {
 
   @Override
   public RuleEngine create(BoardAdapter.MapData data, RuleConfig config) {
-    return new SnlRuleEngine(data.snakes(), data.ladders(), config.extraTurn());
+    return new SnlRuleEngine(data.snakes(), data.ladders());
   }
 }

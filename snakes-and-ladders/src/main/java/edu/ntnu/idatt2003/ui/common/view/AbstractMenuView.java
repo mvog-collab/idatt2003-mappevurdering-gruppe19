@@ -10,7 +10,6 @@ import javafx.scene.control.Label;
 public abstract class AbstractMenuView extends AbstractView implements MenuView {
   protected Button startButton;
   protected Button choosePlayerButton;
-  protected Button chooseBoardButton;
   protected Button resetButton;
   protected Label statusLabel;
 

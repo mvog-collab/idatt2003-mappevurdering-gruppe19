@@ -138,6 +138,10 @@ public class BoardView extends AbstractGameView {
     diceContainer.setPadding(new Insets(20));
     diceContainer.getStyleClass().add("dice-box");
 
+    diceContainer.setPrefSize(250, 250);
+    diceContainer.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    diceContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
     // Initialize dice
     diceService.initializeDice(diceContainer);
 

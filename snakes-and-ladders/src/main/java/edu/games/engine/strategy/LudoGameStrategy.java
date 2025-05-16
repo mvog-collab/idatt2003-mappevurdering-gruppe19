@@ -6,91 +6,53 @@ import edu.games.engine.impl.DefaultGame;
 import edu.games.engine.model.LudoColor;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.PlayerPiece;
+import edu.games.engine.rule.RuleEngine;
 
 public class LudoGameStrategy implements GameStrategy {
+  private final RuleEngine ruleEngine;
+
+  public LudoGameStrategy(RuleEngine ruleEngine) {
+    this.ruleEngine = ruleEngine;
+  }
 
   @Override
   public void initializeGame(DefaultGame game) {
-    // Nothing special needed for Ludo initialization
+    game.players().forEach(player -> player.getPieces().forEach(p -> p.moveTo(null)));
   }
 
   @Override
   public boolean processDiceRoll(Player player, int diceValue, DefaultGame game) {
-    // Player gets an extra turn if they roll a 6
-    return diceValue == 6;
+    return ruleEngine.grantsExtraTurn(player, game.dice().lastValues(), game);
   }
 
   @Override
   public Tile movePiece(Player player, int pieceIndex, int diceValue, DefaultGame game) {
-    if (player == null || game == null || !(game.board() instanceof LudoBoard)) {
+    if (player == null
+        || game == null
+        || !(game.board() instanceof LudoBoard)
+        || pieceIndex < 0
+        || pieceIndex >= player.getPieces().size()) {
       return null;
     }
-
-    if (pieceIndex < 0 || pieceIndex >= player.getPieces().size()) {
-      return null;
-    }
-
     PlayerPiece piece = player.getPiece(pieceIndex);
-    if (piece == null) return null;
-
-    LudoColor color = LudoColor.valueOf(player.getToken().name());
     LudoBoard board = (LudoBoard) game.board();
+    LudoColor color = LudoColor.valueOf(player.getToken().name());
 
     if (piece.isAtHome()) {
-      // Can only leave home with a 6
-      if (diceValue != 6) {
-        return null;
-      }
-
-      // Get the starting tile for this color
-      return board.getStartTile(color);
+      return (diceValue == 6) ? board.getStartTile(color) : null;
     } else {
-      // Already on board - move normally
-      Tile currentTile = piece.getCurrentTile();
-      if (currentTile == null) return null;
-
-      return board.move(currentTile, diceValue, color);
+      return board.move(piece.getCurrentTile(), diceValue, color);
     }
   }
 
   @Override
   public boolean checkWinCondition(Player player, DefaultGame game) {
-    if (player == null) return false;
-
-    return player.getPieces().stream()
-            .filter(PlayerPiece::isOnBoard)
-            .allMatch(
-                piece -> {
-                  Tile tile = piece.getCurrentTile();
-                  return tile != null && tile.id() > 52 && tile.id() < 77;
-                })
-        && player.getPieces().stream().allMatch(PlayerPiece::isOnBoard);
+    return ruleEngine.hasWon(player, game);
   }
 
   @Override
   public void applySpecialRules(
       Player player, PlayerPiece piece, Tile destinationTile, DefaultGame game) {
-    if (player == null || destinationTile == null || game == null || piece == null) {
-      return;
-    }
-
-    // Skip bumping in goal tiles (ID > 52)
-    if (destinationTile.id() > 52) return;
-
-    // Bump other players' pieces
-    game.players().stream()
-        .filter(p -> p != player)
-        .forEach(
-            otherPlayer -> {
-              otherPlayer.getPieces().stream()
-                  .filter(
-                      otherPiece ->
-                          otherPiece.isOnBoard()
-                              && otherPiece.getCurrentTile().id() == destinationTile.id())
-                  .forEach(
-                      otherPiece -> {
-                        otherPiece.moveTo(null);
-                      });
-            });
+    ruleEngine.applyPostLandingEffects(player, piece, destinationTile, game);
   }
 }
