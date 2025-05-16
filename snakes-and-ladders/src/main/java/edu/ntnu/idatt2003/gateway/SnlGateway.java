@@ -12,9 +12,6 @@ import edu.games.engine.impl.overlay.OverlayProvider;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
 import edu.games.engine.observer.BoardGameEvent;
-import edu.games.engine.rule.RuleConfig;
-import edu.games.engine.rule.RuleEngine;
-import edu.games.engine.rule.SnlRuleEngine;
 import edu.games.engine.rule.factory.RuleFactory;
 import edu.games.engine.store.PlayerStore;
 import edu.games.engine.strategy.GameStrategy;
@@ -34,7 +31,6 @@ public final class SnlGateway extends AbstractGameGateway {
   private final JsonBoardLoader boardFactory;
   private final DiceFactory diceFactory;
   private final RuleFactory ruleFactory;
-  private final RuleConfig ruleConfig = new RuleConfig();
   private GameStrategy gameStrategy;
 
   public SnlGateway(
@@ -55,9 +51,8 @@ public final class SnlGateway extends AbstractGameGateway {
     BoardAdapter.MapData map = BoardFactory.loadFromClasspath(resource);
     this.gameStrategy = GameStrategyFactory.createSnlStrategy(map);
     Board board = boardFactory.create(map.size());
-    RuleEngine rules = ruleFactory.create(map, ruleConfig);
     Dice dice = diceFactory.create();
-    game = new DefaultGame(board, rules, gameStrategy, new ArrayList<>(), dice);
+    game = new DefaultGame(board, gameStrategy, new ArrayList<>(), dice);
 
     gameStrategy.initializeGame(game);
 
@@ -67,9 +62,8 @@ public final class SnlGateway extends AbstractGameGateway {
   @Override
   public void newGame(BoardAdapter.MapData data) {
     LinearBoard board = new LinearBoard(data.size());
-    RuleEngine rules = new SnlRuleEngine(data.snakes(), data.ladders(), ruleConfig.extraTurn());
     Dice dice = new RandomDice(2);
-    game = new DefaultGame(board, rules, gameStrategy, new ArrayList<>(), dice);
+    game = new DefaultGame(board, gameStrategy, new ArrayList<>(), dice);
   }
 
   @Override
@@ -161,7 +155,6 @@ public final class SnlGateway extends AbstractGameGateway {
     return TokenMapperFactory.getSnlToken(token);
   }
 
-  /** Returns the snake positions (source tile -> destination tile) */
   public Map<Integer, Integer> getSnakes() {
     if (gameStrategy instanceof SnlGameStrategy strategy) {
       return strategy.getSnakes();
@@ -169,7 +162,6 @@ public final class SnlGateway extends AbstractGameGateway {
     return Map.of();
   }
 
-  /** Returns the ladder positions (source tile -> destination tile) */
   public Map<Integer, Integer> getLadders() {
     if (gameStrategy instanceof SnlGameStrategy strategy) {
       return strategy.getLadders();
