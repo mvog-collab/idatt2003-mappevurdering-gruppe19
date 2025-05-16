@@ -33,6 +33,11 @@ public class RandomDice implements Dice {
     return sum;
   }
 
+  public int getDiceCount() {
+    return dice;
+  }
+
+
   @Override
   public List<Integer> lastValues() {
     return List.copyOf(lastRolledValues);
