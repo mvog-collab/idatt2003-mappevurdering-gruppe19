@@ -29,64 +29,60 @@ public final class SnlRuleEngine implements RuleEngine {
   @Override
   public void applyPostLandingEffects(
       Player player, PlayerPiece piece, Tile landedTile, DefaultGame game) {
-    if (player == null
-        || landedTile == null
-        || game == null
-        || !(game.board() instanceof LinearBoard)) {
+    if (!isValidState(player, landedTile, game)) {
       return;
     }
+
     LinearBoard board = (LinearBoard) game.board();
-    int currentPosition = landedTile.id();
+    Tile destinationTile = applySnakesOrLadders(player, landedTile, board);
+    applyBumping(player, destinationTile, board, game);
+  }
 
-    // Apply Snakes or Ladders
-    Integer N_P =
-        snakes.get(currentPosition); // Use a new name to avoid confusion if modified later
-    if (N_P == null) {
-      N_P = ladders.get(currentPosition);
-    }
-    final Integer newPositionFinal = N_P; // Make it final for the lambda
+  private boolean isValidState(Player player, Tile tile, DefaultGame game) {
+    return player != null && tile != null && game != null && game.board() instanceof LinearBoard;
+  }
 
-    Tile F_D = landedTile; // Use a new name
-    if (newPositionFinal != null) {
-      F_D = board.tile(newPositionFinal);
-      player.moveTo(F_D); // Player moves due to snake/ladder
+  private Tile applySnakesOrLadders(Player player, Tile tile, LinearBoard board) {
+    int pos = tile.id();
+    Integer newPos = snakes.getOrDefault(pos, ladders.get(pos));
 
-      // Log the snake/ladder move
-      final int originalPosition = currentPosition; // Capture for lambda
+    if (newPos != null) {
+      Tile newTile = board.tile(newPos);
+      player.moveTo(newTile);
       Log.game()
           .info(
-              () -> // Lambda expression
-              player.getName()
-                      + (newPositionFinal > originalPosition // Use final variable
-                          ? " climbs a ladder"
-                          : " slides down a snake")
+              () ->
+                  player.getName()
+                      + (newPos > pos ? " climbs a ladder" : " slides down a snake")
                       + " to tile "
-                      + newPositionFinal); // Use final variable
+                      + newPos);
+      return newTile;
     }
-    final Tile finalDestinationForBumping = F_D; // Make it final for the lambda
 
-    // Bumping logic (only if not on start tile and not the same player)
-    if (finalDestinationForBumping.id() != board.start().id()) {
-      game.players().stream()
-          .filter(p -> p != player)
-          .filter(
-              p ->
-                  p.getCurrentTile() != null
-                      && p.getCurrentTile().id()
-                          == finalDestinationForBumping.id()) // Use final variable
-          .forEach(
-              otherPlayer -> {
-                otherPlayer.moveTo(board.start());
-                Log.game()
-                    .info(
-                        () ->
-                            player.getName()
-                                + " bumps "
-                                + otherPlayer.getName()
-                                + " back to start from tile "
-                                + finalDestinationForBumping.id()); // Use final variable
-              });
-    }
+    return tile;
+  }
+
+  private void applyBumping(Player currentPlayer, Tile tile, LinearBoard board, DefaultGame game) {
+    if (tile.id() == board.start().id()) return;
+
+    game.players().stream()
+        .filter(
+            p ->
+                p != currentPlayer
+                    && p.getCurrentTile() != null
+                    && p.getCurrentTile().id() == tile.id())
+        .forEach(
+            other -> {
+              other.moveTo(board.start());
+              Log.game()
+                  .info(
+                      () ->
+                          currentPlayer.getName()
+                              + " bumps "
+                              + other.getName()
+                              + " back to start from tile "
+                              + tile.id());
+            });
   }
 
   @Override

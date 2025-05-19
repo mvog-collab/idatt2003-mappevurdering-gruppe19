@@ -3,6 +3,7 @@ package edu.ntnu.idatt2003.ui.snl.controller;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.gateway.SnlGateway;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractPageController;
+import edu.ntnu.idatt2003.ui.navigation.NavigationService; // Import
 import edu.ntnu.idatt2003.ui.service.board.SnlBoardUIService;
 import edu.ntnu.idatt2003.ui.shared.controller.ChoosePlayerController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
@@ -12,29 +13,23 @@ import edu.ntnu.idatt2003.ui.snl.view.SnlPage;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.UiDialogs;
 import java.util.Map;
-import javafx.stage.Stage;
+
+// import javafx.stage.Stage; // No longer needed for scene switching here
 
 public class SnlPageController extends AbstractPageController<SnlPage> {
 
   public SnlPageController(SnlPage view, CompleteBoardGame gateway) {
     super(view, gateway);
-
-    // Connect view to observe the model
     view.connectToModel(gateway);
-
     gateway.newGame(90);
     initializeEventHandlers();
   }
 
   private void showPlayerDialog() {
     ChoosePlayerPage choosePlayerPage = new ChoosePlayerPage();
-    // Connect player page to observe model
     choosePlayerPage.connectToModel(gateway);
-
     new ChoosePlayerController(choosePlayerPage, gateway);
     UiDialogs.createModalPopup("Players", choosePlayerPage.getView(), 800, 700).showAndWait();
-
-    // No need to manually refresh - observer pattern will handle UI updates
   }
 
   private void setupChooseBoardButton() {
@@ -63,7 +58,6 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
               }
 
               int boardSize = gateway.boardSize();
-
               Map<Integer, Integer> snakes = Map.of();
               Map<Integer, Integer> ladders = Map.of();
 
@@ -72,28 +66,19 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
                 ladders = snlGateway.getLadders();
               }
 
-              BoardView board = new BoardView(boardSize);
+              BoardView boardView = new BoardView(boardSize);
+              boardView.connectToModel(gateway);
 
-              // Connect view to observe the model
-              board.connectToModel(gateway);
-
-              if (board.getBoardUIService() instanceof SnlBoardUIService snlBoardUIService) {
+              if (boardView.getBoardUIService() instanceof SnlBoardUIService snlBoardUIService) {
                 snlBoardUIService.applySpecialTileStyling(
-                    snakes,
-                    ladders,
-                    board.getOverlayPane(),
-                    false); // CHANGE FOR JSON BOARD LOADING
+                    snakes, ladders, boardView.getOverlayPane(), false);
               }
-              BoardController boardController = new BoardController(board, gateway);
+              new BoardController(boardView, gateway);
+              boardView.setPlayers(gateway.players(), gateway.boardOverlays());
 
-              // Initial UI setup
-              board.setPlayers(gateway.players(), gateway.boardOverlays());
-
-              Stage stage = (Stage) view.getStartButton().getScene().getWindow();
-              stage.setScene(board.getScene());
-
-              // board.applySpecialStylingWhenReady(
-              //     snakes, ladders, false); // CHANGE FOR JSON BOARD LOADING
+              // NavigationService handles stage and scene switching
+              NavigationService.getInstance()
+                  .navigateToGameScene(boardView.getScene(), "Snakes & Ladders Board");
             });
   }
 
@@ -103,7 +88,6 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
             e -> {
               gateway.newGame(gateway.boardSize());
               view.disableChoosePlayerButton();
-              // No need to manually refresh UI - observer pattern will handle it
               showResetConfirmation();
             });
   }

@@ -4,21 +4,18 @@ import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractPageController;
 import edu.ntnu.idatt2003.ui.ludo.view.LudoBoardView;
 import edu.ntnu.idatt2003.ui.ludo.view.LudoPage;
+import edu.ntnu.idatt2003.ui.navigation.NavigationService;
 import edu.ntnu.idatt2003.ui.shared.controller.ChoosePlayerController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
 import edu.ntnu.idatt2003.utils.UiDialogs;
-import javafx.stage.Stage;
 
 public final class LudoPageController extends AbstractPageController<LudoPage> {
 
   public LudoPageController(LudoPage view, CompleteBoardGame gateway) {
     super(view, gateway);
-
     gateway.newGame(0);
     initializeEventHandlers();
   }
-
-  /* --------------------- helpers --------------------- */
 
   private void showPlayerDialog() {
     String[] ludoTokens = {"BLUE", "GREEN", "RED", "YELLOW"};
@@ -30,16 +27,12 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
 
   private void startGame() {
     LudoBoardView boardView = new LudoBoardView();
-
-    // Connect view to observe model
     boardView.connectToModel(gateway);
+    new LudoBoardController(boardView, gateway);
 
-    LudoBoardController boardCtrl = new LudoBoardController(boardView, gateway);
+    // NavigationService handles stage and scene switching
+    NavigationService.getInstance().navigateToGameScene(boardView.getScene(), "Ludo Board");
 
-    Stage stage = (Stage) view.startButton().getScene().getWindow();
-    stage.setScene(boardView.getScene());
-
-    // Initial state
     boardView.showDice(1);
   }
 

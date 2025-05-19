@@ -25,16 +25,14 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-public class BoardView extends AbstractGameView {
-  // Services
+public class BoardView extends AbstractGameView { // AbstractGameView should extend AbstractView
   private final BoardUIService boardUIService;
   private final PlayerUIService playerUIService;
   private AnimationService animationService;
   private final DiceService diceService;
 
-  // UI Components
-  private final BorderPane mainLayout;
-  private StackPane boardStack; // Added this to hold all board components
+  private BorderPane rootLayout; // Change mainLayout to BorderPane and use as root
+  private StackPane boardStack;
   private Pane boardPane;
   private final Pane tokenPane;
   private final Pane overlayPane;
@@ -42,7 +40,6 @@ public class BoardView extends AbstractGameView {
   private final HBox diceContainer;
   private FlowPane playerPanel;
 
-  // State
   private final int boardSize;
   private final Map<String, ImageView> tokenImages = new HashMap<>();
   private boolean hasActiveAnimation = false;
@@ -60,19 +57,16 @@ public class BoardView extends AbstractGameView {
     this.animationService = animationService;
     this.diceService = diceService;
 
-    // Initialize UI components
-    this.boardStack = new StackPane(); // Initialize the stack pane
+    this.rootLayout = new BorderPane(); // Initialize rootLayout
+    this.boardStack = new StackPane();
     this.tokenPane = new Pane();
     this.overlayPane = new Pane();
     this.controlPanel = new VBox(20);
     this.diceContainer = new HBox(10);
-    this.mainLayout = new BorderPane();
 
-    // Create roll and play again buttons
     this.rollButton = new Button("Roll Dice");
     this.playAgainButton = new Button("Play Again");
 
-    // Build the UI
     buildUI();
   }
 
@@ -81,71 +75,51 @@ public class BoardView extends AbstractGameView {
         boardSize,
         ViewServiceFactory.createBoardUIService("SNL", boardSize),
         ViewServiceFactory.createPlayerUIService("SNL"),
-        null, // Will be initialized properly after we have coordinates
+        null,
         ViewServiceFactory.createDiceService("SNL"));
 
-    // Complete initialization of services after we have coordinates
     Map<Integer, Point2D> coordinates = boardUIService.getTileCoordinates();
     AnimationService newAnimationService =
         ViewServiceFactory.createAnimationService("SNL", coordinates, tokenPane);
-
-    // Replace the null animation service with the proper one
     this.animationService = newAnimationService;
   }
 
   private void buildUI() {
-    // Create the board pane using the service
     boardStack = boardUIService.createBoardPane(boardSize);
-
-    // Keep a reference to the actual board grid (first child of boardStack)
     if (!boardStack.getChildren().isEmpty()) {
       boardPane = (Pane) boardStack.getChildren().get(0);
     } else {
-      boardPane = new GridPane(); // Fallback
+      boardPane = new GridPane();
       boardStack.getChildren().add(boardPane);
     }
 
-    // Get the dimensions to ensure consistent sizing
     double boardWidth = boardPane.getPrefWidth();
     double boardHeight = boardPane.getPrefHeight();
-
-    // Ensure the stack pane has the correct size
     boardStack.setPrefSize(boardWidth, boardHeight);
     boardStack.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     boardStack.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-    // Configure overlay and token panes with explicit pref/min/max sizes
     overlayPane.setPrefSize(boardWidth, boardHeight);
     overlayPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     overlayPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
     tokenPane.setPrefSize(boardWidth, boardHeight);
     tokenPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     tokenPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-    // Clear and rebuild the stack with all components in the correct order
     boardStack.getChildren().clear();
     boardStack.getChildren().addAll(boardPane, overlayPane, tokenPane);
 
-    // Create player panel
     playerPanel = new FlowPane();
     playerPanel.setHgap(15);
     playerPanel.setVgap(15);
     playerPanel.setPrefWrapLength(300);
 
-    // Set up dice area
     diceContainer.setAlignment(Pos.CENTER);
     diceContainer.setPadding(new Insets(20));
     diceContainer.getStyleClass().add("dice-box");
-
     diceContainer.setPrefSize(250, 250);
     diceContainer.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     diceContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-    // Initialize dice
     diceService.initializeDice(diceContainer);
 
-    // Set up buttons
     rollButton.getStyleClass().add("roll-dice-button");
     playAgainButton.getStyleClass().add("play-again-button");
 
@@ -163,25 +137,27 @@ public class BoardView extends AbstractGameView {
     HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
     buttonContainer.setAlignment(Pos.CENTER);
 
-    // Add everything to control panel
     controlPanel.getChildren().addAll(howToButton, playerPanel, diceContainer, buttonContainer);
     controlPanel.setAlignment(Pos.TOP_CENTER);
     controlPanel.setPrefWidth(400);
     controlPanel.getStyleClass().add("game-control");
 
-    // Set up main layout
-    mainLayout.setCenter(boardStack);
-    mainLayout.setRight(controlPanel);
-    mainLayout.setPadding(new Insets(20));
-    mainLayout.getStyleClass().add("page-background");
+    // Set up rootLayout (BorderPane)
+    rootLayout.setCenter(boardStack);
+    rootLayout.setRight(controlPanel);
+    rootLayout.setPadding(new Insets(20));
+    rootLayout.getStyleClass().add("page-background"); // Add main-box if needed
 
-    // Add border padding
+    // Add navigation controls to the top of the BorderPane
+    addNavigationAndHelpToBorderPane(
+        rootLayout, true, howToButton); // true = include "Back to Game Setup"
+
     BorderPane.setMargin(boardStack, new Insets(0, 20, 0, 0));
   }
 
   @Override
   public Scene getScene() {
-    Scene scene = new Scene(mainLayout, 1000, 700);
+    Scene scene = new Scene(rootLayout, 1000, 700); // Use rootLayout
     scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
     return scene;
   }

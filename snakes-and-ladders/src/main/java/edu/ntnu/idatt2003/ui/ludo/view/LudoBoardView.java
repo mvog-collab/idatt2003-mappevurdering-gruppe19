@@ -43,14 +43,13 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   private final DiceService diceService;
 
   // UI Components
-  private final BorderPane mainLayout;
-  private final HBox root;
   private final Pane boardPane;
   private final Pane tokenPane;
   private final Pane overlayPane;
   private final VBox controlPanel;
   private final HBox diceContainer;
   private final Label statusLabel;
+  private BorderPane rootLayout;
 
   // State
   private Consumer<Integer> pieceSelectedCallback;
@@ -71,8 +70,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
     this.diceService = diceService;
 
     // Initialize UI components
-    this.root = new HBox();
-    this.mainLayout = new BorderPane();
+    this.rootLayout = new BorderPane();
     this.boardPane = new Pane();
     this.tokenPane = new Pane();
     this.overlayPane = new Pane();
@@ -105,21 +103,12 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   }
 
   private void buildUI() {
-    // Create the board area with the Ludo board
     StackPane boardArea = boardUIService.createLudoBoardArea(boardPane, overlayPane, tokenPane);
-
-    // Set up status label
     statusLabel.getStyleClass().add("status-label");
-
-    // Set up dice area
     diceContainer.setAlignment(Pos.CENTER);
     diceContainer.setPadding(new Insets(20));
     diceContainer.getStyleClass().add("dice-box");
-
-    // Initialize dice
     diceService.initializeDice(diceContainer);
-
-    // Set up buttons
     rollButton.getStyleClass().add("roll-dice-button");
     playAgainButton.getStyleClass().add("play-again-button");
 
@@ -136,31 +125,25 @@ public class LudoBoardView extends AbstractGameView implements GameView {
     buttonContainer.setSpacing(10);
     buttonContainer.setAlignment(Pos.CENTER);
 
-    // Add everything to control panel
     controlPanel.getChildren().addAll(howToButton, statusLabel, diceContainer, buttonContainer);
     controlPanel.setSpacing(20);
     controlPanel.setAlignment(Pos.TOP_CENTER);
     controlPanel.setPrefWidth(400);
     controlPanel.getStyleClass().add("game-control");
 
-    // Set up main layout
-    mainLayout.setCenter(boardArea);
-    mainLayout.setRight(controlPanel);
-    mainLayout.setPadding(new Insets(20));
-    mainLayout.getStyleClass().add("main-box");
+    rootLayout.setCenter(boardArea);
+    rootLayout.setRight(controlPanel);
+    rootLayout.setPadding(new Insets(20));
+    rootLayout.getStyleClass().add("page-background");
 
-    // Add border padding
+    addNavigationAndHelpToBorderPane(rootLayout, true, howToButton);
+
     BorderPane.setMargin(boardArea, new Insets(0, 20, 0, 0));
-
-    // Add to root
-    root.getChildren().setAll(mainLayout);
-    root.setAlignment(Pos.CENTER);
-    root.getStyleClass().add("page-background");
   }
 
   @Override
   public Scene getScene() {
-    Scene scene = new Scene(root, 1000, 700);
+    Scene scene = new Scene(rootLayout, 1000, 700);
     scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
     return scene;
   }
