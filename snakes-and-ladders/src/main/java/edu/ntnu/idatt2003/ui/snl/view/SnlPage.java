@@ -30,7 +30,7 @@ public class SnlPage extends AbstractMenuView {
     ImageView boardPreview =
         menuUIService.createBoardPreview("/images/snakeAndLadder.png", 400, 400);
 
-    startButton = menuUIService.createMenuButton("Start game", "start-page-button");
+    startButton = menuUIService.createMenuButton("Start game", "confirm-button");
     choosePlayerButton = menuUIService.createMenuButton("Choose players", "start-page-button");
     resetButton = menuUIService.createMenuButton("Reset game", "exit-button");
 
