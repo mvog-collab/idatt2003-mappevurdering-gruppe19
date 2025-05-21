@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.Map;
 
 public abstract class AbstractGameGateway implements CompleteBoardGame {
@@ -24,6 +26,8 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   protected final Map<Integer, List<OverlayParams>> overlayCache = new HashMap<>();
   protected List<Integer> lastDiceValues = List.of();
   protected DefaultGame game;
+
+  private static final Logger LOG = Logger.getLogger(AbstractGameGateway.class.getName());
 
   // Constructor
   protected AbstractGameGateway(PlayerStore playerStore, OverlayProvider overlayProvider) {
@@ -73,8 +77,7 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
         playerStore.save(game.players(), out);
       }
     } catch (GameEngineException gameEngineException) {
-      // TODO: bytt til logger?
-      System.err.println(gameEngineException.getMessage());
+      LOG.log(Level.WARNING, gameEngineException.getMessage());
     }
   }
 
