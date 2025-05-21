@@ -27,7 +27,7 @@ public final class CsvPlayerStore implements PlayerStore {
     if (out == null) {
       throw new ValidationException("Output path is null.");
     }
-    try (BufferedWriter w = new BufferedWriter(new FileWriter(out.toFile()))) {
+    try (BufferedWriter w = Files.newBufferedWriter(out)) {
       for (Player p : players) {
         w.write("%s%s%s%s%s%n".formatted(
             p.getName(), SEP, p.getToken(), SEP, p.getBirtday()));
@@ -52,6 +52,7 @@ public final class CsvPlayerStore implements PlayerStore {
       }
       return list;
     } catch (IOException | RuntimeException e) {
+      LOG.log(Level.WARNING, "Could not load players from " + in, e);
       throw new StorageException("Could not load players from " + in, e);
     }
   }
