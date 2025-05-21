@@ -359,7 +359,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
   }
 
   public void applySpecialStylingWhenReady(
-      Map<Integer, Integer> snakes, Map<Integer, Integer> ladders, boolean isCustom) {
+      Map<Integer, Integer> snakes, Map<Integer, Integer> ladders) {
     // Store the data for application when the stage is shown
     final Map<Integer, Integer> finalSnakes = new HashMap<>(snakes);
     final Map<Integer, Integer> finalLadders = new HashMap<>(ladders);
@@ -368,8 +368,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
         () -> {
           if (boardUIService instanceof SnlBoardUIService snlBoardUIService) {
 
-            snlBoardUIService.applySpecialTileStyling(
-                finalSnakes, finalLadders, overlayPane, isCustom);
+            snlBoardUIService.applySpecialTileStyling(finalSnakes, finalLadders, overlayPane);
           }
         });
   }
