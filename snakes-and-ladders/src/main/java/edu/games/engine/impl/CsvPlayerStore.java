@@ -5,6 +5,8 @@ import edu.games.engine.exception.StorageException;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
 import edu.games.engine.store.PlayerStore;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +17,7 @@ import java.util.List;
 public final class CsvPlayerStore implements PlayerStore {
 
   private static final String SEP = ",";
+  private static final Logger LOG = Logger.getLogger(CsvPlayerStore.class.getName());
 
   @Override
   public void save(List<Player> players, Path out) throws StorageException {
@@ -30,6 +33,7 @@ public final class CsvPlayerStore implements PlayerStore {
             p.getName(), SEP, p.getToken(), SEP, p.getBirtday()));
       }
     } catch (IOException e) {
+      LOG.log(Level.WARNING, "Could not save players to " + out, e);
       throw new StorageException("Could not save players to " + out, e);
     }
   }
