@@ -54,7 +54,7 @@ public final class LinearBoard implements Board {
 
   private static LinearTile cast(Tile tile) {
     if (!(tile instanceof LinearTile lt)) {
-      throw new IllegalArgumentException("Not a LinearTile");
+      throw new ValidationException("Not a LinearTile");
     }
     return lt;
   }

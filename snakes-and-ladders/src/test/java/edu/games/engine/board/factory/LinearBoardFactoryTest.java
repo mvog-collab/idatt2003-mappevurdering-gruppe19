@@ -2,6 +2,7 @@ package edu.games.engine.board.factory;
 
 import edu.games.engine.board.Board;
 import edu.games.engine.board.LinearBoard;
+import edu.games.engine.exception.ValidationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class LinearBoardFactoryTest {
     @Test
     void shouldThrowExceptionIfSizeIsTooSmall() {
       LinearBoardFactory factory = new LinearBoardFactory();
-      assertThrows(IllegalArgumentException.class, () -> factory.create(1));
+      assertThrows(ValidationException.class, () -> factory.create(1));
     }
   }
 }

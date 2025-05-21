@@ -35,7 +35,7 @@ public final class DefaultGame implements Game {
   // In DefaultGame
   public int playTurn() {
     if (winner != null) {
-      throw new ValidationException("Game already finished - winner is " + winner.getName());
+      throw new RuleViolationException("Game already finished - winner is " + winner.getName());
     }
 
     Player currentPlayer = currentPlayer();

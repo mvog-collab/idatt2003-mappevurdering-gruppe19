@@ -2,6 +2,7 @@ package edu.games.engine.dice.factory;
 
 import edu.games.engine.dice.Dice;
 import edu.games.engine.dice.RandomDice;
+import edu.games.engine.exception.ValidationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -38,23 +39,15 @@ class RandomDiceFactoryTest {
     }
 
     @Test
-    void shouldHandleZeroDiceGracefully() {
-      DiceFactory factory = new RandomDiceFactory(0);
-
-      Dice dice = factory.create();
-
-      assertTrue(dice instanceof RandomDice);
-      assertEquals(0, ((RandomDice) dice).getDiceCount()); // eller forvent en exception?
+    void shouldThrowValidationExceptionWhenZeroDice() {
+      assertThrows(ValidationException.class,
+          () -> new RandomDiceFactory(0).create());
     }
 
     @Test
-    void shouldHandleNegativeDiceGracefully() {
-      DiceFactory factory = new RandomDiceFactory(-1);
-
-      Dice dice = factory.create();
-
-      assertTrue(dice instanceof RandomDice);
-      assertEquals(-1, ((RandomDice) dice).getDiceCount()); // evt. kast unntak?
+    void shouldThrowValidationExceptionWhenNegativeDice() {
+      assertThrows(ValidationException.class,
+          () -> new RandomDiceFactory(-1).create());
     }
   }
 }

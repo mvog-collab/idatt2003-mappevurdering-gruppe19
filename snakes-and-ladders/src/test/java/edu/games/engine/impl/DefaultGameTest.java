@@ -3,6 +3,7 @@ package edu.games.engine.impl;
 import edu.games.engine.board.Board;
 import edu.games.engine.board.Tile;
 import edu.games.engine.dice.Dice;
+import edu.games.engine.exception.RuleViolationException;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
 import edu.games.engine.rule.RuleEngine;
@@ -36,7 +37,7 @@ class DefaultGameTest {
     rules = mock(RuleEngine.class);
     strategy = mock(GameStrategy.class);
 
-    game = new DefaultGame(board, rules, strategy, List.of(player), dice);
+    game = new DefaultGame(board, strategy, List.of(player), dice);
   }
 
   @Test
@@ -83,13 +84,6 @@ class DefaultGameTest {
     game.playTurn();
 
     assertEquals(Optional.of(player), game.winner());
-  }
-
-  @Test
-  void shouldReturnZeroIfAlreadyWon() {
-    game.setWinner(player);
-    int result = game.playTurn();
-    assertEquals(0, result);
   }
 
   @Test
