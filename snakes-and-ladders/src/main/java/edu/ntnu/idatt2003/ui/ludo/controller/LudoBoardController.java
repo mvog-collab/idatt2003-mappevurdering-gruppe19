@@ -29,302 +29,335 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   protected void onRollDice() {
     view.disableRollButton();
 
-    PlayerView current = getCurrentPlayer();
-    if (current == null) {
-      view.enableRollButton();
+    PlayerView currentPlayer = getCurrentPlayer();
+    if (currentPlayer == null) {
+      view.enableRollButton(); // Should not happen if game is active
       return;
     }
 
-    LudoColor color = LudoColor.valueOf(current.token());
-
-    // Roll the dice
+    // 1. Roll the dice and update UI
     lastRolledValue = gateway.rollDice();
     view.showDice(lastRolledValue);
-    System.out.println("Rolled: " + lastRolledValue);
+    System.out.println(currentPlayer.name() + " rolled: " + lastRolledValue);
 
-    // Check player pieces
-    boolean hasHomePieces = current.piecePositions().stream().anyMatch(pos -> pos <= 0);
-    boolean hasBoardPieces =
-        current.piecePositions().stream().anyMatch(pos -> pos > 0 && !isPieceFinished(pos, color));
+    // 2. Determine player's piece status
+    LudoColor color = LudoColor.valueOf(currentPlayer.token());
+    boolean hasHomePieces = playerHasPiecesAtHome(currentPlayer);
+    boolean hasMoveableBoardPieces = playerHasMoveablePiecesOnBoard(currentPlayer, color);
 
-    // Special case handling for rolling a 6
+    // 3. Handle different roll scenarios
     if (lastRolledValue == 6) {
-      waitingForPieceSelection = true;
-
-      if (hasHomePieces) {
-        // Can move from home or on board
-        view.showStatusMessage(
-            current.name() + " rolled a 6! Select a piece to move (can move from home)");
-        return;
-      } else if (hasBoardPieces) {
-        // Normal board piece movement
-        view.showStatusMessage(current.name() + " rolled a 6! Select a piece to move");
-
-        // If only one piece on board, auto-select it
-        List<Integer> boardPieceIndices = getBoardPieceIndices(current);
-        if (boardPieceIndices.size() == 1) {
-          selectedPieceIndex = boardPieceIndices.get(0);
-          processSelectedPiece();
-        }
-        return;
-      } else {
-        // Should never happen, as player always has either home or board pieces
-        view.showStatusMessage(current.name() + " has no valid moves");
-        view.enableRollButton();
-        return;
-      }
-    }
-
-    if (hasBoardPieces) {
-      // Player has pieces on board - must select one
-      waitingForPieceSelection = true;
-      view.showStatusMessage(current.name() + " - select a piece to move");
-
-      // If player has only one piece on board, auto-select it
-      List<Integer> boardPieceIndices = getBoardPieceIndices(current);
-      if (boardPieceIndices.size() == 1) {
-        selectedPieceIndex = boardPieceIndices.get(0);
-        processSelectedPiece();
-      }
+      handleRollOfSix(currentPlayer, hasHomePieces, hasMoveableBoardPieces);
     } else {
-      // Player has no valid moves (only home pieces and didn't roll a 6)
-      System.out.println("No valid moves");
-      view.showStatusMessage(current.name() + " has no valid moves");
-
-      // Auto-advance turn by selecting any piece index and processing it without rolling again
-      if (hasHomePieces) {
-        // Select the first home piece for processing (which will skip the turn)
-        for (int i = 0; i < current.piecePositions().size(); i++) {
-          if (current.piecePositions().get(i) <= 0) {
-            selectedPieceIndex = i;
-            break;
-          }
-        }
-
-        // Process the selection (will skip turn since it's not a 6)
-        if (gateway instanceof LudoGateway ludoGw) {
-          ludoGw.selectPiece(selectedPieceIndex);
-          ludoGw.applyPieceMovement(); // Use apply instead of rolling again
-          selectedPieceIndex = -1;
-          waitingForPieceSelection = false;
-          refreshTokens();
-          view.enableRollButton(); // This is executed but not taking effect!
-        }
-      }
-
-      // Add this line as a backup to ensure button is enabled
-      view.enableRollButton();
+      handleNormalRoll(currentPlayer, hasMoveableBoardPieces, hasHomePieces);
     }
   }
 
+  private boolean playerHasPiecesAtHome(PlayerView player) {
+    return player.piecePositions().stream().anyMatch(pos -> pos <= 0);
+  }
+
+  private boolean playerHasMoveablePiecesOnBoard(PlayerView player, LudoColor color) {
+    return player.piecePositions().stream()
+        .anyMatch(pos -> pos > 0 && !isPieceFinished(pos, color));
+  }
+
+  private void handleRollOfSix(
+      PlayerView currentPlayer, boolean hasHomePieces, boolean hasMoveableBoardPieces) {
+    waitingForPieceSelection = true;
+    if (hasHomePieces) {
+      view.showStatusMessage(
+          currentPlayer.name() + " rolled a 6! Select a piece to move (can move from home).");
+      // Don't auto-select if they can move from home OR board, offer choice.
+    } else if (hasMoveableBoardPieces) {
+      view.showStatusMessage(currentPlayer.name() + " rolled a 6! Select a piece to move.");
+      tryAutoSelectOnlyMovablePiece(currentPlayer); // Auto-select if only one piece on board
+    } else {
+      // All pieces are finished or some other unexpected state
+      view.showStatusMessage(
+          currentPlayer.name() + " rolled a 6 but has no valid moves (all pieces finished?).");
+      view.enableRollButton(); // Allow to re-roll or indicate an issue
+    }
+  }
+
+  private void handleNormalRoll(
+      PlayerView currentPlayer, boolean hasMoveableBoardPieces, boolean hasHomePieces) {
+    if (hasMoveableBoardPieces) {
+      waitingForPieceSelection = true;
+      view.showStatusMessage(currentPlayer.name() + " - select a piece to move.");
+      tryAutoSelectOnlyMovablePiece(currentPlayer); // Auto-select if only one piece on board
+    } else {
+      // No pieces on board (all at home or finished) and didn't roll a 6
+      handleNoValidMoves(currentPlayer, hasHomePieces);
+    }
+  }
+
+  private void tryAutoSelectOnlyMovablePiece(PlayerView currentPlayer) {
+    LudoColor color = LudoColor.valueOf(currentPlayer.token());
+    List<Integer> boardPieceIndices = getBoardPieceIndices(currentPlayer, color); // Pass color
+    if (boardPieceIndices.size() == 1) {
+      selectedPieceIndex = boardPieceIndices.get(0);
+      System.out.println(
+          "Auto-selecting piece: " + selectedPieceIndex + " for " + currentPlayer.name());
+      processSelectedPiece();
+    }
+  }
+
+  private void handleNoValidMoves(PlayerView currentPlayer, boolean hasHomePieces) {
+    System.out.println(currentPlayer.name() + " has no valid moves with roll " + lastRolledValue);
+    view.showStatusMessage(currentPlayer.name() + " has no valid moves.");
+
+    if (hasHomePieces && gateway instanceof LudoGateway ludoGw) {
+      // Select the first home piece for processing (which will skip the turn in gateway)
+      for (int i = 0; i < currentPlayer.piecePositions().size(); i++) {
+        if (currentPlayer.piecePositions().get(i) <= 0) {
+          selectedPieceIndex = i;
+          break;
+        }
+      }
+      ludoGw.selectPiece(selectedPieceIndex);
+      ludoGw.applyPieceMovement();
+      selectedPieceIndex = -1;
+      waitingForPieceSelection = false;
+      refreshTokens();
+    }
+    view.enableRollButton();
+  }
+
+  // Helper for getBoardPieceIndices to include color for isPieceFinished check
+  private List<Integer> getBoardPieceIndices(PlayerView player, LudoColor color) {
+    List<Integer> indices = new ArrayList<>();
+    for (int i = 0; i < player.piecePositions().size(); i++) {
+      int pos = player.piecePositions().get(i);
+      if (pos > 0 && !isPieceFinished(pos, color)) {
+        indices.add(i);
+      }
+    }
+    return indices;
+  }
+
   private void onPieceSelected(int pieceIndex) {
-    if (!waitingForPieceSelection) return;
+    if (!waitingForPieceSelection) {
+      System.out.println("Not waiting for piece selection. Ignoring click.");
+      return;
+    }
 
-    PlayerView current = getCurrentPlayer();
-    if (current == null) return;
+    PlayerView currentPlayer = getCurrentPlayer();
+    if (currentPlayer == null) {
+      System.out.println("No current player. Ignoring click.");
+      return;
+    }
 
-    // Validate selection
-    if (pieceIndex < current.piecePositions().size()) {
-      int position = current.piecePositions().get(pieceIndex);
-      if (position <= 0 && lastRolledValue != 6) {
-        view.showAlert("Invalid move", "You need to roll a 6 to move a piece from home.");
-        return;
-      }
-      LudoColor color = LudoColor.valueOf(current.token());
-      if (isPieceFinished(position, color)) {
-        view.showAlert("Piece finished", "That piece has already reached the goal.");
-        return;
-      }
+    if (!isValidPieceSelection(currentPlayer, pieceIndex, lastRolledValue)) {
+      return; // showAlert is called within isValidPieceSelection
     }
 
     selectedPieceIndex = pieceIndex;
     processSelectedPiece();
   }
 
+  private boolean isValidPieceSelection(PlayerView player, int pieceIndex, int currentRoll) {
+    if (pieceIndex >= player.piecePositions().size() || pieceIndex < 0) {
+      view.showAlert("Invalid Selection", "Selected piece index is out of bounds.");
+      return false;
+    }
+
+    int position = player.piecePositions().get(pieceIndex);
+    LudoColor color = LudoColor.valueOf(player.token());
+
+    if (position <= 0 && currentRoll != 6) {
+      view.showAlert("Invalid Move", "You need to roll a 6 to move a piece from home.");
+      return false;
+    }
+    if (isPieceFinished(position, color)) {
+      view.showAlert("Piece Finished", "That piece has already reached the goal.");
+      return false;
+    }
+    return true;
+  }
+
   // Fix for the processSelectedPiece method in LudoBoardController.java
   private void processSelectedPiece() {
-    view.disableRollButton();
+    view.disableRollButton(); // Disable while processing and animating
     waitingForPieceSelection = false;
 
-    PlayerView current = getCurrentPlayer();
-    if (current == null || selectedPieceIndex < 0) {
-      view.enableRollButton();
+    PlayerView currentPlayer = getCurrentPlayer();
+    if (currentPlayer == null || selectedPieceIndex < 0) {
+      view.enableRollButton(); // Should not happen
       return;
     }
 
-    String playerColor = current.token();
-    int startPosition = current.piecePositions().get(selectedPieceIndex);
-    boolean movingFromHome = startPosition <= 0;
+    String playerColorToken = currentPlayer.token();
+    int initialPosition = currentPlayer.piecePositions().get(selectedPieceIndex);
 
-    // Tell the gateway which piece to move
+    // 1. Interact with Gateway to apply move
     if (gateway instanceof LudoGateway ludoGw) {
       ludoGw.selectPiece(selectedPieceIndex);
-      ludoGw.applyPieceMovement();
+      ludoGw.applyPieceMovement(); // This updates the game state in the model
     }
 
-    // Get updated player and check if they still have the turn
-    PlayerView currentPlayer = getCurrentPlayer();
-    boolean stillHasTurn = currentPlayer != null && currentPlayer.token().equals(playerColor);
-
-    // Get updated player data for animation purposes
-    PlayerView updatedPlayer =
+    // 2. Get updated state for animation and turn management
+    PlayerView playerAfterMove =
         gateway.players().stream()
-            .filter(p -> p.token().equals(playerColor))
+            .filter(p -> p.token().equals(playerColorToken))
             .findFirst()
-            .orElse(null);
+            .orElse(null); // This player might not be the "current" player anymore if turn passed
 
-    int endPosition = 0;
-    if (updatedPlayer != null && selectedPieceIndex < updatedPlayer.piecePositions().size()) {
-      endPosition = updatedPlayer.piecePositions().get(selectedPieceIndex);
+    if (playerAfterMove == null) { // Should not happen
+      resetAndEnableRoll();
+      return;
     }
 
-    // Special handling for home piece moving to start with a 6
-    if (movingFromHome && lastRolledValue == 6) {
-      // Determine the correct start position for this color
-      int startTileId =
-          switch (LudoColor.valueOf(playerColor)) {
-            case BLUE -> 1;
-            case RED -> 14;
-            case GREEN -> 27;
-            case YELLOW -> 40;
-          };
+    int finalPosition = playerAfterMove.piecePositions().get(selectedPieceIndex);
+    PlayerView newCurrentPlayer = getCurrentPlayer(); // Who has the turn NOW
+    boolean playerKeepsTurn =
+        newCurrentPlayer != null && newCurrentPlayer.token().equals(playerColorToken);
 
-      if (endPosition > 0) {
-        // Animate from home to the start position
-        List<Integer> path = List.of(0, startTileId);
+    // 3. Animate based on movement
+    boolean movedFromHomeToStart =
+        initialPosition <= 0 && finalPosition > 0 && lastRolledValue == 6;
 
-        view.animateMoveAlongPath(
-            playerColor,
-            selectedPieceIndex,
-            path,
-            () -> {
-              refreshTokens();
-              // Only enable roll button if this player still has the turn
-              if (stillHasTurn) {
-                view.enableRollButton();
-              }
-            });
+    if (movedFromHomeToStart) {
+      animatePieceFromHome(playerColorToken, selectedPieceIndex, finalPosition, playerKeepsTurn);
+    } else if (initialPosition != finalPosition) { // Actual movement on board
+      animatePieceOnBoard(
+          playerColorToken, selectedPieceIndex, initialPosition, finalPosition, playerKeepsTurn);
+    } else {
+      handlePostMoveUI(playerColorToken, playerKeepsTurn);
+    }
 
-        // Reset selection
-        selectedPieceIndex = -1;
+    selectedPieceIndex = -1; // Reset for next selection
+  }
+
+  private void animatePieceFromHome(
+      String playerToken, int pieceIdx, int endPositionOnBoard, boolean playerKeepsTurn) {
+    LudoColor color = LudoColor.valueOf(playerToken);
+    List<Integer> path = List.of(0, endPositionOnBoard); // 0 represents home visually
+
+    view.animateMoveAlongPath(
+        playerToken, pieceIdx, path, () -> handlePostMoveUI(playerToken, playerKeepsTurn));
+  }
+
+  private void animatePieceOnBoard(
+      String playerToken, int pieceIdx, int startPos, int endPos, boolean playerKeepsTurn) {
+    List<Integer> path = buildLudoPathBetween(startPos, endPos, LudoColor.valueOf(playerToken));
+    System.out.println(
+        "Animating piece " + pieceIdx + " for " + playerToken + " along path: " + path);
+
+    view.animateMoveAlongPath(
+        playerToken, pieceIdx, path, () -> handlePostMoveUI(playerToken, playerKeepsTurn));
+  }
+
+  private void handlePostMoveUI(String playerMovedToken, boolean playerKeepsTurn) {
+    refreshTokens(); // Update all token positions from model
+
+    if (gateway.hasWinner()) {
+      // Find the winner's name from the potentially updated player list
+      gateway.players().stream()
+          .filter(
+              p -> p.token().equals(playerMovedToken)) // Assuming winner is the one who just moved
+          .findFirst()
+          .ifPresent(winner -> view.announceWinner(winner.name()));
+      // Roll button likely stays disabled or game ends.
+    } else {
+      PlayerView actualCurrentPlayer = getCurrentPlayer(); // Get the player whose turn it is NOW
+      if (actualCurrentPlayer == null) { // Should not happen unless game ended abruptly
+        view.disableRollButton();
         return;
       }
-    }
 
-    // Check if there was actual movement for board pieces
-    if (startPosition != endPosition) {
-      // Always build a path and animate
-      List<Integer> path =
-          buildLudoPathBetween(startPosition, endPosition, LudoColor.valueOf(playerColor));
-
-      System.out.println("Animating piece " + selectedPieceIndex + " along path: " + path);
-
-      view.animateMoveAlongPath(
-          playerColor,
-          selectedPieceIndex,
-          path,
-          () -> {
-            refreshTokens();
-            if (gateway.hasWinner()) {
-              view.announceWinner(current.name());
-            } else {
-              // Only enable roll button if the player still has the turn
-              // This is critical to prevent the same player from getting multiple turns
-              PlayerView newCurrentPlayer = getCurrentPlayer();
-              if (newCurrentPlayer != null && newCurrentPlayer.token().equals(playerColor)) {
-                view.enableRollButton();
-                view.showStatusMessage(newCurrentPlayer.name() + "'s turn continues - roll again!");
-              } else if (newCurrentPlayer != null) {
-                view.showStatusMessage(newCurrentPlayer.name() + "'s turn - please roll");
-                view.enableRollButton();
-              }
-            }
-          });
-    } else {
-      refreshTokens();
-
-      // Only enable roll button if this player still has the turn
-      if (stillHasTurn) {
+      if (playerKeepsTurn) { // The same player who moved still has the turn
         view.enableRollButton();
-      } else {
-        PlayerView newCurrentPlayer = getCurrentPlayer();
-        if (newCurrentPlayer != null) {
-          view.showStatusMessage(newCurrentPlayer.name() + "'s turn - please roll");
-          view.enableRollButton();
-        }
+        view.showStatusMessage(actualCurrentPlayer.name() + "'s turn continues - roll again!");
+      } else { // Turn has passed to someone else
+        view.showStatusMessage(actualCurrentPlayer.name() + "'s turn - please roll");
+        view.enableRollButton(); // Enable for the new current player
       }
     }
+  }
 
-    // Reset selection
+  private void resetAndEnableRoll() {
+    refreshTokens();
+    view.enableRollButton();
     selectedPieceIndex = -1;
+    waitingForPieceSelection = false;
   }
 
   private List<Integer> buildLudoPathBetween(int startId, int endId, LudoColor color) {
     List<Integer> path = new ArrayList<>();
 
-    // Handle home position or same position
-    if (startId <= 0 || startId == endId) {
-      path.add(startId);
-      if (endId > 0 && startId != endId) {
+    if (startId <= 0) {
+      path.add(0);
+      if (endId > 0) {
         path.add(endId);
       }
       return path;
     }
+    if (startId == endId) {
+      path.add(startId);
+      return path;
+    }
+    path.add(startId);
+    int currentPos = startId;
 
-    // Check if on main ring
-    if (startId <= 52 && endId <= 52) {
-      // Calculate clockwise and counterclockwise distances
-      int clockwiseSteps;
-      if (endId >= startId) {
-        clockwiseSteps = endId - startId;
-      } else {
-        clockwiseSteps = (52 - startId) + endId;
+    int playerEntryPoint = getEntryPoint(color);
+    int playerGoalBaseId = getGoalBaseId(color);
+    int playerGoalEndId = playerGoalBaseId + GOAL_LENGTH - 1;
+
+    while (currentPos != endId) {
+      if (path.size() > 70) {
+        System.err.println(
+            "Path generation exceeded max length. Breaking. Start: "
+                + startId
+                + " End: "
+                + endId
+                + " Color: "
+                + color);
+        path.add(endId);
+        return path;
       }
 
-      int counterClockwiseSteps;
-      if (startId >= endId) {
-        counterClockwiseSteps = startId - endId;
-      } else {
-        counterClockwiseSteps = startId + (52 - endId);
-      }
-
-      // Choose the shorter path
-      if (clockwiseSteps <= counterClockwiseSteps) {
-        // Go clockwise
-        int pos = startId;
-        for (int i = 0; i < clockwiseSteps; i++) {
-          pos = pos % 52 + 1; // Next position, wrapping from 52 to 1
-          path.add(pos);
+      if (currentPos >= 1 && currentPos <= 52) {
+        int tileBeforePlayerEntryPoint = (playerEntryPoint == 1) ? 52 : playerEntryPoint - 1;
+        if (currentPos == tileBeforePlayerEntryPoint
+            && (endId >= playerGoalBaseId && endId <= playerGoalEndId)) {
+          currentPos = playerGoalBaseId;
+        } else {
+          currentPos = (currentPos % 52) + 1;
         }
-      } else {
-        // Go counterclockwise
-        int pos = startId;
-        for (int i = 0; i < counterClockwiseSteps; i++) {
-          pos = (pos == 1) ? 52 : pos - 1; // Previous position, wrapping from 1 to 52
-          path.add(pos);
+      } else if (currentPos >= playerGoalBaseId && currentPos < playerGoalEndId) {
+        if (endId >= playerGoalBaseId && endId <= playerGoalEndId) {
+          currentPos++;
+        } else {
+          System.err.println(
+              "Pathing logic error: In goal "
+                  + currentPos
+                  + ", but target "
+                  + endId
+                  + " is not. Color: "
+                  + color);
+          break; // Break and add endId later
         }
+
+      } else if (currentPos == playerGoalEndId) {
+        break;
+      } else {
+        System.err.println(
+            "Pathing logic: Unhandled state. currentPos="
+                + currentPos
+                + " endId="
+                + endId
+                + " color="
+                + color);
+        break;
       }
-
-      return path;
+      path.add(currentPos);
     }
 
-    // For goal paths and other cases, just use a simple direct path
-    if (startId <= 52 && endId > 52) {
-      // Simply add the end position
-      path.add(endId);
-      return path;
-    }
+    if (!path.isEmpty() && path.get(path.size() - 1) != endId && currentPos == endId) {
 
-    // Moving within goal path
-    if (startId > 52 && endId > 52) {
-      for (int i = startId + 1; i <= endId; i++) {
-        path.add(i);
-      }
-      return path;
-    }
-
-    // Fallback - just add end position
-    if (endId != startId) {
+    } else if (path.isEmpty() && startId != endId) {
+      path.add(startId);
       path.add(endId);
     }
 
@@ -374,18 +407,5 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
   private PlayerView getCurrentPlayer() {
     return gateway.players().stream().filter(PlayerView::hasTurn).findFirst().orElse(null);
-  }
-
-  private List<Integer> getBoardPieceIndices(PlayerView player) {
-    List<Integer> indices = new ArrayList<>();
-    LudoColor color = LudoColor.valueOf(player.token());
-
-    for (int i = 0; i < player.piecePositions().size(); i++) {
-      int pos = player.piecePositions().get(i);
-      if (pos > 0 && !isPieceFinished(pos, color)) {
-        indices.add(i);
-      }
-    }
-    return indices;
   }
 }

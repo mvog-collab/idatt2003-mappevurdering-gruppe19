@@ -16,8 +16,13 @@ public class LudoPage extends AbstractMenuView { // AbstractMenuView should exte
     private BorderPane rootLayout; // Use BorderPane as the root
 
     public LudoPage() {
-        menuUIService = new MenuUIService();
-        rootLayout = new BorderPane(); // Initialize BorderPane
+        this.menuUIService = new MenuUIService();
+        this.rootLayout = new BorderPane(); // Initialize BorderPane
+        buildUi();
+    }
+
+    private void buildUi() {
+        
 
         Label titleLabel = menuUIService.createTitleLabel("Ludo", "ludo-page-title");
         ImageView boardPreview = menuUIService.createBoardPreview("/images/ludoBoard.jpg", 350, 350);

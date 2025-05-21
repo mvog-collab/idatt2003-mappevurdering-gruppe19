@@ -93,9 +93,6 @@ public class BoardAnimationService implements AnimationService {
         }
       }
     }
-
-    // If we get here, we couldn't find the token - let's grab the first one as fallback
-    // This isn't ideal but prevents null pointer exceptions
     for (javafx.scene.Node node : tokenPane.getChildren()) {
       if (node instanceof ImageView) {
         System.out.println("No match found, using first token as fallback");
@@ -111,15 +108,12 @@ public class BoardAnimationService implements AnimationService {
     int count = 0;
     for (javafx.scene.Node node : tokenPane.getChildren()) {
       if (node instanceof ImageView imageView) {
-        // Different approaches to identify tokens with indices
-        // Option 1: Using userData as a combination of name and index
         if (node.getUserData() != null
             && node.getUserData().toString().startsWith(tokenName + "_")
             && count++ == pieceIndex) {
           return imageView;
         }
 
-        // Option 2: Using a naming convention
         if (node.getId() != null && node.getId().equals(tokenName + "Token_" + pieceIndex)) {
           return imageView;
         }

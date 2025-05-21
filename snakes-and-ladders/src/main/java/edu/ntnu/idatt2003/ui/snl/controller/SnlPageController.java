@@ -3,7 +3,7 @@ package edu.ntnu.idatt2003.ui.snl.controller;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.gateway.SnlGateway;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractPageController;
-import edu.ntnu.idatt2003.ui.navigation.NavigationService; // Import
+import edu.ntnu.idatt2003.ui.navigation.NavigationService;
 import edu.ntnu.idatt2003.ui.service.board.SnlBoardUIService;
 import edu.ntnu.idatt2003.ui.shared.controller.ChoosePlayerController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
@@ -71,7 +71,7 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
 
               if (boardView.getBoardUIService() instanceof SnlBoardUIService snlBoardUIService) {
                 snlBoardUIService.applySpecialTileStyling(
-                    snakes, ladders, boardView.getOverlayPane(), false);
+                    snakes, ladders, boardView.getOverlayPane());
               }
               new BoardController(boardView, gateway);
               boardView.setPlayers(gateway.players(), gateway.boardOverlays());
