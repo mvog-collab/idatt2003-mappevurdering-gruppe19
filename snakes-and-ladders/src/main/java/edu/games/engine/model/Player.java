@@ -1,5 +1,6 @@
 package edu.games.engine.model;
 
+import edu.games.engine.exception.ValidationException;
 import edu.games.engine.board.Tile;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,7 +15,13 @@ public final class Player {
 
   public Player(String name, Token token, LocalDate birthday) {
     if (name == null || name.isBlank()) {
-      throw new IllegalArgumentException("Invalid name: cannot be empty");
+      throw new ValidationException("Invalid name: cannot be empty");
+    }
+    if (token == null) {
+      throw new ValidationException("Invalid token: cannot be null");
+    }
+    if (birthday == null) {
+      throw new ValidationException("Invalid birthday: cannot be null");
     }
     this.name = name;
     this.token = Objects.requireNonNull(token);
