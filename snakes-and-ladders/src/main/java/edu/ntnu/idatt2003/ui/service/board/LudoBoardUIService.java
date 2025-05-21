@@ -125,7 +125,7 @@ public class LudoBoardUIService implements BoardUIService {
   }
 
   public void highlightActivePiece(ImageView piece) {
-    DropShadow highlight = new DropShadow(10, Color.GOLD);
+    DropShadow highlight = new DropShadow(10, Color.BLACK);
     highlight.setSpread(0.8);
     piece.setEffect(highlight);
   }
