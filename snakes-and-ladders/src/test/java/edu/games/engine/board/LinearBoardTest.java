@@ -1,5 +1,6 @@
 package edu.games.engine.board;
 
+import edu.games.engine.exception.ValidationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ class LinearBoardTest {
 
     @Test
     void shouldThrowExceptionWhenSizeLessThanTwo() {
-      assertThrows(IllegalArgumentException.class, () -> new LinearBoard(1));
+      assertThrows(ValidationException.class, () -> new LinearBoard(1));
     }
   }
 
@@ -51,7 +52,7 @@ class LinearBoardTest {
     @Test
     void shouldThrowIfStepsNegative() {
       Tile start = board.start();
-      assertThrows(IllegalArgumentException.class, () -> board.move(start, -1));
+      assertThrows(ValidationException.class, () -> board.move(start, -1));
     }
 
     @Test
@@ -62,7 +63,7 @@ class LinearBoardTest {
           return 0;
         }
       };
-      assertThrows(IllegalArgumentException.class, () -> board.move(fakeTile, 1));
+      assertThrows(ValidationException.class, () -> board.move(fakeTile, 1));
     }
   }
 
@@ -94,7 +95,7 @@ class LinearBoardTest {
           return 1;
         }
       };
-      assertThrows(IllegalArgumentException.class, () -> board.isEnd(fakeTile));
+      assertThrows(ValidationException.class, () -> board.isEnd(fakeTile));
     }
   }
 }

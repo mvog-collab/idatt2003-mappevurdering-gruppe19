@@ -1,6 +1,7 @@
 package edu.games.engine.model;
 
 import edu.games.engine.board.Tile;
+import edu.games.engine.exception.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +55,7 @@ class PlayerTest {
   @Test
   void shouldThrowIfInvalidPieceId() {
     Tile tile = mock(Tile.class);
-    assertThrows(IllegalArgumentException.class, () -> player.movePiece(99, tile));
+    assertThrows(ValidationException.class, () -> player.movePiece(99, tile));
   }
 
   @Test

@@ -1,5 +1,6 @@
 package edu.games.engine.dice;
 
+import edu.games.engine.exception.ValidationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -15,10 +16,10 @@ class RandomDiceTest {
 
     @Test
     void shouldThrowExceptionIfDiceLessThanOne() {
-      IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-        new RandomDice(0, new Random());
-      });
-      assertEquals("dice < 1", ex.getMessage());
+      ValidationException ex = assertThrows(
+          ValidationException.class,
+          () -> new RandomDice(0, new Random()));
+      assertTrue(ex.getMessage().contains("dice"));
     }
   }
 

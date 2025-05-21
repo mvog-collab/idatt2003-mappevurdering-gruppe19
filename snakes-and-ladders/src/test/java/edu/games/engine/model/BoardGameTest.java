@@ -26,7 +26,6 @@ class BoardGameTest {
   }
 
   private static class TestableBoardGame extends BoardGame {
-    // Eksponerer protected metode for testing
     public void simulatePlayerMove(Player player, Tile from, Tile to) {
       playerMoved(player, from, to);
     }
