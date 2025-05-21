@@ -15,4 +15,8 @@ public interface PlayerUIService {
   List<ImageView> createPlayerPieces(PlayerView player);
 
   void updatePlayerDisplay(Node container, List<PlayerView> players);
+
+  Node createCurrentPlayerTurnBox(PlayerView currentPlayer);
+
+  void updateCurrentPlayerTurnBox(Node turnBox, PlayerView currentPlayer, String message);
 }
