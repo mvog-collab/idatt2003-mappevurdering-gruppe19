@@ -1,5 +1,6 @@
 package edu.games.engine.impl;
 
+import edu.games.engine.exception.GameEngineException;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
 import edu.games.engine.store.PlayerStore;
@@ -17,8 +18,11 @@ public final class CsvPlayerStore implements PlayerStore {
   public void save(List<Player> players, Path out) throws IOException {
     try (BufferedWriter w = new BufferedWriter(new FileWriter(out.toFile()))) {
       for (Player p : players) {
-        w.write("%s%s%s%s%s%n".formatted(p.getName(), SEP, p.getToken(), SEP, p.getBirtday()));
+        w.write("%s%s%s%s%s%n".formatted(
+            p.getName(), SEP, p.getToken(), SEP, p.getBirtday()));
       }
+    } catch (IOException e) {
+      throw new GameEngineException("Could not save players to " + out, e);
     }
   }
 
