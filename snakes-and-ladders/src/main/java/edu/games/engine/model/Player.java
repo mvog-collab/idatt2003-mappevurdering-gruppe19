@@ -77,7 +77,7 @@ public final class Player {
   // New method to move a specific piece
   public void movePiece(int pieceId, Tile tile) {
     if (pieceId < 0 || pieceId >= pieces.size()) {
-      throw new IllegalArgumentException("Invalid piece ID: " + pieceId);
+      throw new ValidationException("pieceId out of range: " + pieceId);
     }
     pieces.get(pieceId).moveTo(tile);
   }
