@@ -34,6 +34,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
   private BorderPane rootLayout; // Change mainLayout to BorderPane and use as root
   private StackPane boardStack;
   private Pane boardPane;
+  private Node playerTurnBox;
   private final Pane tokenPane;
   private final Pane overlayPane;
   private final VBox controlPanel;
@@ -112,6 +113,9 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
     playerPanel.setVgap(15);
     playerPanel.setPrefWrapLength(300);
 
+    PlayerView currentPlayer = getCurrentPlayer();
+    playerTurnBox = playerUIService.createCurrentPlayerTurnBox(currentPlayer);
+
     diceContainer.setAlignment(Pos.CENTER);
     diceContainer.setPadding(new Insets(20));
     diceContainer.getStyleClass().add("dice-box");
@@ -137,7 +141,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
     HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
     buttonContainer.setAlignment(Pos.CENTER);
 
-    controlPanel.getChildren().addAll(howToButton, playerPanel, diceContainer, buttonContainer);
+    controlPanel.getChildren().addAll(howToButton, playerTurnBox, diceContainer, buttonContainer);
     controlPanel.setAlignment(Pos.TOP_CENTER);
     controlPanel.setPrefWidth(400);
     controlPanel.getStyleClass().add("game-control");
@@ -153,6 +157,19 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
         rootLayout, true, howToButton); // true = include "Back to Game Setup"
 
     BorderPane.setMargin(boardStack, new Insets(0, 20, 0, 0));
+  }
+
+  private Optional<PlayerView> getOptCurrentPlayer() {
+    return currentPlayers.stream().filter(PlayerView::hasTurn).findFirst();
+  }
+
+  private PlayerView getCurrentPlayer() {
+    return currentPlayers.stream().filter(PlayerView::hasTurn).findFirst().orElse(null);
+  }
+
+  private void updatePlayerTurnDisplay() {
+    PlayerView currentPlayer = getOptCurrentPlayer().orElse(null);
+    playerUIService.updateCurrentPlayerTurnBox(playerTurnBox, currentPlayer, null);
   }
 
   @Override
@@ -193,6 +210,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
 
     // Add overlays to overlay pane
     boardUIService.addOverlays(overlayPane, overlays);
+    updatePlayerTurnDisplay();
   }
 
   @Override
@@ -217,6 +235,17 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
       int startPosition = player.tileId();
       int rolled = diceValues[0] + diceValues[1];
       int endPosition = Math.min(startPosition + rolled, boardSize);
+
+      String message = player.name() + " rolled " + rolled + "! ";
+      if (diceValues[0] == diceValues[1]) {
+        if (diceValues[0] == 6) {
+          message += "Double 6 - turn skipped!";
+        } else {
+          message += "Got a double - gets an extra turn!";
+        }
+      }
+
+      playerUIService.updateCurrentPlayerTurnBox(playerTurnBox, player, message);
 
       // Animate move (unless it's special case)
       if (rolled != 12) { // Example special case
@@ -307,6 +336,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
           playerUIService.updateTurnIndicator(playerBox, isCurrentPlayer);
         }
       }
+      updatePlayerTurnDisplay();
     }
   }
 
