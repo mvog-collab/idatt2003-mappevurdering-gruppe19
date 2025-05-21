@@ -39,7 +39,7 @@ public final class LinearBoard implements Board {
   @Override
   public Tile move(Tile from, int steps) {
     if (steps < 0) {
-      throw new IllegalArgumentException("steps < 0");
+      throw new ValidationException("steps cannot be < 0");
     }
     LinearTile tile = cast(from);
     for (int i = 0; i < steps && tile.next() != null; i++) {
