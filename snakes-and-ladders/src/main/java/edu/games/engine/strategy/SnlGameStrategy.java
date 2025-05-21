@@ -36,7 +36,6 @@ public class SnlGameStrategy implements GameStrategy {
 
   @Override
   public Tile movePiece(Player player, int pieceIndexIgnored, int diceValue, DefaultGame game) {
-    // This method now focuses purely on the *primary* move determination
     if (player == null || game == null || player.getCurrentTile() == null || game.board() == null) {
       return null;
     }
@@ -45,7 +44,6 @@ public class SnlGameStrategy implements GameStrategy {
 
   @Override
   public boolean checkWinCondition(Player player, DefaultGame game) {
-    // Delegate to RuleEngine
     return ruleEngine.hasWon(player, game);
   }
 
