@@ -8,6 +8,9 @@ import edu.ntnu.idatt2003.ui.common.controller.AbstractGameController;
 import edu.ntnu.idatt2003.ui.ludo.view.LudoBoardView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 
 public final class LudoBoardController extends AbstractGameController<LudoBoardView> {
 
@@ -15,6 +18,8 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   private int selectedPieceIndex = -1;
   private boolean waitingForPieceSelection = false;
   private static final int GOAL_LENGTH = 5;
+  private static final Logger LOG =
+      Logger.getLogger(LudoBoardController.class.getName());
 
   public LudoBoardController(LudoBoardView view, CompleteBoardGame gateway) {
     super(view, gateway);
@@ -38,7 +43,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     // 1. Roll the dice and update UI
     lastRolledValue = gateway.rollDice();
     view.showDice(lastRolledValue);
-    System.out.println(currentPlayer.name() + " rolled: " + lastRolledValue);
+    LOG.log(Level.INFO, () -> currentPlayer.name() + " rolled: " + lastRolledValue);
 
     // 2. Determine player's piece status
     LudoColor color = LudoColor.valueOf(currentPlayer.token());
@@ -97,14 +102,14 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     List<Integer> boardPieceIndices = getBoardPieceIndices(currentPlayer, color); // Pass color
     if (boardPieceIndices.size() == 1) {
       selectedPieceIndex = boardPieceIndices.get(0);
-      System.out.println(
-          "Auto-selecting piece: " + selectedPieceIndex + " for " + currentPlayer.name());
+      LOG.log(Level.INFO, () -> "Auto-selecting piece: " + selectedPieceIndex +
+          " for " + currentPlayer.name());
       processSelectedPiece();
     }
   }
 
   private void handleNoValidMoves(PlayerView currentPlayer, boolean hasHomePieces) {
-    System.out.println(currentPlayer.name() + " has no valid moves with roll " + lastRolledValue);
+    LOG.log(Level.INFO, () -> currentPlayer.name() + " has no valid moves with roll " + lastRolledValue);
     view.showStatusMessage(currentPlayer.name() + " has no valid moves.");
 
     if (hasHomePieces && gateway instanceof LudoGateway ludoGw) {
@@ -138,13 +143,13 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
   private void onPieceSelected(int pieceIndex) {
     if (!waitingForPieceSelection) {
-      System.out.println("Not waiting for piece selection. Ignoring click.");
+      LOG.fine("Not waiting for piece selection. Ignoring click.");
       return;
     }
 
     PlayerView currentPlayer = getCurrentPlayer();
     if (currentPlayer == null) {
-      System.out.println("No current player. Ignoring click.");
+      LOG.fine("No current player. Ignoring click.");
       return;
     }
 
@@ -241,7 +246,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   private void animatePieceOnBoard(
       String playerToken, int pieceIdx, int startPos, int endPos, boolean playerKeepsTurn) {
     List<Integer> path = buildLudoPathBetween(startPos, endPos, LudoColor.valueOf(playerToken));
-    System.out.println(
+    LOG.log(Level.WARNING, () ->
         "Animating piece " + pieceIdx + " for " + playerToken + " along path: " + path);
 
     view.animateMoveAlongPath(
@@ -306,7 +311,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
     while (currentPos != endId) {
       if (path.size() > 70) {
-        System.err.println(
+        LOG.log(Level.WARNING, () ->
             "Path generation exceeded max length. Breaking. Start: "
                 + startId
                 + " End: "
@@ -329,7 +334,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
         if (endId >= playerGoalBaseId && endId <= playerGoalEndId) {
           currentPos++;
         } else {
-          System.err.println(
+          LOG.log(Level.WARNING,
               "Pathing logic error: In goal "
                   + currentPos
                   + ", but target "
@@ -342,7 +347,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       } else if (currentPos == playerGoalEndId) {
         break;
       } else {
-        System.err.println(
+        LOG.log(Level.WARNING,
             "Pathing logic: Unhandled state. currentPos="
                 + currentPos
                 + " endId="
