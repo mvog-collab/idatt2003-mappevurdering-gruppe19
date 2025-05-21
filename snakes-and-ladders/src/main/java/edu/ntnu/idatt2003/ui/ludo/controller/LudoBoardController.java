@@ -283,84 +283,56 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     waitingForPieceSelection = false;
   }
 
+  // TODO: Simplify this
   private List<Integer> buildLudoPathBetween(int startId, int endId, LudoColor color) {
     List<Integer> path = new ArrayList<>();
-
-    if (startId <= 0) {
-      path.add(0);
-      if (endId > 0) {
-        path.add(endId);
-      }
-      return path;
-    }
-    if (startId == endId) {
-      path.add(startId);
-      return path;
-    }
     path.add(startId);
-    int currentPos = startId;
 
-    int playerEntryPoint = getEntryPoint(color);
-    int playerGoalBaseId = getGoalBaseId(color);
-    int playerGoalEndId = playerGoalBaseId + GOAL_LENGTH - 1;
+    if (startId == endId) {
+      return path;
+    }
 
-    while (currentPos != endId) {
-      if (path.size() > 70) {
-        System.err.println(
-            "Path generation exceeded max length. Breaking. Start: "
-                + startId
-                + " End: "
-                + endId
-                + " Color: "
-                + color);
-        path.add(endId);
-        return path;
-      }
+    int currentSimulatedId = startId;
+    int ownerEntryPointId = getEntryPoint(color);
+    int ownerPreEntryPointId = (ownerEntryPointId == 1) ? 52 : ownerEntryPointId - 1;
+    int goalBaseForColor = getGoalBaseId(color);
 
-      if (currentPos >= 1 && currentPos <= 52) {
-        int tileBeforePlayerEntryPoint = (playerEntryPoint == 1) ? 52 : playerEntryPoint - 1;
-        if (currentPos == tileBeforePlayerEntryPoint
-            && (endId >= playerGoalBaseId && endId <= playerGoalEndId)) {
-          currentPos = playerGoalBaseId;
+    for (int i = 0; i < 70 && currentSimulatedId != endId; i++) {
+      int nextSimulatedId = -1;
+
+      if (currentSimulatedId == 0) { // Moving from home
+        if (endId == ownerEntryPointId) { // Check if the actual move was to the entry point
+          nextSimulatedId = ownerEntryPointId;
         } else {
-          currentPos = (currentPos % 52) + 1;
+          nextSimulatedId = endId;
         }
-      } else if (currentPos >= playerGoalBaseId && currentPos < playerGoalEndId) {
-        if (endId >= playerGoalBaseId && endId <= playerGoalEndId) {
-          currentPos++;
+      } else if (currentSimulatedId >= goalBaseForColor
+          && currentSimulatedId < goalBaseForColor + GOAL_LENGTH) { // In own goal path
+        if (currentSimulatedId < goalBaseForColor + GOAL_LENGTH - 1) {
+          nextSimulatedId = currentSimulatedId + 1;
         } else {
-          System.err.println(
-              "Pathing logic error: In goal "
-                  + currentPos
-                  + ", but target "
-                  + endId
-                  + " is not. Color: "
-                  + color);
-          break; // Break and add endId later
+          break;
         }
-
-      } else if (currentPos == playerGoalEndId) {
-        break;
+      } else if (currentSimulatedId > 0 && currentSimulatedId <= 52) { // On the main ring
+        int physicalNextOnRing = (currentSimulatedId % 52) + 1;
+        if (currentSimulatedId == ownerPreEntryPointId && physicalNextOnRing == ownerEntryPointId) {
+          // Transitioning from pre-entry to entry, so next is goal start
+          nextSimulatedId = goalBaseForColor;
+        } else {
+          // Normal ring movement
+          nextSimulatedId = physicalNextOnRing;
+        }
       } else {
-        System.err.println(
-            "Pathing logic: Unhandled state. currentPos="
-                + currentPos
-                + " endId="
-                + endId
-                + " color="
-                + color);
         break;
       }
-      path.add(currentPos);
+
+      if (nextSimulatedId != -1) {
+        path.add(nextSimulatedId);
+        currentSimulatedId = nextSimulatedId;
+      } else {
+        break;
+      }
     }
-
-    if (!path.isEmpty() && path.get(path.size() - 1) != endId && currentPos == endId) {
-
-    } else if (path.isEmpty() && startId != endId) {
-      path.add(startId);
-      path.add(endId);
-    }
-
     return path;
   }
 
