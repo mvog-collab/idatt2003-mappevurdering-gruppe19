@@ -101,17 +101,7 @@ public final class LudoGateway extends AbstractGameGateway {
   @Override
   public int rollDice() {
     if (game == null || game.players().isEmpty() || winner != null) return 0;
-
-    int roll = performDiceRoll();
-
-    if (selectedPieceIndex >= 0) {
-      moveSelectedPiece(roll);
-    } else {
-      advanceTurnIfNoExtraTurn(game.currentPlayer(), roll);
-      notifyTurnChanged();
-    }
-
-    return roll;
+    return performDiceRoll();
   }
 
   public int applyPieceMovement() {
@@ -156,10 +146,19 @@ public final class LudoGateway extends AbstractGameGateway {
   }
 
   private boolean hasMoved(Tile from, Tile to) {
-    return to != null && to != from;
+    if (to == null) return false;
+    if (from == null) return true;
+    return to.id() != from.id();
   }
 
   private void executeMove(PlayerPiece piece, Tile destination) {
+    if (game != null && game.players() != null) {
+      for (Player p : game.players()) {
+        if (p.getPieces().contains(piece)) {
+          break;
+        }
+      }
+    }
     piece.moveTo(destination);
   }
 
@@ -225,7 +224,10 @@ public final class LudoGateway extends AbstractGameGateway {
   private PlayerView mapToView(Player p, Token turnToken) {
     List<Integer> positions =
         p.getPieces().stream()
-            .map(piece -> piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id())
+            .map(
+                piece -> {
+                  return piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id();
+                })
             .toList();
     int activeIndex = p.getToken() == turnToken ? selectedPieceIndex : -1;
     return new PlayerView(
