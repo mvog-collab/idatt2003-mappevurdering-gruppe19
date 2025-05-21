@@ -4,6 +4,7 @@ import edu.games.engine.board.LudoBoard;
 import edu.games.engine.board.LudoPath;
 import edu.games.engine.board.Tile;
 import edu.games.engine.dice.factory.DiceFactory;
+import edu.games.engine.exception.ValidationException;
 import edu.games.engine.impl.DefaultGame;
 import edu.games.engine.impl.overlay.OverlayProvider;
 import edu.games.engine.model.Player;
@@ -89,8 +90,9 @@ public final class LudoGateway extends AbstractGameGateway {
       return;
     }
 
-    if (pieceIndex < 0 || pieceIndex >= 4)
-      throw new IllegalArgumentException("Invalid piece index: " + pieceIndex);
+    if (pieceIndex < 0 || pieceIndex >= 4) {
+      throw new ValidationException("pieceIndex out of range: " + pieceIndex);
+    }
 
     selectedPieceIndex = pieceIndex;
     notifyObservers(

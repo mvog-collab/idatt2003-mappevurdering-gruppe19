@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.gateway;
 
+import edu.games.engine.exception.GameEngineException;
 import edu.games.engine.impl.DefaultGame;
 import edu.games.engine.impl.overlay.OverlayProvider;
 import edu.games.engine.model.Token;
@@ -66,9 +67,14 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   }
 
   @Override
-  public void savePlayers(Path out) throws IOException {
-    if (game != null) {
-      playerStore.save(game.players(), out);
+  public void savePlayers(Path out) {
+    try {
+      if (game != null) {
+        playerStore.save(game.players(), out);
+      }
+    } catch (GameEngineException gameEngineException) {
+      // TODO: bytt til logger?
+      System.err.println(gameEngineException.getMessage());
     }
   }
 

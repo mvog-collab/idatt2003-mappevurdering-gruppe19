@@ -2,7 +2,9 @@ package edu.games.engine.impl.overlay;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.games.engine.exception.StorageException;
 import edu.ntnu.idatt2003.ui.fx.OverlayParams;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +19,14 @@ public final class JsonOverlayProvider implements OverlayProvider {
   }
 
   @Override
-  public List<OverlayParams> overlaysForBoard(int size) {
+  public List<OverlayParams> overlaysForBoard(int size) throws StorageException {
     String resource = baseDir + "overlays" + size + ".json";
-
     try (InputStream in = getClass().getResourceAsStream(resource)) {
       if (in == null) return List.of(); // no overlays available
 
       JsonNode root = MAPPER.readTree(in);
-
       JsonNode entries = root.has("overlays") ? root.get("overlays") : root;
+
       List<OverlayParams> list = new ArrayList<>();
       for (JsonNode n : entries) {
         list.add(
@@ -38,9 +39,8 @@ public final class JsonOverlayProvider implements OverlayProvider {
       }
       return List.copyOf(list);
 
-    } catch (Exception ex) {
-      ex.printStackTrace(); // log & continue without overlays
-      return List.of();
+    } catch (IOException ex) {
+      throw new StorageException("Failed to read overlay file " + resource, ex);
     }
   }
 }

@@ -2,6 +2,7 @@ package edu.games.engine.strategy;
 
 import edu.games.engine.board.LudoBoard;
 import edu.games.engine.board.Tile;
+import edu.games.engine.exception.ValidationException;
 import edu.games.engine.impl.DefaultGame;
 import edu.games.engine.model.LudoColor;
 import edu.games.engine.model.Player;
@@ -32,7 +33,7 @@ public class LudoGameStrategy implements GameStrategy {
         || !(game.board() instanceof LudoBoard)
         || pieceIndex < 0
         || pieceIndex >= player.getPieces().size()) {
-      return null;
+      throw new ValidationException("pieceIndex out of range: " + pieceIndex);
     }
     PlayerPiece piece = player.getPiece(pieceIndex);
     LudoBoard board = (LudoBoard) game.board();
