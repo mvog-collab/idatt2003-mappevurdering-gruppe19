@@ -38,7 +38,7 @@ public class LudoBoardUIService implements BoardUIService {
     boardImg.setFitWidth(boardSize);
     boardImg.setFitHeight(boardSize);
 
-    // Set up overlay and token panes
+    // Set up overlay and playerToken panes
     overlayPane.setMinSize(boardSize, boardSize);
     overlayPane.setMaxSize(boardSize, boardSize);
 
@@ -90,7 +90,7 @@ public class LudoBoardUIService implements BoardUIService {
 
   @Override
   public void placeTokenAtStart(Pane tokenPane, ImageView token) {
-    // Default implementation - would need to know which player's token it is
+    // Default implementation - would need to know which player's playerToken it is
     // Instead use placePieceAtHome
   }
 

@@ -18,7 +18,7 @@ public final class Player {
       throw new ValidationException("Invalid name: cannot be empty");
     }
     if (token == null) {
-      throw new ValidationException("Invalid token: cannot be null");
+      throw new ValidationException("Invalid playerToken: cannot be null");
     }
     if (birthday == null) {
       throw new ValidationException("Invalid birthday: cannot be null");

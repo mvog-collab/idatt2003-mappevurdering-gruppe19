@@ -43,7 +43,7 @@ public class LudoPlayerUIService implements PlayerUIService {
       box.getStyleClass().remove("current-player");
     }
 
-    // Update turn indicator and token glow
+    // Update turn indicator and playerToken glow
     for (Node node : box.getChildren()) {
       if (node instanceof Label label && label.getStyleClass().contains("turn-indicator")) {
         label.setVisible(hasTurn);
@@ -65,7 +65,7 @@ public class LudoPlayerUIService implements PlayerUIService {
   public List<ImageView> createPlayerPieces(PlayerView player) {
     // Create 4 pieces for each Ludo player
     List<ImageView> pieces = new ArrayList<>();
-    String tokenName = player.token();
+    String tokenName = player.playerToken();
 
     for (int i = 0; i < player.piecePositions().size(); i++) {
       String imgFile = tokenName.toLowerCase() + "Piece.png";

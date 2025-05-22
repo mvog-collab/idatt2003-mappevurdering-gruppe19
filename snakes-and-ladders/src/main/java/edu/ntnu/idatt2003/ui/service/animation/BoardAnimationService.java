@@ -73,7 +73,7 @@ public class BoardAnimationService implements AnimationService {
   private ImageView findToken(String tokenName) {
     // Log for debugging
     System.out.println(
-        "Finding token: " + tokenName + " among " + tokenPane.getChildren().size() + " children");
+        "Finding playerToken: " + tokenName + " among " + tokenPane.getChildren().size() + " children");
 
     // Check ID-based lookup first
     for (javafx.scene.Node node : tokenPane.getChildren()) {
@@ -89,13 +89,13 @@ public class BoardAnimationService implements AnimationService {
 
         if (imageView.getImage() != null) {
           // Just log that we found an image without userData
-          System.out.println("Found image without userData for token: " + tokenName);
+          System.out.println("Found image without userData for playerToken: " + tokenName);
         }
       }
     }
     for (javafx.scene.Node node : tokenPane.getChildren()) {
       if (node instanceof ImageView) {
-        System.out.println("No match found, using first token as fallback");
+        System.out.println("No match found, using first playerToken as fallback");
         return (ImageView) node;
       }
     }

@@ -159,16 +159,16 @@ public class LudoBoardView extends AbstractGameView implements GameView {
     // Create tokens for each player
     for (PlayerView player : players) {
       List<ImageView> pieces = playerUIService.createPlayerPieces(player);
-      tokenImages.put(player.token(), pieces);
+      tokenImages.put(player.playerToken(), pieces);
 
       // Setup click handlers for pieces
       for (int i = 0; i < pieces.size(); i++) {
         final int pieceIndex = i;
         ImageView piece = pieces.get(i);
 
-        piece.setOnMouseClicked(e -> handlePieceClicked(player.token(), pieceIndex));
+        piece.setOnMouseClicked(e -> handlePieceClicked(player.playerToken(), pieceIndex));
 
-        // Add to token pane
+        // Add to playerToken pane
         tokenPane.getChildren().add(piece);
       }
 
@@ -184,7 +184,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   }
 
   private void updatePiecePositions(PlayerView player) {
-    List<ImageView> pieces = tokenImages.get(player.token());
+    List<ImageView> pieces = tokenImages.get(player.playerToken());
     if (pieces == null) return;
 
     // Place each piece at its position
@@ -202,7 +202,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
       // Place the piece
       if (position <= 0) {
         // Piece is at home
-        boardUIService.placePieceAtHome(tokenPane, piece, player.token(), i);
+        boardUIService.placePieceAtHome(tokenPane, piece, player.playerToken(), i);
       } else {
         // Piece is on the board
         boardUIService.placePieceOnBoard(tokenPane, piece, position, i);
@@ -213,7 +213,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   private void handlePieceClicked(String tokenName, int pieceIndex) {
     // Only respond to clicks from the current player's pieces
     PlayerView currentPlayer = getCurrentPlayer();
-    if (currentPlayer == null || !currentPlayer.token().equals(tokenName)) {
+    if (currentPlayer == null || !currentPlayer.playerToken().equals(tokenName)) {
       return;
     }
 
@@ -241,7 +241,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   private void updateStatusForCurrentPlayer() {
     PlayerView currentPlayer = getCurrentPlayer();
     if (currentPlayer != null) {
-      statusLabel.setText(currentPlayer.name() + "'s turn");
+      statusLabel.setText(currentPlayer.playerName() + "'s turn");
     } else {
       statusLabel.setText("Roll the dice to start");
     }
@@ -275,11 +275,11 @@ public class LudoBoardView extends AbstractGameView implements GameView {
         enableRollButton();
       } else if (dieValue == 6) {
         // Player rolled a 6, which has special meaning in Ludo
-        statusLabel.setText(currentPlayer.name() + " rolled a 6! Select a piece to move.");
+        statusLabel.setText(currentPlayer.playerName() + " rolled a 6! Select a piece to move.");
       } else {
         // Normal roll
         statusLabel.setText(
-            currentPlayer.name() + " rolled a " + dieValue + ". Select a piece to move.");
+            currentPlayer.playerName() + " rolled a " + dieValue + ". Select a piece to move.");
       }
     }
   }
@@ -334,7 +334,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   private int findPieceIndex(String token, int tileId) {
     for (PlayerView player : players) {
-      if (player.token().equals(token)) {
+      if (player.playerToken().equals(token)) {
         // Find which piece is at the given tile
         for (int i = 0; i < player.piecePositions().size(); i++) {
           if (player.piecePositions().get(i) == tileId) {
@@ -372,11 +372,11 @@ public class LudoBoardView extends AbstractGameView implements GameView {
       // Update all players and their statuses
       for (PlayerView pv : players) {
         // Check if this is the new current player
-        boolean isCurrentPlayer = pv.token().equals(tokenName);
+        boolean isCurrentPlayer = pv.playerToken().equals(tokenName);
 
         // Update the UI accordingly
         if (isCurrentPlayer) {
-          statusLabel.setText(pv.name() + "'s turn");
+          statusLabel.setText(pv.playerName() + "'s turn");
         }
 
         // Update piece highlights for the current player
@@ -387,7 +387,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   }
 
   private void updatePieceHighlights(PlayerView player, boolean isCurrentPlayer) {
-    List<ImageView> pieces = tokenImages.get(player.token());
+    List<ImageView> pieces = tokenImages.get(player.playerToken());
     if (pieces == null) return;
 
     for (int i = 0; i < pieces.size(); i++) {

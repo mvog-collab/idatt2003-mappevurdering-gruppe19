@@ -170,7 +170,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
     // Clear existing player UI
     playerPanel.getChildren().clear();
 
-    // Clear token pane and token images
+    // Clear playerToken pane and playerToken images
     tokenPane.getChildren().clear();
     tokenImages.clear();
 
@@ -179,11 +179,11 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
       VBox playerBox = (VBox) playerUIService.createPlayerBox(player, player.hasTurn());
       playerPanel.getChildren().add(playerBox);
 
-      // Create token image and add to token pane
-      ImageView tokenImage = playerUIService.createTokenImage(player.token());
-      tokenImages.put(player.token(), tokenImage);
+      // Create playerToken image and add to playerToken pane
+      ImageView tokenImage = playerUIService.createTokenImage(player.playerToken());
+      tokenImages.put(player.playerToken(), tokenImage);
 
-      // Place token on board
+      // Place playerToken on board
       if (player.tileId() > 0) {
         boardUIService.placeTokenOnTile(tokenPane, tokenImage, player.tileId());
       } else {
@@ -223,7 +223,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
         hasActiveAnimation = true;
 
         animationService.animateMove(
-            player.token(),
+            player.playerToken(),
             startPosition,
             endPosition,
             () -> {
@@ -231,7 +231,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
 
               // Check for winner
               if (gateway != null && gateway.hasWinner()) {
-                String winnerName = player.name();
+                String winnerName = player.playerName();
                 announceWinner(winnerName);
               } else {
                 enableRollButton();
@@ -289,14 +289,14 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
 
       // Update player UI to show current player
       for (PlayerView player : currentPlayers) {
-        boolean isCurrentPlayer = player.token().equals(currentToken);
+        boolean isCurrentPlayer = player.playerToken().equals(currentToken);
         Node playerBox =
             playerPanel.getChildren().stream()
                 .filter(
                     node -> {
                       if (node instanceof VBox box) {
                         return box.getUserData() != null
-                            && box.getUserData().equals(player.token());
+                            && box.getUserData().equals(player.playerToken());
                       }
                       return false;
                     })

@@ -25,11 +25,11 @@ public class DefaultPlayerUIService implements PlayerUIService {
     box.setMaxWidth(150);
     box.setPrefHeight(50);
 
-    // Store token as user data for lookup
-    box.setUserData(player.token());
+    // Store playerToken as user data for lookup
+    box.setUserData(player.playerToken());
 
-    // Create token image
-    ImageView tokenImg = createTokenImage(player.token());
+    // Create playerToken image
+    ImageView tokenImg = createTokenImage(player.playerToken());
     tokenImg.setFitWidth(50);
     tokenImg.setFitHeight(50);
 
@@ -39,7 +39,7 @@ public class DefaultPlayerUIService implements PlayerUIService {
     turnLabel.setVisible(hasTurn);
 
     // Create name label
-    Label nameLabel = new Label(player.name());
+    Label nameLabel = new Label(player.playerName());
     nameLabel.getStyleClass().add("player-name");
 
     // Assemble box
@@ -49,7 +49,7 @@ public class DefaultPlayerUIService implements PlayerUIService {
     if (hasTurn) {
       box.getStyleClass().add("current-player");
 
-      // Add glow effect to token
+      // Add glow effect to playerToken
       DropShadow glow = new DropShadow(20, Color.GOLD);
       glow.setSpread(0.5);
       tokenImg.setEffect(glow);
@@ -86,7 +86,7 @@ public class DefaultPlayerUIService implements PlayerUIService {
         label.setVisible(hasTurn);
       }
 
-      // Update token glow effect
+      // Update playerToken glow effect
       if (node instanceof ImageView token) {
         if (hasTurn) {
           DropShadow glow = new DropShadow(20, Color.GOLD);

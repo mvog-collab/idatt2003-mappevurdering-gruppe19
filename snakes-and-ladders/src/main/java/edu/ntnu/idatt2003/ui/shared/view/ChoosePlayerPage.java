@@ -37,7 +37,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
   // Gateway reference
   private CompleteBoardGame gameGateway;
 
-  /** Constructor with custom token names */
+  /** Constructor with custom playerToken names */
   public ChoosePlayerPage(String[] TOKEN_NAMES) {
     this.TOKEN_NAMES = TOKEN_NAMES;
     this.root = new VBox();
@@ -83,7 +83,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     // Clear player list
     addedPlayersBox.getChildren().clear();
 
-    // Re-enable all token buttons
+    // Re-enable all playerToken buttons
     tokenButtons.values().forEach(tb -> tb.setDisable(false));
   }
 
@@ -101,7 +101,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
       addedPlayersBox.getChildren().add(playerBox);
 
       // Disable used tokens
-      disableToken(pv.token());
+      disableToken(pv.playerToken());
     }
   }
 
@@ -109,7 +109,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
   private VBox createPlayerBox(PlayerView player) {
     int yearsOld = java.time.Period.between(player.birthday(), LocalDate.now()).getYears();
 
-    Label name = new Label(player.name());
+    Label name = new Label(player.playerName());
     name.getStyleClass().add("player-name");
 
     Label age = new Label(yearsOld + " yrs");
@@ -153,7 +153,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     tokenToggleGroup = new ToggleGroup();
     HBox tokenSelectionBox = new HBox(10);
     tokenSelectionBox.setAlignment(Pos.CENTER);
-    tokenSelectionBox.getStyleClass().add("token-selection-box");
+    tokenSelectionBox.getStyleClass().add("playerToken-selection-box");
     for (String token : TOKEN_NAMES) {
       ToggleButton tb = buildTokenButton(token);
       tokenButtons.put(token, tb);
@@ -208,7 +208,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     root.setSpacing(20);
   }
 
-  /** Creates a styled token button */
+  /** Creates a styled playerToken button */
   private ToggleButton buildTokenButton(String token) {
     ToggleButton tb = new ToggleButton();
     ImageView iv =
@@ -220,7 +220,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     tb.setGraphic(iv);
     tb.setUserData(token);
     tb.setToggleGroup(tokenToggleGroup);
-    tb.getStyleClass().add("token-button");
+    tb.getStyleClass().add("playerToken-button");
     return tb;
   }
 

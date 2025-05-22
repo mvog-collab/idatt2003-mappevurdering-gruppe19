@@ -30,7 +30,7 @@ public class BoardController extends AbstractGameController<BoardView> {
 
   private void handlePlayerMovement(PlayerView player, int rolled) {
     if (rolled != 12) {
-      String token = player.token();
+      String token = player.playerToken();
       int startId = player.tileId();
       int pathEndId = Math.min(startId + rolled, gateway.boardSize());
 
