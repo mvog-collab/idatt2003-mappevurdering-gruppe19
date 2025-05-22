@@ -1,5 +1,5 @@
 package edu.games.engine.rule;
 
-public class SnlRuleFactoryTest {
+public class LudoRuleEngineTest {
 
 }
