@@ -50,8 +50,4 @@ public class BoardController extends AbstractGameController<BoardView> {
   private PlayerView getCurrentPlayer() {
     return gateway.players().stream().filter(PlayerView::hasTurn).findFirst().orElse(null);
   }
-
-  public BoardView getView() {
-    return view;
-  }
 }
