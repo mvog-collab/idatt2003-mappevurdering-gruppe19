@@ -145,7 +145,7 @@ public final class SnlGateway extends AbstractGameGateway {
                     p.getName(),
                     p.getToken().name(),
                     p.getCurrentTile().tileId(),
-                    p.getBirtday(),
+                    p.getBirthday(),
                     p.getToken() == turnToken))
         .toList();
   }

@@ -30,7 +30,7 @@ public final class CsvPlayerStore implements PlayerStore {
     try (BufferedWriter w = Files.newBufferedWriter(out)) {
       for (Player p : players) {
         w.write("%s%s%s%s%s%n".formatted(
-            p.getName(), SEP, p.getToken(), SEP, p.getBirtday()));
+            p.getName(), SEP, p.getToken(), SEP, p.getBirthday()));
       }
     } catch (IOException e) {
       LOG.log(Level.WARNING, "Could not save players to " + out, e);

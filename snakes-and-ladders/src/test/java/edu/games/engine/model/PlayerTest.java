@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,7 +27,7 @@ class PlayerTest {
   void shouldCreatePlayerWithValidData() {
     assertEquals("Alice", player.getName());
     assertEquals(token, player.getToken());
-    assertEquals(birthday, player.getBirtday());
+    assertEquals(birthday, player.getBirthday());
     assertEquals(4, player.getPieces().size());
   }
 
@@ -60,7 +59,7 @@ class PlayerTest {
 
   @Test
   void shouldDetectHomeAndBoardPiecesCorrectly() {
-    assertTrue(player.hasHomepieces());
+    assertTrue(player.hasHomePieces());
     assertFalse(player.hasPiecesOnBoard());
 
     Tile tile = mock(Tile.class);

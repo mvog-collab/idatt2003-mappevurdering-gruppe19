@@ -234,7 +234,7 @@ public final class LudoGateway extends AbstractGameGateway {
         p.getName(),
         p.getToken().name(),
         positions,
-        p.getBirtday(),
+        p.getBirthday(),
         p.getToken() == turnToken,
         activeIndex);
   }

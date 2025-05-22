@@ -14,7 +14,7 @@ public final class PlayerAdapter {
 
   public static PlayerDTO toDto(Player player) {
     return new PlayerDTO(
-        player.getName(), player.getToken().name(), dateFormatter.format(player.getBirtday()));
+        player.getName(), player.getToken().name(), dateFormatter.format(player.getBirthday()));
   }
 
   public static Player fromDto(PlayerDTO dto) {

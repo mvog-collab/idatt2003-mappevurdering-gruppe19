@@ -42,7 +42,7 @@ public final class Player {
     return token;
   }
 
-  public LocalDate getBirtday() {
+  public LocalDate getBirthday() {
     return birthday;
   }
 
@@ -83,7 +83,7 @@ public final class Player {
   }
 
   // Check if player has at least one piece at home
-  public boolean hasHomepieces() {
+  public boolean hasHomePieces() {
     return pieces.stream().anyMatch(PlayerPiece::isAtHome);
   }
 
