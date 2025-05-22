@@ -22,7 +22,7 @@ class LinearTileTest {
   void shouldReturnNextTileIfConnected() {
     LinearTile first = new LinearTile(1);
     LinearTile second = new LinearTile(2);
-    first.next = second;
+    first.nextTile = second;
     assertEquals(second, first.next());
   }
 }

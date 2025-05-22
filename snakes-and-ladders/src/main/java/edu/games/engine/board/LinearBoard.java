@@ -18,7 +18,7 @@ public final class LinearBoard implements Board {
       LinearTile tile = new LinearTile(i);
       tiles.put(i, tile);
       if (prev != null) {
-        prev.next = tile;
+        prev.nextTile = tile;
       }
       prev = tile;
     }
