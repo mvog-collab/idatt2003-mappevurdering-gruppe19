@@ -13,7 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class LudoBoardUIService implements BoardUIService {
-  private static final int TILE_PX = 35;
+  public static final int TILE_PX = 35;
   private final Map<Integer, Point2D> coordinates;
   private final Map<String, List<Point2D>> homePositions;
 
@@ -22,31 +22,37 @@ public class LudoBoardUIService implements BoardUIService {
     this.homePositions = buildHomePositions();
   }
 
-  @Override
-  public StackPane createBoardPane(int size) {
-    return createLudoBoardArea(new Pane(), new Pane(), new Pane());
+  public void initializeGameBoardArea(StackPane gameBoardAreaContainer, Pane overlayPane, Pane tokenPane) {
+    double boardActualSize = TILE_PX * 15;
+
+    ImageView boardImg = new ImageView(new Image(getClass().getResourceAsStream("/images/ludoBoard.jpg")));
+    boardImg.setPreserveRatio(true);
+    boardImg.setFitWidth(boardActualSize);
+    boardImg.setFitHeight(boardActualSize);
+
+    // Configure the passed-in panes
+    overlayPane.setPrefSize(boardActualSize, boardActualSize);
+    overlayPane.setMinSize(boardActualSize, boardActualSize);
+    overlayPane.setMaxSize(boardActualSize, boardActualSize);
+
+    tokenPane.setPrefSize(boardActualSize, boardActualSize);
+    tokenPane.setMinSize(boardActualSize, boardActualSize);
+    tokenPane.setMaxSize(boardActualSize, boardActualSize);
+
+    // Add children to the container passed from the View
+    gameBoardAreaContainer.getChildren().setAll(boardImg, overlayPane, tokenPane);
+    gameBoardAreaContainer.setPrefSize(boardActualSize, boardActualSize);
+    gameBoardAreaContainer.setMinSize(boardActualSize, boardActualSize);
+    gameBoardAreaContainer.setMaxSize(boardActualSize, boardActualSize);
   }
 
-  public StackPane createLudoBoardArea(Pane boardPane, Pane overlayPane, Pane tokenPane) {
-    // Create the board with correct boardSize
-    double boardSize = TILE_PX * 15;
-
-    // Load the Ludo board image
-    ImageView boardImg =
-        new ImageView(new Image(getClass().getResourceAsStream("/images/ludoBoard.jpg")));
-    boardImg.setPreserveRatio(true);
-    boardImg.setFitWidth(boardSize);
-    boardImg.setFitHeight(boardSize);
-
-    // Set up overlay and playerToken panes
-    overlayPane.setMinSize(boardSize, boardSize);
-    overlayPane.setMaxSize(boardSize, boardSize);
-
-    tokenPane.setMinSize(boardSize, boardSize);
-    tokenPane.setMaxSize(boardSize, boardSize);
-
-    // Create and return the stacked panes
-    return new StackPane(boardImg, overlayPane, tokenPane);
+  @Override
+  public StackPane createBoardPane(int sizeIgnoredForLudo) {
+    StackPane boardArea = new StackPane();
+    Pane internalOverlayPane = new Pane();
+    Pane internalTokenPane = new Pane();
+    initializeGameBoardArea(boardArea, internalOverlayPane, internalTokenPane);
+    return boardArea;
   }
 
   @Override
@@ -61,10 +67,10 @@ public class LudoBoardUIService implements BoardUIService {
 
     for (OverlayParams params : overlays) {
       Point2D center = coordinates.get(params.getStartTileId());
-      if (center == null) continue;
+      if (center == null)
+        continue;
 
-      ImageView iv =
-          new ImageView(new Image(getClass().getResourceAsStream(params.getImagePath())));
+      ImageView iv = new ImageView(new Image(getClass().getResourceAsStream(params.getImagePath())));
       iv.setFitWidth(params.getFitWidth());
       iv.setPreserveRatio(true);
 
@@ -78,7 +84,8 @@ public class LudoBoardUIService implements BoardUIService {
   @Override
   public void placeTokenOnTile(Pane tokenPane, ImageView token, int tileId) {
     Point2D target = coordinates.get(tileId);
-    if (target == null) return;
+    if (target == null)
+      return;
 
     if (!tokenPane.getChildren().contains(token)) {
       tokenPane.getChildren().add(token);
@@ -90,13 +97,14 @@ public class LudoBoardUIService implements BoardUIService {
 
   @Override
   public void placeTokenAtStart(Pane tokenPane, ImageView token) {
-    // Default implementation - would need to know which player's playerToken it is
+    // Default implementation - would need to know which player's token it is
     // Instead use placePieceAtHome
   }
 
   public void placePieceAtHome(Pane tokenPane, ImageView token, String tokenName, int pieceIndex) {
     List<Point2D> homePositions = this.homePositions.get(tokenName);
-    if (homePositions == null || pieceIndex >= homePositions.size()) return;
+    if (homePositions == null || pieceIndex >= homePositions.size())
+      return;
 
     Point2D position = homePositions.get(pieceIndex);
 
@@ -110,7 +118,8 @@ public class LudoBoardUIService implements BoardUIService {
 
   public void placePieceOnBoard(Pane tokenPane, ImageView token, int tileId, int pieceIndex) {
     Point2D target = coordinates.get(tileId);
-    if (target == null) return;
+    if (target == null)
+      return;
 
     // Add offset based on piece index to avoid exact overlap
     double offsetX = (pieceIndex % 2) * 8 - 4;
@@ -125,7 +134,7 @@ public class LudoBoardUIService implements BoardUIService {
   }
 
   public void highlightActivePiece(ImageView piece) {
-    DropShadow highlight = new DropShadow(10, Color.GOLD);
+    DropShadow highlight = new DropShadow(10, Color.BLACK);
     highlight.setSpread(0.8);
     piece.setEffect(highlight);
   }
@@ -143,27 +152,28 @@ public class LudoBoardUIService implements BoardUIService {
     Map<Integer, Point2D> map = new HashMap<>();
 
     int[][] tileMap = {
-      {0, 0, 0, 0, 0, 0, 24, 25, 26, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 23, 65, 27, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 22, 66, 28, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 21, 67, 29, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 20, 68, 30, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 19, 69, 31, 0, 0, 0, 0, 0, 0},
-      {13, 14, 15, 16, 17, 18, 0, 70, 0, 32, 33, 34, 35, 36, 37},
-      {12, 59, 60, 61, 62, 63, 64, 0, 76, 75, 74, 73, 72, 71, 38},
-      {11, 10, 9, 8, 7, 6, 0, 58, 0, 44, 43, 42, 41, 40, 39},
-      {0, 0, 0, 0, 0, 0, 5, 57, 45, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 4, 56, 46, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 3, 55, 47, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 2, 54, 48, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 1, 53, 49, 0, 0, 0, 0, 0, 0},
-      {0, 0, 0, 0, 0, 0, 52, 51, 50, 0, 0, 0, 0, 0, 0}
+        { 0, 0, 0, 0, 0, 0, 24, 25, 26, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 23, 65, 27, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 22, 66, 28, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 21, 67, 29, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 20, 68, 30, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 19, 69, 31, 0, 0, 0, 0, 0, 0 },
+        { 13, 14, 15, 16, 17, 18, 0, 70, 0, 32, 33, 34, 35, 36, 37 },
+        { 12, 59, 60, 61, 62, 63, 64, 0, 76, 75, 74, 73, 72, 71, 38 },
+        { 11, 10, 9, 8, 7, 6, 0, 58, 0, 44, 43, 42, 41, 40, 39 },
+        { 0, 0, 0, 0, 0, 0, 5, 57, 45, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 4, 56, 46, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 3, 55, 47, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 2, 54, 48, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 1, 53, 49, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 52, 51, 50, 0, 0, 0, 0, 0, 0 }
     };
 
     for (int row = 0; row < tileMap.length; row++) {
       for (int col = 0; col < tileMap[row].length; col++) {
         int id = tileMap[row][col];
-        if (id > 0) map.put(id, createPoint(row, col));
+        if (id > 0)
+          map.put(id, createPoint(row, col));
       }
     }
 

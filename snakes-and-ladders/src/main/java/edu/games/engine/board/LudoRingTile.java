@@ -16,7 +16,7 @@ public final class LudoRingTile implements LudoTile {
     return tileId;
   }
 
-  public void next(LudoTile nextTile) {
+  public void setNext(LudoTile nextTile) {
     this.nextTile = nextTile;
   }
 
@@ -25,9 +25,7 @@ public final class LudoRingTile implements LudoTile {
   }
 
   @Override
-  public LudoTile next(LudoColor player) {
-    // Only redirect to goal path if we're AT the entry point
-    // but NOT when we're landing on it for the first time
+  public LudoTile next(LudoColor ownerIgnored) {
     return nextTile;
   }
 
@@ -43,5 +41,9 @@ public final class LudoRingTile implements LudoTile {
         };
 
     return tileId() == entryPoint && currentId != entryPoint;
+  }
+
+  public LudoTile goalEntry() {
+    return this.goalEntry;
   }
 }

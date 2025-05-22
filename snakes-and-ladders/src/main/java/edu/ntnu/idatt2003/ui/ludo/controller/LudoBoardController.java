@@ -18,8 +18,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   private int selectedPieceIndex = -1;
   private boolean waitingForPieceSelection = false;
   private static final int GOAL_LENGTH = 5;
-  private static final Logger LOG =
-      Logger.getLogger(LudoBoardController.class.getName());
+  private static final Logger LOG = Logger.getLogger(LudoBoardController.class.getName());
 
   public LudoBoardController(LudoBoardView view, CompleteBoardGame gateway) {
     super(view, gateway);
@@ -113,7 +112,8 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     view.showStatusMessage(currentPlayer.playerName() + " has no valid moves.");
 
     if (hasHomePieces && gateway instanceof LudoGateway ludoGw) {
-      // Select the first home piece for processing (which will skip the turn in gateway)
+      // Select the first home piece for processing (which will skip the turn in
+      // gateway)
       for (int i = 0; i < currentPlayer.piecePositions().size(); i++) {
         if (currentPlayer.piecePositions().get(i) <= 0) {
           selectedPieceIndex = i;
@@ -219,8 +219,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
         newCurrentPlayer != null && newCurrentPlayer.playerToken().equals(playerColorToken);
 
     // 3. Animate based on movement
-    boolean movedFromHomeToStart =
-        initialPosition <= 0 && finalPosition > 0 && lastRolledValue == 6;
+    boolean movedFromHomeToStart = initialPosition <= 0 && finalPosition > 0 && lastRolledValue == 6;
 
     if (movedFromHomeToStart) {
       animatePieceFromHome(playerColorToken, selectedPieceIndex, finalPosition, playerKeepsTurn);
@@ -231,7 +230,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       handlePostMoveUI(playerColorToken, playerKeepsTurn);
     }
 
-    selectedPieceIndex = -1; // Reset for next selection
+    selectedPieceIndex = -1; // Reset for nextTile selection
   }
 
   private void animatePieceFromHome(
@@ -246,8 +245,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   private void animatePieceOnBoard(
       String playerToken, int pieceIdx, int startPos, int endPos, boolean playerKeepsTurn) {
     List<Integer> path = buildLudoPathBetween(startPos, endPos, LudoColor.valueOf(playerToken));
-    LOG.log(Level.WARNING, () ->
-        "Animating piece " + pieceIdx + " for " + playerToken + " along path: " + path);
+    LOG.log(Level.WARNING, () -> "Animating piece " + pieceIdx + " for " + playerToken + " along path: " + path);
 
     view.animateMoveAlongPath(
         playerToken, pieceIdx, path, () -> handlePostMoveUI(playerToken, playerKeepsTurn));
@@ -288,84 +286,81 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     waitingForPieceSelection = false;
   }
 
+  // TODO: Simplify this
   private List<Integer> buildLudoPathBetween(int startId, int endId, LudoColor color) {
     List<Integer> path = new ArrayList<>();
-
-    if (startId <= 0) {
-      path.add(0);
-      if (endId > 0) {
-        path.add(endId);
-      }
-      return path;
-    }
-    if (startId == endId) {
-      path.add(startId);
-      return path;
-    }
     path.add(startId);
-    int currentPos = startId;
 
-    int playerEntryPoint = getEntryPoint(color);
-    int playerGoalBaseId = getGoalBaseId(color);
-    int playerGoalEndId = playerGoalBaseId + GOAL_LENGTH - 1;
+    if (startId == endId) {
+      return path;
+    }
 
-    while (currentPos != endId) {
-      if (path.size() > 70) {
-        LOG.log(Level.WARNING, () ->
-            "Path generation exceeded max length. Breaking. Start: "
-                + startId
-                + " End: "
-                + endId
-                + " Color: "
-                + color);
-        path.add(endId);
-        return path;
-      }
+    int currentSimulatedId = startId;
+    int ownerEntryPointId = getEntryPoint(color);
+    int ownerPreEntryPointId = (ownerEntryPointId == 1) ? 52 : ownerEntryPointId - 1;
+    int goalBaseForColor = getGoalBaseId(color);
+    int goalEndForColor = goalBaseForColor + GOAL_LENGTH - 1;
+    for (int step = 0; step < 70 && currentSimulatedId != endId; step++) {
+      int nextSimulatedId = -1;
 
-      if (currentPos >= 1 && currentPos <= 52) {
-        int tileBeforePlayerEntryPoint = (playerEntryPoint == 1) ? 52 : playerEntryPoint - 1;
-        if (currentPos == tileBeforePlayerEntryPoint
-            && (endId >= playerGoalBaseId && endId <= playerGoalEndId)) {
-          currentPos = playerGoalBaseId;
-        } else {
-          currentPos = (currentPos % 52) + 1;
-        }
-      } else if (currentPos >= playerGoalBaseId && currentPos < playerGoalEndId) {
-        if (endId >= playerGoalBaseId && endId <= playerGoalEndId) {
-          currentPos++;
-        } else {
-          LOG.log(Level.WARNING,
-              "Pathing logic error: In goal "
-                  + currentPos
-                  + ", but target "
-                  + endId
-                  + " is not. Color: "
-                  + color);
-          break; // Break and add endId later
+      if (currentSimulatedId == 0) {
+        nextSimulatedId = ownerEntryPointId;
+        if (endId == ownerEntryPointId) {
+        } else if (endId > 0 && endId <= 52 && endId != ownerEntryPointId) {
+          LOG.log(Level.WARNING, "Pathing from home to a non-entry point: " + endId + ". Animating to entry first.");
+        } else if (endId >= goalBaseForColor && endId <= goalEndForColor) {
+          LOG.log(Level.WARNING, "Pathing from home directly into goal: " + endId + ". Animating to entry first.");
         }
 
-      } else if (currentPos == playerGoalEndId) {
+      } else if (currentSimulatedId >= goalBaseForColor && currentSimulatedId < goalEndForColor) {
+        if (currentSimulatedId < endId && endId <= goalEndForColor) {
+          nextSimulatedId = currentSimulatedId + 1;
+        } else {
+          LOG.log(Level.WARNING, "Pathing logic error: In goal " + currentSimulatedId +
+              ", but target " + endId + " is unexpected. Color: " + color);
+          break;
+        }
+      } else if (currentSimulatedId > 0 && currentSimulatedId <= 52) {
+        if (currentSimulatedId == ownerPreEntryPointId &&
+            (endId == goalBaseForColor || (endId > goalBaseForColor && endId <= goalEndForColor)
+                || endId == ownerEntryPointId)) {
+          nextSimulatedId = goalBaseForColor;
+        } else {
+          int physicalNextOnRing = (currentSimulatedId % 52) + 1;
+          nextSimulatedId = physicalNextOnRing;
+        }
+      } else if (currentSimulatedId == goalEndForColor) {
+        LOG.fine("Piece " + currentSimulatedId + " is already at the end of its goal path for " + color);
         break;
       } else {
-        LOG.log(Level.WARNING,
-            "Pathing logic: Unhandled state. currentPos="
-                + currentPos
-                + " endId="
-                + endId
-                + " color="
-                + color);
+        LOG.log(Level.WARNING, "Pathing logic: Unhandled state. currentSimulatedId=" + currentSimulatedId +
+            " endId=" + endId + " color=" + color);
         break;
       }
-      path.add(currentPos);
+
+      if (nextSimulatedId != -1) {
+        path.add(nextSimulatedId);
+        currentSimulatedId = nextSimulatedId;
+      } else {
+        LOG.log(Level.SEVERE,
+            "Pathing logic: nextSimulatedId remained -1. Breaking. current=" + currentSimulatedId + " target=" + endId);
+        break;
+      }
+    }
+    if (currentSimulatedId != endId && (path.isEmpty() || path.get(path.size() - 1) != endId)) {
+      LOG.log(Level.WARNING, "Path incomplete or diverged. CurrentSim: " + currentSimulatedId + " Target: " + endId
+          + ". Forcing target as last step.");
+      if (path.isEmpty() || path.get(path.size() - 1) != endId) {
+        if (endId != 0) {
+          path.add(endId);
+        }
+      }
+    }
+    if (path.size() >= 2 && path.get(path.size() - 1).equals(path.get(path.size() - 2))) {
+      path.remove(path.size() - 1);
     }
 
-    if (!path.isEmpty() && path.get(path.size() - 1) != endId && currentPos == endId) {
-
-    } else if (path.isEmpty() && startId != endId) {
-      path.add(startId);
-      path.add(endId);
-    }
-
+    LOG.log(Level.INFO, "Generated path for " + color + " from " + startId + " to " + endId + ": " + path);
     return path;
   }
 
@@ -388,7 +383,8 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   }
 
   private void refreshTokens() {
-    if (gateway == null) return;
+    if (gateway == null)
+      return;
 
     // Get updated player list
     List<PlayerView> updatedPlayers = gateway.players();

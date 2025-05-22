@@ -19,8 +19,7 @@ public class MenuUIService {
 
   // Creates a board preview image with specified dimensions.
   public ImageView createBoardPreview(String imagePath, double width, double height) {
-    ImageView imageView =
-        new ImageView(new Image(getClass().getResource(imagePath).toExternalForm()));
+    ImageView imageView = new ImageView(new Image(getClass().getResource(imagePath).toExternalForm()));
     imageView.setFitWidth(width);
     imageView.setFitHeight(height);
     imageView.setPreserveRatio(true);
@@ -46,7 +45,7 @@ public class MenuUIService {
   // Creates a container for the title and board preview.
   public VBox createLeftPanel(Label title, ImageView boardPreview) {
     VBox leftPanel = new VBox(20, title, boardPreview);
-    leftPanel.setAlignment(Pos.CENTER_LEFT);
+    leftPanel.setAlignment(Pos.TOP_CENTER);
     leftPanel.setPadding(new Insets(10));
     return leftPanel;
   }

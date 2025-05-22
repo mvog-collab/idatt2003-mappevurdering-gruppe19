@@ -20,7 +20,7 @@ public final class LudoPath implements MovementPath {
 
   public LudoPath() {
     for (int i = 0; i < 52; i++) ring.add(new LudoRingTile(i + 1));
-    for (int i = 0; i < 52; i++) ring.get(i).next(ring.get((i + 1) % 52));
+    for (int i = 0; i < 52; i++) ring.get(i).setNext(ring.get((i + 1) % 52));
 
     Map<LudoColor, Integer> goalStartIds =
         Map.of(
@@ -49,21 +49,9 @@ public final class LudoPath implements MovementPath {
             case YELLOW -> 39;
           };
 
-      // Set the starting tile
       LudoRingTile startTile = ring.get(entryIndex);
       startingPoints.put(c, startTile);
-
-      // Connect entry point to goal path
-      // The key part: each entry point needs to connect to its goal path
       ring.get(entryIndex).goalEntry(lane.getFirst());
-
-      System.out.println(
-          "Set up "
-              + c
-              + " to enter goal at tile "
-              + (entryIndex + 1)
-              + " leading to goal tile "
-              + lane.getFirst().tileId());
     }
   }
 
@@ -82,47 +70,37 @@ public final class LudoPath implements MovementPath {
   }
 
   @Override
-  public Tile nextTile(Tile from, int steps, LudoColor player) {
-    // If player is at home, they need a 6 to get out
-    if (from == null) {
-      if (steps != 6) {
-        return null;
-      }
-      // Return the starting point for this color
-      return startingPoints.get(player);
+  public Tile nextTile(Tile from, int steps, LudoColor owner) {
+    if (from == null) { // Piece is at home
+      return (steps == 6) ? startingPoints.get(owner) : null;
     }
 
-    // If the player is already on the board
     LudoTile currentTile = (LudoTile) from;
-    LudoTile tile = currentTile;
+    int ownerEntryPointRingId = getEntryPointId(owner);
+    int ownerPreEntryPointRingId = (ownerEntryPointRingId == 1) ? 52 : ownerEntryPointRingId - 1;
 
-    // Get the entry point for this color
-    int entryPointId = getEntryPointId(player);
+    for (int k = 0; k < steps; k++) {
+      LudoTile candidateNextTile = null;
 
-    // Move the specified number of steps
-    for (int i = 0; i < steps; i++) {
-      // Check if we're on the ring and about to pass our entry point
-      if (tile instanceof LudoRingTile
-          && tile.tileId() != entryPointId
-          && // Not currently on entry point
-          tile.next(player).tileId() == entryPointId) { // Next would be the entry point
-
-        // Instead of continuing on the ring, we should enter the goal path
-        tile = goals.get(player).getFirst();
-        System.out.println(
-            "Player " + player + " entering goal path at step " + (i + 1) + " of " + steps);
-      } else {
-        // Regular movement
-        LudoTile next = tile.next(player);
-        if (next == null) {
-          // We're at the very last goal-tile; can't go any further
-          return tile;
+      if (currentTile instanceof LudoRingTile currentRingTile) {
+        if (currentRingTile.tileId() == ownerPreEntryPointRingId
+            && currentRingTile.next(null) != null
+            && currentRingTile.next(null).tileId() == ownerEntryPointRingId) {
+          candidateNextTile = goals.get(owner).getFirst();
+        } else {
+          candidateNextTile = currentRingTile.next(null);
         }
-        tile = next;
-      }
-    }
 
-    return tile;
+      } else if (currentTile instanceof LudoGoalTile currentGoalTile) {
+        candidateNextTile = currentGoalTile.next(null);
+      }
+
+      if (candidateNextTile == null) {
+        return currentTile;
+      }
+      currentTile = candidateNextTile;
+    }
+    return currentTile;
   }
 
   // Helper method to get the entry point ID for a color

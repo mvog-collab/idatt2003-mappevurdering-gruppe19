@@ -3,6 +3,7 @@ package edu.ntnu.idatt2003.ui.snl.view;
 import edu.ntnu.idatt2003.ui.MenuUIService;
 import edu.ntnu.idatt2003.ui.common.view.AbstractMenuView;
 import edu.ntnu.idatt2003.utils.Dialogs;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ public class SnlFrontPage extends AbstractMenuView {
   private final Button chooseBoardButton;
   private final MenuUIService menuUIService;
   private BorderPane rootLayout;
+  private ImageView boardPreview;
 
   public SnlFrontPage() {
     this.menuUIService = new MenuUIService();
@@ -27,17 +29,17 @@ public class SnlFrontPage extends AbstractMenuView {
 
   private void buildUi() {
     Label titleLabel = menuUIService.createTitleLabel("Snakes & Ladders", "start-page-title");
-    ImageView boardPreview =
-        menuUIService.createBoardPreview("/images/snakeAndLadder.png", 400, 400);
+    titleLabel.setWrapText(true);
+    boardPreview = menuUIService.createBoardPreview("/images/snakeAndLadder.png", 350, 350);
+    boardPreview.setPreserveRatio(true);
 
-    startButton = menuUIService.createMenuButton("Start game", "start-page-button");
+    startButton = menuUIService.createMenuButton("Start game", "confirm-button");
     choosePlayerButton = menuUIService.createMenuButton("Choose players", "start-page-button");
     resetButton = menuUIService.createMenuButton("Reset game", "exit-button");
 
-    Button howToButton =
-        createHowToPlayButton(
-            "How to play - Snakes & Ladders",
-            """
+    Button howToButton = createHowToPlayButton(
+        "How to play - Snakes & Ladders",
+        """
             - Roll the dice and be the first to the goal!
             - If you land on an enemy player(s), they are sent back to start.
             - Roll a pair for an extra turn.
@@ -46,23 +48,25 @@ public class SnlFrontPage extends AbstractMenuView {
             """);
     statusLabel = new Label("Start by choosing a board");
     statusLabel.getStyleClass().add("status-label");
+    statusLabel.setWrapText(true);
 
     disableStartButton();
     disableChoosePlayerButton();
 
     VBox leftPanel = menuUIService.createLeftPanel(titleLabel, boardPreview);
-    VBox menuPanel =
-        menuUIService.createMenuPanel(
-            chooseBoardButton, choosePlayerButton, startButton, resetButton);
+    VBox menuPanel = menuUIService.createMenuPanel(
+        chooseBoardButton, choosePlayerButton, startButton, resetButton);
     menuPanel.getChildren().add(statusLabel);
     HBox mainContent = menuUIService.createMainLayout(leftPanel, menuPanel);
+    mainContent.setAlignment(Pos.TOP_CENTER);
+    leftPanel.setTranslateY(-50);
 
     rootLayout.setCenter(mainContent);
 
     // Add navigation controls to the top of the BorderPane
     addNavigationAndHelpToBorderPane(rootLayout, false, howToButton);
 
-    scene = new Scene(rootLayout, 1100, 700);
+    scene = new Scene(rootLayout, 1100, 750);
     scene.getStylesheets().add(getStylesheet());
   }
 

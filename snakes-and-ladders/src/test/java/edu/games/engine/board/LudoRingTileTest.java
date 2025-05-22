@@ -17,7 +17,7 @@ class LudoRingTileTest {
   void shouldReturnNextTile() {
     LudoRingTile first = new LudoRingTile(1);
     LudoRingTile second = new LudoRingTile(2);
-    first.next(second);
+    first.setNext(second);
     assertSame(second, first.next(LudoColor.BLUE));
   }
 
