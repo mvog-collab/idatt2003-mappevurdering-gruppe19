@@ -55,12 +55,6 @@ mvn javafx:run
 
 *Requirements*: JDK 21 + Maven 3.9+
 
-Run the engine only (no UI):
-
-```bash
-mvn -q exec:java -Dexec.mainClass="edu.ntnu.scripts.RunEngineDemo"
-```
-
 ---
 
 ## How to run the tests
@@ -90,3 +84,4 @@ MIT © 2025 Martha Luise Vogel, Edvard Emmanuel Klavenes & Group 19
 * [https://www.makeareadme.com/](https://www.makeareadme.com/) for quick README tips
 * Oracle Java Docs & JavaFX tutorials
 * *Clean Architecture* – Robert C. Martin
+---
