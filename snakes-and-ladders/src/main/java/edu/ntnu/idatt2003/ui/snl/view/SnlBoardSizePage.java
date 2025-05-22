@@ -12,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /** View component for board boardSize selection */
-public class BoardSizePage implements BoardGameObserver {
+public class SnlBoardSizePage implements BoardGameObserver {
 
   // UI components
   private Button sixtyFourTiles;
@@ -26,7 +26,7 @@ public class BoardSizePage implements BoardGameObserver {
   private VBox root;
 
   /** Constructor - initializes the UI */
-  public BoardSizePage() {
+  public SnlBoardSizePage() {
     buildUI();
   }
 

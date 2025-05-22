@@ -25,7 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-public class BoardView extends AbstractGameView { // AbstractGameView should extend AbstractView
+public class SnlBoardView extends AbstractGameView { // AbstractGameView should extend AbstractView
   private final BoardUIService boardUIService;
   private final PlayerUIService playerUIService;
   private AnimationService animationService;
@@ -45,7 +45,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
   private boolean hasActiveAnimation = false;
   private List<PlayerView> currentPlayers = new ArrayList<>();
 
-  public BoardView(
+  public SnlBoardView(
       int boardSize,
       BoardUIService boardUIService,
       PlayerUIService playerUIService,
@@ -70,7 +70,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
     buildUI();
   }
 
-  public BoardView(int boardSize) {
+  public SnlBoardView(int boardSize) {
     this(
         boardSize,
         ViewServiceFactory.createBoardUIService("SNL", boardSize),

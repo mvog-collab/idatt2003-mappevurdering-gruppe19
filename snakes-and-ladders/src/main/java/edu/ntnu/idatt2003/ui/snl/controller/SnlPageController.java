@@ -7,18 +7,18 @@ import edu.ntnu.idatt2003.ui.navigation.NavigationService;
 import edu.ntnu.idatt2003.ui.service.board.SnlBoardUIService;
 import edu.ntnu.idatt2003.ui.shared.controller.ChoosePlayerController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
-import edu.ntnu.idatt2003.ui.snl.view.BoardSizePage;
-import edu.ntnu.idatt2003.ui.snl.view.BoardView;
-import edu.ntnu.idatt2003.ui.snl.view.SnlPage;
+import edu.ntnu.idatt2003.ui.snl.view.SnlBoardSizePage;
+import edu.ntnu.idatt2003.ui.snl.view.SnlBoardView;
+import edu.ntnu.idatt2003.ui.snl.view.SnlFrontPage;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.UiDialogs;
 import java.util.Map;
 
 // import javafx.stage.Stage; // No longer needed for scene switching here
 
-public class SnlPageController extends AbstractPageController<SnlPage> {
+public class SnlPageController extends AbstractPageController<SnlFrontPage> {
 
-  public SnlPageController(SnlPage view, CompleteBoardGame gateway) {
+  public SnlPageController(SnlFrontPage view, CompleteBoardGame gateway) {
     super(view, gateway);
     view.connectToModel(gateway);
     gateway.newGame(90);
@@ -36,9 +36,9 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
     view.getChooseBoardButton()
         .setOnAction(
             e -> {
-              BoardSizePage page = new BoardSizePage();
+              SnlBoardSizePage page = new SnlBoardSizePage();
               var root = page.getBoardSizeView();
-              new BoardSizeController(page, (CompleteBoardGame) gateway);
+              new SnlBoardSizeController(page, (CompleteBoardGame) gateway);
               UiDialogs.createModalPopup("Choose board boardSize", root, 600, 500).showAndWait();
               view.enableChoosePlayerButton();
             });
@@ -66,14 +66,14 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
                 ladders = snlGateway.getLadders();
               }
 
-              BoardView boardView = new BoardView(boardSize);
+              SnlBoardView boardView = new SnlBoardView(boardSize);
               boardView.connectToModel(gateway);
 
               if (boardView.getBoardUIService() instanceof SnlBoardUIService snlBoardUIService) {
                 snlBoardUIService.applySpecialTileStyling(
                     snakes, ladders, boardView.getOverlayPane());
               }
-              new BoardController(boardView, gateway);
+              new SnlBoardController(boardView, gateway);
               boardView.setPlayers(gateway.players(), gateway.boardOverlays());
 
               // NavigationService handles stage and scene switching
