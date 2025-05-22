@@ -22,6 +22,20 @@ class LudoRingTileTest {
   }
 
   @Test
+  void shouldReturnGoalEntryIfSet() {
+    LudoRingTile tile = new LudoRingTile(14);
+    LudoGoalTile goal = new LudoGoalTile(59);
+    tile.goalEntry(goal);
+    assertSame(goal, tile.goalEntry());
+  }
+
+  @Test
+  void shouldReturnNullGoalEntryIfNotSet() {
+    LudoRingTile tile = new LudoRingTile(14);
+    assertNull(tile.goalEntry());
+  }
+
+  @Test
   void shouldNotEnterGoalPathIfCurrentlyOnEntryPoint() {
     LudoRingTile tile = new LudoRingTile(14);
     assertFalse(tile.shouldEnterGoalPath(14, LudoColor.RED));
@@ -37,5 +51,13 @@ class LudoRingTileTest {
   void shouldNotEnterGoalPathIfNotEntryPoint() {
     LudoRingTile tile = new LudoRingTile(10);
     assertFalse(tile.shouldEnterGoalPath(5, LudoColor.RED));
+  }
+
+  @Test
+  void shouldEnterGoalPathOnlyForCorrectColor() {
+    LudoRingTile tile = new LudoRingTile(14); // RED entry
+    assertFalse(tile.shouldEnterGoalPath(14, LudoColor.GREEN));
+    assertFalse(tile.shouldEnterGoalPath(10, LudoColor.GREEN));
+    assertTrue(tile.shouldEnterGoalPath(10, LudoColor.RED));
   }
 }
