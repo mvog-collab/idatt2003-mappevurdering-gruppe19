@@ -3,11 +3,14 @@ package edu.ntnu.idatt2003.ui.common.view;
 import edu.games.engine.observer.BoardGameEvent;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public abstract class AbstractMenuView extends AbstractView implements MenuView {
+  private static final Logger LOG = Logger.getLogger(AbstractMenuView.class.getName());
   protected Button startButton;
   protected Button choosePlayerButton;
   protected Button resetButton;
@@ -25,15 +28,19 @@ public abstract class AbstractMenuView extends AbstractView implements MenuView 
         () -> {
           switch (event.getType()) {
             case GAME_STARTED:
+              LOG.fine("Game started event received in menu view.");
               handleGameStarted();
               break;
-
             case GAME_RESET:
+              LOG.fine("Game reset event received in menu view.");
               handleGameReset();
               break;
-
             case PLAYER_ADDED:
+              LOG.fine("Player added event received in menu view.");
               handlePlayerAdded();
+              break;
+            default:
+              LOG.finest("Received unhandled event type in menu view: " + event.getType());
               break;
           }
         });
@@ -45,15 +52,16 @@ public abstract class AbstractMenuView extends AbstractView implements MenuView 
 
   protected void handleGameReset() {
     disableStartButton();
+    if (gateway != null && statusLabel != null) {
+      updateStatusMessage(
+          "Game reset. Need at least 2 players to start (currently have " + gateway.players().size() + ")");
+    }
   }
 
   protected void handlePlayerAdded() {
-    // Check if we have enough players to start
-    if (gateway != null) {
+    if (gateway != null && statusLabel != null) {
       boolean ready = gateway.players().size() >= 2;
       setStartButtonEnabled(ready);
-
-      // Update status label
       if (ready) {
         updateStatusMessage("Ready to start game with " + gateway.players().size() + " players");
       } else {
@@ -80,32 +88,43 @@ public abstract class AbstractMenuView extends AbstractView implements MenuView 
 
   @Override
   public void enableStartButton() {
-    startButton.setDisable(false);
+    if (startButton != null)
+      startButton.setDisable(false);
   }
 
   @Override
   public void disableStartButton() {
-    startButton.setDisable(true);
+    if (startButton != null)
+      startButton.setDisable(true);
   }
 
   @Override
   public void updateStatusMessage(String message) {
-    statusLabel.setText(message);
+    if (statusLabel != null)
+      statusLabel.setText(message);
   }
 
   protected void setStartButtonEnabled(boolean enabled) {
-    startButton.setDisable(!enabled);
+    if (startButton != null)
+      startButton.setDisable(!enabled);
   }
 
   public void enableChoosePlayerButton() {
-    choosePlayerButton.setDisable(false);
+    if (choosePlayerButton != null)
+      choosePlayerButton.setDisable(false);
   }
 
   public void disableChoosePlayerButton() {
-    choosePlayerButton.setDisable(true);
+    if (choosePlayerButton != null)
+      choosePlayerButton.setDisable(true);
   }
 
   protected String getStylesheet() {
-    return getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm();
+    java.net.URL cssUrl = getClass().getResource(ResourcePaths.STYLE_SHEET);
+    if (cssUrl == null) {
+      LOG.warning("Stylesheet not found: " + ResourcePaths.STYLE_SHEET);
+      return null;
+    }
+    return cssUrl.toExternalForm();
   }
 }

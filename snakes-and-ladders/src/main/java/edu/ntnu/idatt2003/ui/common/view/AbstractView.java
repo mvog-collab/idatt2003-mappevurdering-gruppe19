@@ -2,8 +2,13 @@ package edu.ntnu.idatt2003.ui.common.view;
 
 import edu.games.engine.observer.BoardGameEvent;
 import edu.games.engine.observer.BoardGameObserver;
+import edu.ntnu.idatt2003.exception.ResourceNotFoundException;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.ui.navigation.NavigationService;
+import edu.ntnu.idatt2003.utils.ResourcePaths;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +22,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 public abstract class AbstractView implements BoardGameObserver {
+  private static final Logger LOG = Logger.getLogger(AbstractView.class.getName());
   protected CompleteBoardGame gateway;
 
   public void connectToModel(CompleteBoardGame gateway) {
@@ -33,12 +39,26 @@ public abstract class AbstractView implements BoardGameObserver {
 
   protected abstract void handleEvent(BoardGameEvent event);
 
-  protected Button createHowToPlayButton(String title, String instructions) {
-    ImageView icon = new ImageView(new Image(getClass().getResource("/images/question-sign.png").toString()));
+  private ImageView createIcon(String imagePath, String altText) {
+    InputStream imageStream = getClass().getResourceAsStream(imagePath);
+    if (imageStream == null) {
+      LOG.warning("Icon image not found: " + imagePath + ". Using placeholder for " + altText);
+      // Return a placeholder or handle error appropriately. For an icon, a blank
+      // ImageView might be okay.
+      ImageView placeholder = new ImageView();
+      placeholder.setFitWidth(24);
+      placeholder.setFitHeight(24);
+      return placeholder;
+    }
+    ImageView icon = new ImageView(new Image(imageStream));
     icon.setFitWidth(24);
     icon.setFitHeight(24);
     icon.setPreserveRatio(true);
+    return icon;
+  }
 
+  protected Button createHowToPlayButton(String title, String instructions) {
+    ImageView icon = createIcon("/images/question-sign.png", "How to Play");
     Button howToPlayButton = new Button();
     howToPlayButton.setGraphic(icon);
     howToPlayButton.getStyleClass().add("icon-button");
@@ -48,21 +68,20 @@ public abstract class AbstractView implements BoardGameObserver {
           alert.setTitle(title);
           alert.setHeaderText(null);
           alert.setContentText(instructions);
-
           alert.getDialogPane().getStyleClass().add("how-to-alert");
-          alert.getDialogPane().getStylesheets()
-              .add(getClass().getResource("/styles/style.css").toExternalForm());
+          java.net.URL cssUrl = getClass().getResource(ResourcePaths.STYLE_SHEET);
+          if (cssUrl != null) {
+            alert.getDialogPane().getStylesheets().add(cssUrl.toExternalForm());
+          } else {
+            LOG.warning("Stylesheet for 'How to play' alert not found: " + ResourcePaths.STYLE_SHEET);
+          }
           alert.showAndWait();
         });
     return howToPlayButton;
   }
 
   private Button createGoToHomeButton() {
-    ImageView icon = new ImageView(new Image(getClass().getResource("/images/home.png").toString()));
-    icon.setFitWidth(24);
-    icon.setFitHeight(24);
-    icon.setPreserveRatio(true);
-
+    ImageView icon = createIcon("/images/home.png", "Go to Home");
     Button homeButton = new Button();
     homeButton.setGraphic(icon);
     homeButton.getStyleClass().add("icon-button");
@@ -71,11 +90,7 @@ public abstract class AbstractView implements BoardGameObserver {
   }
 
   private Button createGoBackToGameSetupButton() {
-    ImageView icon = new ImageView(new Image(getClass().getResource("/images/back.png").toString()));
-    icon.setFitWidth(24);
-    icon.setFitHeight(24);
-    icon.setPreserveRatio(true);
-
+    ImageView icon = createIcon("/images/back.png", "Go Back");
     Button backButton = new Button();
     backButton.setGraphic(icon);
     backButton.getStyleClass().add("icon-button");
@@ -104,14 +119,11 @@ public abstract class AbstractView implements BoardGameObserver {
     if (helpButtonInstance != null) {
       Region spacer = new Region();
       HBox.setHgrow(spacer, Priority.ALWAYS);
-
       HBox rightAlignedButton = new HBox(helpButtonInstance);
       rightAlignedButton.setAlignment(Pos.CENTER_RIGHT);
-
       topBar.getChildren().addAll(spacer, rightAlignedButton);
     }
     topBar.getStyleClass().add("page-background");
-
     return topBar;
   }
 
