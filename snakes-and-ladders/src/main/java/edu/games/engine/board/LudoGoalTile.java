@@ -3,28 +3,28 @@ package edu.games.engine.board;
 import edu.games.engine.model.LudoColor;
 
 public final class LudoGoalTile implements LudoTile {
-  private final int id;
-  private LudoTile next;
+  private final int tileId;
+  private LudoTile nextTile;
 
-  public LudoGoalTile(int id) {
-    this.id = id;
+  public LudoGoalTile(int tileId) {
+    this.tileId = tileId;
   }
 
   @Override
   public int id() {
-    return id;
+    return tileId;
   }
 
-  void linkNext(LudoTile n) {
-    this.next = n;
+  void linkNext(LudoTile nextTile) {
+    this.nextTile = nextTile;
   }
 
   LudoTile next() {
-    return next;
+    return nextTile;
   }
 
   @Override
   public LudoTile next(LudoColor ownerIgnored) {
-    return next;
+    return nextTile;
   }
 }
