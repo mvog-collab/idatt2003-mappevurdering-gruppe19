@@ -44,7 +44,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
             || token.isEmpty();
 
     if (invalid) {
-      alert("Invalid setup", "Please choose a valid name, birthday and playerToken.");
+      alert("Invalid setup", "Please choose a valid playerName, birthday and playerToken.");
       return;
     }
 

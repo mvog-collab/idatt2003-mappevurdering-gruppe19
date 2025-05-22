@@ -26,7 +26,7 @@ public final class BoardAdapter {
   }
 
   public static MapData fromDto(BoardDTO dto) {
-    return new MapData(dto.size(), dto.snakes(), dto.ladders());
+    return new MapData(dto.boardSize(), dto.snakes(), dto.ladders());
   }
 
   public record MapData(int size, Map<Integer, Integer> snakes, Map<Integer, Integer> ladders) {}

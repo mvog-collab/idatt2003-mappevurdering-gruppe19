@@ -19,6 +19,6 @@ public final class PlayerAdapter {
 
   public static Player fromDto(PlayerDTO dto) {
     return new Player(
-        dto.name(), Token.valueOf(dto.token()), LocalDate.parse(dto.birthday(), dateFormatter));
+        dto.playerName(), Token.valueOf(dto.playerToken()), LocalDate.parse(dto.birthday(), dateFormatter));
   }
 }

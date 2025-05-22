@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-/** View component for board size selection */
+/** View component for board boardSize selection */
 public class BoardSizePage implements BoardGameObserver {
 
   // UI components
@@ -48,7 +48,7 @@ public class BoardSizePage implements BoardGameObserver {
         });
   }
 
-  /** Updates the UI when a game is started with a specific board size */
+  /** Updates the UI when a game is started with a specific board boardSize */
   private void handleGameStarted(Object data) {
     if (data instanceof Integer) {
       int boardSize = (Integer) data;
@@ -56,28 +56,28 @@ public class BoardSizePage implements BoardGameObserver {
     }
   }
 
-  /** Updates the UI to highlight the selected board size */
+  /** Updates the UI to highlight the selected board boardSize */
   private void updateSelectedBoardSize(int size) {
     // Reset all button styles
-    sixtyFourTiles.getStyleClass().remove("selected-board-size");
-    ninetyTiles.getStyleClass().remove("selected-board-size");
-    oneTwentyTiles.getStyleClass().remove("selected-board-size");
+    sixtyFourTiles.getStyleClass().remove("selected-board-boardSize");
+    ninetyTiles.getStyleClass().remove("selected-board-boardSize");
+    oneTwentyTiles.getStyleClass().remove("selected-board-boardSize");
 
-    // Highlight the selected board size
+    // Highlight the selected board boardSize
     switch (size) {
       case 64:
-        sixtyFourTiles.getStyleClass().add("selected-board-size");
+        sixtyFourTiles.getStyleClass().add("selected-board-boardSize");
         break;
       case 90:
-        ninetyTiles.getStyleClass().add("selected-board-size");
+        ninetyTiles.getStyleClass().add("selected-board-boardSize");
         break;
       case 120:
-        oneTwentyTiles.getStyleClass().add("selected-board-size");
+        oneTwentyTiles.getStyleClass().add("selected-board-boardSize");
         break;
     }
 
     // Update status message
-    statusLabel.setText("Selected board size: " + size + " tiles");
+    statusLabel.setText("Selected board boardSize: " + size + " tiles");
   }
 
   /** Constructs the UI components */
@@ -90,13 +90,13 @@ public class BoardSizePage implements BoardGameObserver {
     titleBox.setAlignment(Pos.CENTER);
 
     sixtyFourTiles = new Button("64 tiles");
-    sixtyFourTiles.getStyleClass().add("board-size-button");
+    sixtyFourTiles.getStyleClass().add("board-boardSize-button");
 
     ninetyTiles = new Button("90 tiles");
-    ninetyTiles.getStyleClass().add("board-size-button");
+    ninetyTiles.getStyleClass().add("board-boardSize-button");
 
     oneTwentyTiles = new Button("120 tiles");
-    oneTwentyTiles.getStyleClass().add("board-size-button");
+    oneTwentyTiles.getStyleClass().add("board-boardSize-button");
 
     cancelButton = new Button("Cancel");
     cancelButton.getStyleClass().add("exit-button");
@@ -105,7 +105,7 @@ public class BoardSizePage implements BoardGameObserver {
     continueButton.getStyleClass().add("confirm-button");
 
     // Status label
-    statusLabel = new Label("Please select a board size");
+    statusLabel = new Label("Please select a board boardSize");
     statusLabel.getStyleClass().add("status-label");
 
     // Layout containers

@@ -28,7 +28,7 @@ public class LudoBoardUIService implements BoardUIService {
   }
 
   public StackPane createLudoBoardArea(Pane boardPane, Pane overlayPane, Pane tokenPane) {
-    // Create the board with correct size
+    // Create the board with correct boardSize
     double boardSize = TILE_PX * 15;
 
     // Load the Ludo board image

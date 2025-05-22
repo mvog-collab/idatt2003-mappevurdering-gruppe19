@@ -38,9 +38,9 @@ public class DefaultPlayerUIService implements PlayerUIService {
     turnLabel.getStyleClass().add("turn-indicator");
     turnLabel.setVisible(hasTurn);
 
-    // Create name label
+    // Create playerName label
     Label nameLabel = new Label(player.playerName());
-    nameLabel.getStyleClass().add("player-name");
+    nameLabel.getStyleClass().add("player-playerName");
 
     // Assemble box
     box.getChildren().addAll(turnLabel, tokenImg, nameLabel);

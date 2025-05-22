@@ -257,7 +257,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     refreshTokens(); // Update all playerToken positions from model
 
     if (gateway.hasWinner()) {
-      // Find the winner's name from the potentially updated player list
+      // Find the winner's playerName from the potentially updated player list
       gateway.players().stream()
           .filter(
               p -> p.playerToken().equals(playerMovedToken)) // Assuming winner is the one who just moved

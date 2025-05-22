@@ -110,7 +110,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     int yearsOld = java.time.Period.between(player.birthday(), LocalDate.now()).getYears();
 
     Label name = new Label(player.playerName());
-    name.getStyleClass().add("player-name");
+    name.getStyleClass().add("player-playerName");
 
     Label age = new Label(yearsOld + " yrs");
     age.getStyleClass().add("player-age");
@@ -134,8 +134,8 @@ public class ChoosePlayerPage implements BoardGameObserver {
     Label playerName = new Label("Player Name");
     playerName.getStyleClass().add("popup-label");
     nameField = new TextField();
-    nameField.setPromptText("Enter name");
-    nameField.getStyleClass().add("name-field-style");
+    nameField.setPromptText("Enter playerName");
+    nameField.getStyleClass().add("playerName-field-style");
     HBox nameBox = new HBox(10, playerName, nameField);
     nameBox.getStyleClass().add("player-info-box");
     nameBox.setAlignment(Pos.CENTER);
@@ -175,10 +175,10 @@ public class ChoosePlayerPage implements BoardGameObserver {
     cancelButton.getStyleClass().add("exit-button");
 
     savePlayerButton = new Button("Save Players");
-    savePlayerButton.getStyleClass().add("board-size-button");
+    savePlayerButton.getStyleClass().add("board-boardSize-button");
 
     loadPlayersButton = new Button("Load Players");
-    loadPlayersButton.getStyleClass().add("board-size-button");
+    loadPlayersButton.getStyleClass().add("board-boardSize-button");
 
     HBox actionBox = new HBox(20, cancelButton, addPlayerButton, continueButton);
     actionBox.setAlignment(Pos.CENTER);

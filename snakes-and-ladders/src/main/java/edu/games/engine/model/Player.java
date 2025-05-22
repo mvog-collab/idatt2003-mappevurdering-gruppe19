@@ -15,7 +15,7 @@ public final class Player {
 
   public Player(String name, Token token, LocalDate birthday) {
     if (name == null || name.isBlank()) {
-      throw new ValidationException("Invalid name: cannot be empty");
+      throw new ValidationException("Invalid playerName: cannot be empty");
     }
     if (token == null) {
       throw new ValidationException("Invalid playerToken: cannot be null");

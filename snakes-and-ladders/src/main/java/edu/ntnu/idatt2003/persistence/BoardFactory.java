@@ -28,11 +28,11 @@ public final class BoardFactory {
       Map<Integer, Integer> ladders = new HashMap<>();
 
       for (TileDTO tile : dto.tiles()) {
-        if (tile.snakeTo() != null) snakes.put(tile.id(), tile.snakeTo());
-        if (tile.ladderTo() != null) ladders.put(tile.id(), tile.ladderTo());
+        if (tile.snakeTo() != null) snakes.put(tile.tileId(), tile.snakeTo());
+        if (tile.ladderTo() != null) ladders.put(tile.tileId(), tile.ladderTo());
       }
 
-      return new BoardAdapter.MapData(dto.size(), snakes, ladders);
+      return new BoardAdapter.MapData(dto.boardSize(), snakes, ladders);
 
     } catch (IOException e) {
       throw new RuntimeException("Failed to read board JSON", e);

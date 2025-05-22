@@ -39,7 +39,7 @@ public class SnlPageController extends AbstractPageController<SnlPage> {
               BoardSizePage page = new BoardSizePage();
               var root = page.getBoardSizeView();
               new BoardSizeController(page, (CompleteBoardGame) gateway);
-              UiDialogs.createModalPopup("Choose board size", root, 600, 500).showAndWait();
+              UiDialogs.createModalPopup("Choose board boardSize", root, 600, 500).showAndWait();
               view.enableChoosePlayerButton();
             });
   }

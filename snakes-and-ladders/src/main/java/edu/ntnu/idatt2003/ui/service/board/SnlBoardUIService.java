@@ -27,7 +27,7 @@ public class SnlBoardUIService implements BoardUIService {
 
   @Override
   public StackPane createBoardPane(int size) {
-    // Calculate dimensions based on board size
+    // Calculate dimensions based on board boardSize
     int width;
     int height;
     switch (size) {
@@ -43,7 +43,7 @@ public class SnlBoardUIService implements BoardUIService {
         width = 10;
         height = 12;
       }
-      default -> throw new IllegalArgumentException("Unsupported board size: " + size);
+      default -> throw new IllegalArgumentException("Unsupported board boardSize: " + size);
     }
 
     // Create the grid for the board
