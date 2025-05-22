@@ -17,17 +17,14 @@ public class SnlBoardUIService implements BoardUIService {
   private static final double START_OFFSET_X = -40;
   private static final double START_OFFSET_Y = 0;
 
-  private final int boardSize;
   private final Map<Integer, Point2D> tileCoordinates = new HashMap<>();
   private final Map<Integer, StackPane> tiles = new HashMap<>();
 
-  public SnlBoardUIService(int boardSize) {
-    this.boardSize = boardSize;
+  public SnlBoardUIService() {
   }
 
   @Override
   public StackPane createBoardPane(int size) {
-    // Calculate dimensions based on board boardSize
     int width;
     int height;
     switch (size) {
@@ -145,10 +142,10 @@ public class SnlBoardUIService implements BoardUIService {
 
     for (OverlayParams params : overlays) {
       Point2D tileCenter = tileCoordinates.get(params.getStartTileId() + 1);
-      if (tileCenter == null) continue;
+      if (tileCenter == null)
+        continue;
 
-      ImageView imageView =
-          new ImageView(new Image(getClass().getResourceAsStream(params.getImagePath())));
+      ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(params.getImagePath())));
 
       imageView.setFitWidth(params.getFitWidth());
       imageView.setPreserveRatio(true);
@@ -166,7 +163,8 @@ public class SnlBoardUIService implements BoardUIService {
   @Override
   public void placeTokenOnTile(Pane tokenPane, ImageView token, int tileId) {
     Point2D position = tileCoordinates.get(tileId);
-    if (position == null) return;
+    if (position == null)
+      return;
 
     if (!tokenPane.getChildren().contains(token)) {
       tokenPane.getChildren().add(token);
@@ -179,7 +177,8 @@ public class SnlBoardUIService implements BoardUIService {
   @Override
   public void placeTokenAtStart(Pane tokenPane, ImageView token) {
     Point2D startPosition = tileCoordinates.get(1);
-    if (startPosition == null) return;
+    if (startPosition == null)
+      return;
 
     if (!tokenPane.getChildren().contains(token)) {
       tokenPane.getChildren().add(token);

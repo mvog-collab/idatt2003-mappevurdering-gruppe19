@@ -25,7 +25,7 @@ public class ViewServiceFactory {
     String normalizedGameType = gameType.toUpperCase();
     switch (normalizedGameType) {
       case "SNL":
-        return new SnlBoardUIService(boardSize);
+        return new SnlBoardUIService();
       case "LUDO":
         return new LudoBoardUIService();
       default:
