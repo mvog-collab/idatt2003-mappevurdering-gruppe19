@@ -100,7 +100,7 @@ public final class LudoGateway extends AbstractGameGateway {
         new BoardGameEvent(BoardGameEvent.EventType.PIECE_SELECTED, selectedPieceIndex));
   }
 
-  //  Gameplay – public entry points
+  // Gameplay – public entry points
   @Override
   public int rollDice() {
     if (game == null || game.getPlayers().isEmpty() || winner != null)
@@ -222,7 +222,8 @@ public final class LudoGateway extends AbstractGameGateway {
 
   @Override
   public List<PlayerView> players() {
-    if (game == null || game.getPlayers().isEmpty()) return List.of();
+    if (game == null || game.getPlayers().isEmpty())
+      return List.of();
 
     Token turnToken = game.currentPlayer().getToken();
     return game.getPlayers().stream().map(p -> mapToView(p, turnToken)).toList();
