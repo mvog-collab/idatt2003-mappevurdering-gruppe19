@@ -20,7 +20,6 @@ public class BoardSizePage implements BoardGameObserver {
   private Button oneTwentyTiles;
   private Button cancelButton;
   private Button continueButton;
-  private Button saveBoardButton;
   private Label statusLabel;
 
   // Root container for the view
@@ -105,9 +104,6 @@ public class BoardSizePage implements BoardGameObserver {
     continueButton = new Button("Confirm");
     continueButton.getStyleClass().add("confirm-button");
 
-    saveBoardButton = new Button("Save");
-    saveBoardButton.getStyleClass().add("board-size-button");
-
     // Status label
     statusLabel = new Label("Please select a board size");
     statusLabel.getStyleClass().add("status-label");
@@ -116,16 +112,19 @@ public class BoardSizePage implements BoardGameObserver {
     VBox buttonBox = new VBox(20, sixtyFourTiles, ninetyTiles, oneTwentyTiles, statusLabel);
     buttonBox.setAlignment(Pos.CENTER);
 
-    HBox statusBox = new HBox(60, cancelButton, saveBoardButton, continueButton);
+    HBox statusBox = new HBox(60, cancelButton, continueButton);
     statusBox.setAlignment(Pos.CENTER);
     statusBox.setPadding(new Insets(40));
 
     VBox boardPopup = new VBox(10, titleBox, buttonBox, statusBox);
+    boardPopup.setPadding(new Insets(20));
 
     root = new VBox(70, boardPopup);
     root.setAlignment(Pos.CENTER);
+
     root.getStyleClass().add("page-background");
     root.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+    root.setPadding(new Insets(30, 20, 30, 20));
   }
 
   /** Returns the root container of this view */
@@ -153,10 +152,6 @@ public class BoardSizePage implements BoardGameObserver {
 
   public Button getContinueButton() {
     return continueButton;
-  }
-
-  public Button getSaveBoardButton() {
-    return saveBoardButton;
   }
 
   public Label getStatusLabel() {

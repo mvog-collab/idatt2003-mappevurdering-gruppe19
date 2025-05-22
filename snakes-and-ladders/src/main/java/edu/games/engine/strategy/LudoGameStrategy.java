@@ -33,7 +33,7 @@ public class LudoGameStrategy implements GameStrategy {
         || !(game.board() instanceof LudoBoard)
         || pieceIndex < 0
         || pieceIndex >= player.getPieces().size()) {
-      // throw new ValidationException("pieceIndex out of range: " + pieceIndex);
+      throw new ValidationException("pieceIndex out of range: " + pieceIndex);
     }
     PlayerPiece piece = player.getPiece(pieceIndex);
     LudoBoard board = (LudoBoard) game.board();

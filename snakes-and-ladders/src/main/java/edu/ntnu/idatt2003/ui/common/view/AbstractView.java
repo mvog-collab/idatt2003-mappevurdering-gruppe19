@@ -48,6 +48,10 @@ public abstract class AbstractView implements BoardGameObserver {
           alert.setTitle(title);
           alert.setHeaderText(null);
           alert.setContentText(instructions);
+
+          alert.getDialogPane().getStyleClass().add("how-to-alert");
+          alert.getDialogPane().getStylesheets()
+              .add(getClass().getResource("/styles/style.css").toExternalForm());
           alert.showAndWait();
         });
     return howToPlayButton;
