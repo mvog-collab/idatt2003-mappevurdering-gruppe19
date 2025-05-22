@@ -4,6 +4,9 @@ import edu.games.engine.exception.ValidationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class LinearBoardTest {
@@ -15,12 +18,32 @@ class LinearBoardTest {
     void shouldCreateBoardWithValidSize() {
       LinearBoard board = new LinearBoard(5);
       assertNotNull(board.tile(0));
-      assertNotNull(board.tile(4));
+      assertNotNull(board.tile(5));
     }
 
     @Test
     void shouldThrowExceptionWhenSizeLessThanTwo() {
       assertThrows(ValidationException.class, () -> new LinearBoard(1));
+    }
+
+    @Test
+    void shouldCreateBoardFromValidMap() {
+      Map<Integer, LinearTile> map = new HashMap<>();
+      map.put(0, new LinearTile(0));
+      map.put(1, new LinearTile(1));
+      LinearBoard board = new LinearBoard(map);
+      assertNotNull(board.tile(0));
+      assertNotNull(board.tile(1));
+    }
+
+    @Test
+    void shouldThrowIfMapIsNull() {
+      assertThrows(ValidationException.class, () -> new LinearBoard(null));
+    }
+
+    @Test
+    void shouldThrowIfMapIsEmpty() {
+      assertThrows(ValidationException.class, () -> new LinearBoard(new HashMap<>()));
     }
   }
 
@@ -57,44 +80,36 @@ class LinearBoardTest {
 
     @Test
     void shouldThrowIfTileIsNotLinearTile() {
-      Tile fakeTile = new Tile() {
-        @Override
-        public int tileId() {
-          return 0;
-        }
-      };
+      Tile fakeTile = () -> 0;
       assertThrows(ValidationException.class, () -> board.move(fakeTile, 1));
+    }
+
+    @Test
+    void shouldReturnNullIfTileIdDoesNotExist() {
+      assertNull(board.tile(999));
     }
   }
 
   @Nested
   class EndCheck {
 
+    LinearBoard board = new LinearBoard(3);
+
     @Test
     void shouldReturnTrueIfTileIsLast() {
-      LinearBoard board = new LinearBoard(3);
       Tile end = board.tile(3);
-      boolean isEnd = board.isEnd(end);
-      assertTrue(isEnd);
+      assertTrue(board.isEnd(end));
     }
 
     @Test
     void shouldReturnFalseIfTileIsNotLast() {
-      LinearBoard board = new LinearBoard(3);
       Tile notEnd = board.tile(2);
-      boolean isEnd = board.isEnd(notEnd);
-      assertFalse(isEnd);
+      assertFalse(board.isEnd(notEnd));
     }
 
     @Test
     void shouldThrowIfTileNotLinear() {
-      LinearBoard board = new LinearBoard(3);
-      Tile fakeTile = new Tile() {
-        @Override
-        public int tileId() {
-          return 1;
-        }
-      };
+      Tile fakeTile = () -> 1;
       assertThrows(ValidationException.class, () -> board.isEnd(fakeTile));
     }
   }
