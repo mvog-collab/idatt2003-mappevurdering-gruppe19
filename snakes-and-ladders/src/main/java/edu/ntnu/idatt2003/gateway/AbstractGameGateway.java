@@ -8,7 +8,6 @@ import edu.games.engine.observer.BoardGameEvent;
 import edu.games.engine.observer.BoardGameObserver;
 import edu.games.engine.store.PlayerStore;
 import edu.ntnu.idatt2003.ui.fx.OverlayParams;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   // Common implementation of other GameGateway methods
   @Override
   public boolean hasWinner() {
-    return game != null && game.winner().isPresent();
+    return game != null && game.getWinner().isPresent();
   }
 
   @Override
@@ -74,7 +73,7 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   public void savePlayers(Path out) {
     try {
       if (game != null) {
-        playerStore.save(game.players(), out);
+        playerStore.save(game.getPlayers(), out);
       }
     } catch (GameEngineException gameEngineException) {
       LOG.log(Level.WARNING, gameEngineException.getMessage());
@@ -84,7 +83,7 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   @Override
   public void clearPlayers() {
     if (game != null) {
-      game.players().clear();
+      game.getPlayers().clear();
     }
   }
 

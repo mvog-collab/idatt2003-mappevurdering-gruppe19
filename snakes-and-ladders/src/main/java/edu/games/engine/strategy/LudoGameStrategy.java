@@ -18,7 +18,7 @@ public class LudoGameStrategy implements GameStrategy {
 
   @Override
   public void initializeGame(DefaultGame game) {
-    game.players().forEach(player -> player.getPieces().forEach(p -> p.moveTo(null)));
+    game.getPlayers().forEach(player -> player.getPieces().forEach(p -> p.moveTo(null)));
   }
 
   @Override

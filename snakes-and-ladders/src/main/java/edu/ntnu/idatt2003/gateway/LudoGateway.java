@@ -67,7 +67,7 @@ public final class LudoGateway extends AbstractGameGateway {
   public void resetGame() {
     if (game == null) return;
 
-    game.players().forEach(p -> p.getPieces().forEach(piece -> piece.moveTo(null)));
+    game.getPlayers().forEach(p -> p.getPieces().forEach(piece -> piece.moveTo(null)));
     game.setCurrentPlayerIndex(0);
     winner = null;
 
@@ -79,14 +79,14 @@ public final class LudoGateway extends AbstractGameGateway {
   public void addPlayer(String name, String token, LocalDate birthday) {
     Objects.requireNonNull(game, "Call newGame before adding players");
     Player player = new Player(name, mapStringToToken(token), birthday);
-    game.players().add(player);
+    game.getPlayers().add(player);
 
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.PLAYER_ADDED, player));
   }
 
   //  UI interaction helpers
   public void selectPiece(int pieceIndex) {
-    if (game == null || game.players().isEmpty()) {
+    if (game == null || game.getPlayers().isEmpty()) {
       return;
     }
 
@@ -102,7 +102,7 @@ public final class LudoGateway extends AbstractGameGateway {
   //  Gameplay – public entry points
   @Override
   public int rollDice() {
-    if (game == null || game.players().isEmpty() || winner != null) return 0;
+    if (game == null || game.getPlayers().isEmpty() || winner != null) return 0;
 
     int roll = performDiceRoll();
 
@@ -117,7 +117,7 @@ public final class LudoGateway extends AbstractGameGateway {
   }
 
   public int applyPieceMovement() {
-    if (game == null || game.players().isEmpty() || winner != null || selectedPieceIndex < 0) {
+    if (game == null || game.getPlayers().isEmpty() || winner != null || selectedPieceIndex < 0) {
       return 0;
     }
     int roll = lastDiceValues.get(0);
@@ -193,7 +193,7 @@ public final class LudoGateway extends AbstractGameGateway {
   }
 
   private void passTurnToNextPlayer(Player current) {
-    int nextIdx = (game.players().indexOf(current) + 1) % game.players().size();
+    int nextIdx = (game.getPlayers().indexOf(current) + 1) % game.getPlayers().size();
     game.setCurrentPlayerIndex(nextIdx);
   }
 
@@ -218,10 +218,10 @@ public final class LudoGateway extends AbstractGameGateway {
 
   @Override
   public List<PlayerView> players() {
-    if (game == null || game.players().isEmpty()) return List.of();
+    if (game == null || game.getPlayers().isEmpty()) return List.of();
 
     Token turnToken = game.currentPlayer().getToken();
-    return game.players().stream().map(p -> mapToView(p, turnToken)).toList();
+    return game.getPlayers().stream().map(p -> mapToView(p, turnToken)).toList();
   }
 
   private PlayerView mapToView(Player p, Token turnToken) {

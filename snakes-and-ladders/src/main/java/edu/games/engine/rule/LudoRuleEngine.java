@@ -56,7 +56,7 @@ public final class LudoRuleEngine implements RuleEngine {
   }
 
   private void bumpOpponentsFromTile(Player currentPlayer, Tile tile, DefaultGame game) {
-    game.players().stream()
+    game.getPlayers().stream()
         .filter(other -> other != currentPlayer)
         .forEach(
             other ->

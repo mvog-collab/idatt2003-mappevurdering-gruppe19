@@ -22,7 +22,7 @@ public class SnlGameStrategy implements GameStrategy {
   @Override
   public void initializeGame(DefaultGame game) {
     if (game != null && game.board() != null) {
-      for (Player player : game.players()) {
+      for (Player player : game.getPlayers()) {
         player.moveTo(game.board().start());
       }
     }

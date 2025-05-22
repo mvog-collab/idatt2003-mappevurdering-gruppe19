@@ -65,7 +65,7 @@ public final class SnlRuleEngine implements RuleEngine {
   private void applyBumping(Player currentPlayer, Tile tile, LinearBoard board, DefaultGame game) {
     if (tile.tileId() == board.start().tileId()) return;
 
-    game.players().stream()
+    game.getPlayers().stream()
         .filter(
             p ->
                 p != currentPlayer
