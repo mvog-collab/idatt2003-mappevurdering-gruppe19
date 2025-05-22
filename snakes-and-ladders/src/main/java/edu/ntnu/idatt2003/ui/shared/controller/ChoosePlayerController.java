@@ -148,7 +148,8 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
 
   @Override
   public void cancel() {
-    LOG.info("ChoosePlayer dialog cancelled.");
+    gateway.clearPlayers();
+    LOG.info("ChoosePlayer dialog cancelled and players cleared.");
     close(view.getCancelButton());
   }
 
