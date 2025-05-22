@@ -13,7 +13,7 @@ public class JsonBoardHandler implements FileHandler<BoardAdapter.MapData> {
 
   @Override
   public void save(BoardAdapter.MapData data, Path out) throws IOException {
-    mapper.writeValue(out.toFile(), BoardAdapter.toDto(data.size(), data.snakes(), data.ladders()));
+    mapper.writeValue(out.toFile(), BoardAdapter.toDto(data.boardSize(), data.snakes(), data.ladders()));
   }
 
   @Override

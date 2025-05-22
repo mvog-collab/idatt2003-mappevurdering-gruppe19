@@ -10,10 +10,10 @@ public final class BoardAdapter {
   private BoardAdapter() {}
 
   public static BoardDTO toDto(
-      int size, Map<Integer, Integer> snakes, Map<Integer, Integer> ladders) {
+      int boardSize, Map<Integer, Integer> snakes, Map<Integer, Integer> ladders) {
 
     List<TileDTO> tiles =
-        java.util.stream.IntStream.rangeClosed(1, size)
+        java.util.stream.IntStream.rangeClosed(1, boardSize)
             .mapToObj(
                 id ->
                     new TileDTO(
@@ -22,12 +22,12 @@ public final class BoardAdapter {
                         ladders.get(id))) // null if not a ladder
             .toList();
 
-    return new BoardDTO(size, tiles, snakes, ladders);
+    return new BoardDTO(boardSize, tiles, snakes, ladders);
   }
 
   public static MapData fromDto(BoardDTO dto) {
     return new MapData(dto.boardSize(), dto.snakes(), dto.ladders());
   }
 
-  public record MapData(int size, Map<Integer, Integer> snakes, Map<Integer, Integer> ladders) {}
+  public record MapData(int boardSize, Map<Integer, Integer> snakes, Map<Integer, Integer> ladders) {}
 }

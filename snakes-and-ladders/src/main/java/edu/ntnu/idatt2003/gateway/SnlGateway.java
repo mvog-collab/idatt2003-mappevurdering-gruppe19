@@ -50,7 +50,7 @@ public final class SnlGateway extends AbstractGameGateway {
     String resource = "/boards/board" + size + ".json";
     BoardAdapter.MapData map = BoardFactory.loadFromClasspath(resource);
     this.gameStrategy = GameStrategyFactory.createSnlStrategy(map);
-    Board board = boardFactory.create(map.size());
+    Board board = boardFactory.create(map.boardSize());
     Dice dice = diceFactory.create();
     game = new DefaultGame(board, gameStrategy, new ArrayList<>(), dice);
 
@@ -61,7 +61,7 @@ public final class SnlGateway extends AbstractGameGateway {
 
   @Override
   public void newGame(BoardAdapter.MapData data) {
-    LinearBoard board = new LinearBoard(data.size());
+    LinearBoard board = new LinearBoard(data.boardSize());
     Dice dice = new RandomDice(2);
     game = new DefaultGame(board, gameStrategy, new ArrayList<>(), dice);
   }
