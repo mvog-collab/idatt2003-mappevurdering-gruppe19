@@ -12,5 +12,5 @@ public interface PlayerManagement extends GameGateway {
 
   void clearPlayers();
 
-  void savePlayers(Path out) throws IOException;
+  void savePlayers(Path out);
 }

@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.gateway;
 
+import edu.games.engine.exception.GameEngineException;
 import edu.games.engine.impl.DefaultGame;
 import edu.games.engine.impl.overlay.OverlayProvider;
 import edu.games.engine.model.Token;
@@ -13,6 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.Map;
 
 public abstract class AbstractGameGateway implements CompleteBoardGame {
@@ -23,6 +26,8 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   protected final Map<Integer, List<OverlayParams>> overlayCache = new HashMap<>();
   protected List<Integer> lastDiceValues = List.of();
   protected DefaultGame game;
+
+  private static final Logger LOG = Logger.getLogger(AbstractGameGateway.class.getName());
 
   // Constructor
   protected AbstractGameGateway(PlayerStore playerStore, OverlayProvider overlayProvider) {
@@ -66,9 +71,13 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   }
 
   @Override
-  public void savePlayers(Path out) throws IOException {
-    if (game != null) {
-      playerStore.save(game.players(), out);
+  public void savePlayers(Path out) {
+    try {
+      if (game != null) {
+        playerStore.save(game.players(), out);
+      }
+    } catch (GameEngineException gameEngineException) {
+      LOG.log(Level.WARNING, gameEngineException.getMessage());
     }
   }
 

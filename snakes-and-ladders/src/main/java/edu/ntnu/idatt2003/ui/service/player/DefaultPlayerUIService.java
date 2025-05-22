@@ -149,61 +149,66 @@ public class DefaultPlayerUIService implements PlayerUIService {
 
   @Override
   public void updateCurrentPlayerTurnBox(Node turnBox, PlayerView currentPlayer, String message) {
-    if (!(turnBox instanceof VBox container))
-      return;
+    try {
+      if (!(turnBox instanceof VBox container))
+        return;
 
-    // Find the components
-    HBox contentBox = null;
-    ImageView tokenImg = null;
-    Label turnMessageLabel = null;
+      // Find the components
+      HBox contentBox = null;
+      ImageView tokenImg = null;
+      Label turnMessageLabel = null;
 
-    if (!container.getChildren().isEmpty() && container.getChildren().get(0) instanceof HBox) {
-      contentBox = (HBox) container.getChildren().get(0);
+      if (!container.getChildren().isEmpty() && container.getChildren().get(0) instanceof HBox) {
+        contentBox = (HBox) container.getChildren().get(0);
 
-      if (!contentBox.getChildren().isEmpty()
-          && contentBox.getChildren().get(0) instanceof ImageView) {
-        tokenImg = (ImageView) contentBox.getChildren().get(0);
+        if (!contentBox.getChildren().isEmpty()
+            && contentBox.getChildren().get(0) instanceof ImageView) {
+          tokenImg = (ImageView) contentBox.getChildren().get(0);
+        }
+
+        if (contentBox.getChildren().size() > 1 && contentBox.getChildren().get(1) instanceof Label) {
+          turnMessageLabel = (Label) contentBox.getChildren().get(1);
+        }
       }
 
-      if (contentBox.getChildren().size() > 1 && contentBox.getChildren().get(1) instanceof Label) {
-        turnMessageLabel = (Label) contentBox.getChildren().get(1);
-      }
-    }
+      if (tokenImg == null || turnMessageLabel == null)
+        return;
 
-    if (tokenImg == null || turnMessageLabel == null)
-      return;
-
-    if (currentPlayer == null) {
-      // No player has a turn - show default state
-      turnMessageLabel.setText("Waiting for game to start...");
-      tokenImg.setImage(null);
-      tokenImg.setEffect(null);
-      container.getStyleClass().remove("active");
-    } else {
-      // Player has a turn - update display
-      String playerName = currentPlayer.name();
-      String tokenName = currentPlayer.token();
-
-      // Update the message
-      if (message != null && !message.isEmpty()) {
-        turnMessageLabel.setText(message);
+      if (currentPlayer == null) {
+        // No player has a turn - show default state
+        turnMessageLabel.setText("Waiting for game to start...");
+        tokenImg.setImage(null);
+        tokenImg.setEffect(null);
+        container.getStyleClass().remove("active");
       } else {
-        turnMessageLabel.setText(playerName + "'s turn! Roll the dice 🎲");
+        // Player has a turn - update display
+        String playerName = currentPlayer.name();
+        String tokenName = currentPlayer.token();
+
+        // Update the message
+        if (message != null && !message.isEmpty()) {
+          turnMessageLabel.setText(message);
+        } else {
+          turnMessageLabel.setText(playerName + "'s turn! Roll the dice 🎲");
+        }
+
+        // Update the token image
+        String imagePath = "/images/" + tokenName.toLowerCase() + "Piece.png";
+        tokenImg.setImage(new Image(getClass().getResourceAsStream(imagePath)));
+
+        // Add a glow effect to the token
+        DropShadow glow = new DropShadow(15, Color.GOLD);
+        glow.setSpread(0.4);
+        tokenImg.setEffect(glow);
+
+        // Add active styling
+        if (!container.getStyleClass().contains("active")) {
+          container.getStyleClass().add("active");
+        }
       }
-
-      // Update the token image
-      String imagePath = "/images/" + tokenName.toLowerCase() + "Piece.png";
-      tokenImg.setImage(new Image(getClass().getResourceAsStream(imagePath)));
-
-      // Add a glow effect to the token
-      DropShadow glow = new DropShadow(15, Color.GOLD);
-      glow.setSpread(0.4);
-      tokenImg.setEffect(glow);
-
-      // Add active styling
-      if (!container.getStyleClass().contains("active")) {
-        container.getStyleClass().add("active");
-      }
+    } catch (Exception e) {
+      System.err.println("Error in updateCurrentPlayerTurnBox:");
+      e.printStackTrace();
     }
   }
 }

@@ -4,6 +4,7 @@ import edu.games.engine.board.LudoBoard;
 import edu.games.engine.board.LudoPath;
 import edu.games.engine.board.Tile;
 import edu.games.engine.dice.factory.DiceFactory;
+import edu.games.engine.exception.ValidationException;
 import edu.games.engine.impl.DefaultGame;
 import edu.games.engine.impl.overlay.OverlayProvider;
 import edu.games.engine.model.Player;
@@ -24,12 +25,12 @@ import java.util.Objects;
 
 public final class LudoGateway extends AbstractGameGateway {
 
-  //  Fields
+  // Fields
   private final DiceFactory diceFactory;
   private int selectedPieceIndex = -1;
   private Player winner = null;
 
-  //  Construction
+  // Construction
   public LudoGateway(
       DiceFactory diceFactory, PlayerStore playerStore, OverlayProvider overlayProvider) {
     super(playerStore, overlayProvider);
@@ -43,7 +44,7 @@ public final class LudoGateway extends AbstractGameGateway {
         new edu.games.engine.impl.overlay.JsonOverlayProvider("/overlays/"));
   }
 
-  //  Game lifecycle
+  // Game lifecycle
   @Override
   public void newGame(int ignored) {
     LudoPath path = new LudoPath();
@@ -64,7 +65,8 @@ public final class LudoGateway extends AbstractGameGateway {
 
   @Override
   public void resetGame() {
-    if (game == null) return;
+    if (game == null)
+      return;
 
     game.players().forEach(p -> p.getPieces().forEach(piece -> piece.moveTo(null)));
     game.setCurrentPlayerIndex(0);
@@ -73,7 +75,7 @@ public final class LudoGateway extends AbstractGameGateway {
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.GAME_RESET, null));
   }
 
-  //  Player management
+  // Player management
   @Override
   public void addPlayer(String name, String token, LocalDate birthday) {
     Objects.requireNonNull(game, "Call newGame before adding players");
@@ -83,24 +85,26 @@ public final class LudoGateway extends AbstractGameGateway {
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.PLAYER_ADDED, player));
   }
 
-  //  UI interaction helpers
+  // UI interaction helpers
   public void selectPiece(int pieceIndex) {
     if (game == null || game.players().isEmpty()) {
       return;
     }
 
-    if (pieceIndex < 0 || pieceIndex >= 4)
-      throw new IllegalArgumentException("Invalid piece index: " + pieceIndex);
+    if (pieceIndex < 0 || pieceIndex >= 4) {
+      throw new ValidationException("pieceIndex out of range: " + pieceIndex);
+    }
 
     selectedPieceIndex = pieceIndex;
     notifyObservers(
         new BoardGameEvent(BoardGameEvent.EventType.PIECE_SELECTED, selectedPieceIndex));
   }
 
-  //  Gameplay – public entry points
+  // Gameplay – public entry points
   @Override
   public int rollDice() {
-    if (game == null || game.players().isEmpty() || winner != null) return 0;
+    if (game == null || game.players().isEmpty() || winner != null)
+      return 0;
     return performDiceRoll();
   }
 
@@ -113,7 +117,7 @@ public final class LudoGateway extends AbstractGameGateway {
     return roll;
   }
 
-  //  Gameplay – internal helpers
+  // Gameplay – internal helpers
   private int performDiceRoll() {
     final int roll = game.dice().roll();
     lastDiceValues = game.dice().lastValues();
@@ -146,8 +150,10 @@ public final class LudoGateway extends AbstractGameGateway {
   }
 
   private boolean hasMoved(Tile from, Tile to) {
-    if (to == null) return false;
-    if (from == null) return true;
+    if (to == null)
+      return false;
+    if (from == null)
+      return true;
     return to.id() != from.id();
   }
 
@@ -186,7 +192,8 @@ public final class LudoGateway extends AbstractGameGateway {
 
   private void advanceTurnIfNoExtraTurn(Player player, int roll) {
     boolean extraTurn = game.getStrategy().processDiceRoll(player, roll, game);
-    if (!extraTurn) passTurnToNextPlayer(player);
+    if (!extraTurn)
+      passTurnToNextPlayer(player);
   }
 
   private void passTurnToNextPlayer(Player current) {
@@ -215,20 +222,20 @@ public final class LudoGateway extends AbstractGameGateway {
 
   @Override
   public List<PlayerView> players() {
-    if (game == null || game.players().isEmpty()) return List.of();
+    if (game == null || game.players().isEmpty())
+      return List.of();
 
     Token turnToken = game.currentPlayer().getToken();
     return game.players().stream().map(p -> mapToView(p, turnToken)).toList();
   }
 
   private PlayerView mapToView(Player p, Token turnToken) {
-    List<Integer> positions =
-        p.getPieces().stream()
-            .map(
-                piece -> {
-                  return piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id();
-                })
-            .toList();
+    List<Integer> positions = p.getPieces().stream()
+        .map(
+            piece -> {
+              return piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id();
+            })
+        .toList();
     int activeIndex = p.getToken() == turnToken ? selectedPieceIndex : -1;
     return new PlayerView(
         p.getName(),

@@ -150,48 +150,58 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   @Override
   public void setPlayers(List<PlayerView> players, List<OverlayParams> overlays) {
-    this.players = new ArrayList<>(players);
+    try {
+      this.players = new ArrayList<>(players);
 
-    this.tokenPane.getChildren().clear();
-    tokenImages.clear();
+      this.tokenPane.getChildren().clear();
+      tokenImages.clear();
 
-    for (PlayerView player : players) {
-      List<ImageView> pieces = playerUIService.createPlayerPieces(player);
-      tokenImages.put(player.token(), pieces);
+      for (PlayerView player : players) {
+        List<ImageView> pieces = playerUIService.createPlayerPieces(player);
+        tokenImages.put(player.token(), pieces);
 
-      for (int i = 0; i < pieces.size(); i++) {
-        final int pieceIndex = i;
-        ImageView piece = pieces.get(i);
-        piece.setOnMouseClicked(e -> handlePieceClicked(player.token(), pieceIndex));
-        this.tokenPane.getChildren().add(piece);
+        for (int i = 0; i < pieces.size(); i++) {
+          final int pieceIndex = i;
+          ImageView piece = pieces.get(i);
+          piece.setOnMouseClicked(e -> handlePieceClicked(player.token(), pieceIndex));
+          this.tokenPane.getChildren().add(piece);
+        }
+        updatePiecePositions(player);
       }
-      updatePiecePositions(player);
-    }
 
-    boardUIService.addOverlays(this.overlayPane, overlays);
-    updateStatusForCurrentPlayer();
+      boardUIService.addOverlays(this.overlayPane, overlays);
+      updateStatusForCurrentPlayer();
+    } catch (Exception e) {
+      System.err.println("Error in LudoBoardView.setPlayers:");
+      e.printStackTrace();
+    }
   }
 
   private void updatePiecePositions(PlayerView player) {
-    List<ImageView> pieces = tokenImages.get(player.token());
-    if (pieces == null)
-      return;
+    try {
+      List<ImageView> pieces = tokenImages.get(player.token());
+      if (pieces == null)
+        return;
 
-    for (int i = 0; i < Math.min(player.piecePositions().size(), pieces.size()); i++) {
-      int position = player.piecePositions().get(i);
-      ImageView piece = pieces.get(i);
+      for (int i = 0; i < Math.min(player.piecePositions().size(), pieces.size()); i++) {
+        int position = player.piecePositions().get(i);
+        ImageView piece = pieces.get(i);
 
-      if (player.hasTurn()) {
-        boardUIService.highlightActivePiece(piece);
-      } else {
-        boardUIService.removeHighlight(piece);
+        if (player.hasTurn()) {
+          boardUIService.highlightActivePiece(piece);
+        } else {
+          boardUIService.removeHighlight(piece);
+        }
+
+        if (position <= 0) {
+          boardUIService.placePieceAtHome(this.tokenPane, piece, player.token(), i);
+        } else {
+          boardUIService.placePieceOnBoard(this.tokenPane, piece, position, i);
+        }
       }
-
-      if (position <= 0) {
-        boardUIService.placePieceAtHome(this.tokenPane, piece, player.token(), i);
-      } else {
-        boardUIService.placePieceOnBoard(this.tokenPane, piece, position, i);
-      }
+    } catch (Exception e) {
+      System.err.println("Error in LudoBoardView.setPlayers:");
+      e.printStackTrace();
     }
   }
 

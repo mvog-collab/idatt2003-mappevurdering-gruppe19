@@ -20,22 +20,39 @@ public class BoardAnimationService implements AnimationService {
   public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
     ImageView token = findToken(tokenName);
     if (token == null) {
-      if (onFinished != null) onFinished.run();
+      if (onFinished != null)
+        onFinished.run();
       return;
     }
 
     new Thread(
-            () -> {
-              for (int i = startId + 1; i <= endId; i++) {
-                int id = i;
-                try {
-                  Thread.sleep(200);
-                } catch (InterruptedException ignored) {
-                }
-                Platform.runLater(() -> moveTokenToTile(token, id));
+        () -> {
+          for (int i = startId + 1; i <= endId; i++) {
+            int id = i;
+            try {
+              Thread.sleep(200);
+            } catch (InterruptedException ignored) {
+            }
+            Platform.runLater(() -> {
+              try {
+                moveTokenToTile(token, id); // Or other UI update
+              } catch (Exception e) {
+                System.err.println("Exception in Platform.runLater in BoardAnimationService:");
+                e.printStackTrace();
               }
-              if (onFinished != null) Platform.runLater(onFinished);
-            })
+            });
+          }
+          if (onFinished != null) {
+            Platform.runLater(() -> {
+              try {
+                onFinished.run();
+              } catch (Exception e) {
+                System.err.println("Exception in onFinished callback for animation:");
+                e.printStackTrace();
+              }
+            });
+          }
+        })
         .start();
   }
 
@@ -44,21 +61,38 @@ public class BoardAnimationService implements AnimationService {
       String tokenName, int pieceIndex, List<Integer> path, Runnable onFinished) {
     ImageView token = findTokenWithIndex(tokenName, pieceIndex);
     if (token == null || path.isEmpty()) {
-      if (onFinished != null) Platform.runLater(onFinished);
+      if (onFinished != null)
+        Platform.runLater(onFinished);
       return;
     }
 
     new Thread(
-            () -> {
-              try {
-                for (Integer id : path) {
-                  Thread.sleep(200);
-                  Platform.runLater(() -> moveTokenToTile(token, id));
+        () -> {
+          try {
+            for (Integer id : path) {
+              Thread.sleep(200);
+              Platform.runLater(() -> {
+                try {
+                  moveTokenToTile(token, id); // Or other UI update
+                } catch (Exception e) {
+                  System.err.println("Exception in Platform.runLater in BoardAnimationService:");
+                  e.printStackTrace();
                 }
-              } catch (InterruptedException ignored) {
+              });
+            }
+          } catch (InterruptedException ignored) {
+          }
+          if (onFinished != null) {
+            Platform.runLater(() -> {
+              try {
+                onFinished.run();
+              } catch (Exception e) {
+                System.err.println("Exception in onFinished callback for animation:");
+                e.printStackTrace();
               }
-              if (onFinished != null) Platform.runLater(onFinished);
-            })
+            });
+          }
+        })
         .start();
   }
 

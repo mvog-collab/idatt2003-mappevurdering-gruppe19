@@ -1,5 +1,6 @@
 package edu.games.engine.board;
 
+import edu.games.engine.exception.ValidationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ public final class LinearBoard implements Board {
   /** builds a 1-based, linear board of the given size */
   public LinearBoard(int size) {
     if (size < 2) {
-      throw new IllegalArgumentException("Invalid size: cannot be less than 2");
+      throw new ValidationException("Invalid size: cannot be less than 2");
     }
     LinearTile prev = null;
     for (int i = 0; i <= size; i++) {
@@ -24,6 +25,9 @@ public final class LinearBoard implements Board {
   }
 
   public LinearBoard(Map<Integer, LinearTile> tiles) {
+    if (tiles == null || tiles.isEmpty()) {
+      throw new ValidationException("Invalid map: cannot be null or empty");
+    }
     this.tiles.putAll(tiles);
   }
 
@@ -35,7 +39,7 @@ public final class LinearBoard implements Board {
   @Override
   public Tile move(Tile from, int steps) {
     if (steps < 0) {
-      throw new IllegalArgumentException("steps < 0");
+      throw new ValidationException("steps cannot be < 0");
     }
     LinearTile tile = cast(from);
     for (int i = 0; i < steps && tile.next() != null; i++) {
@@ -50,7 +54,7 @@ public final class LinearBoard implements Board {
 
   private static LinearTile cast(Tile tile) {
     if (!(tile instanceof LinearTile lt)) {
-      throw new IllegalArgumentException("Not a LinearTile");
+      throw new ValidationException("Not a LinearTile");
     }
     return lt;
   }

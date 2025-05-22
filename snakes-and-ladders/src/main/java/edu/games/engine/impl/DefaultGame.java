@@ -1,5 +1,7 @@
 package edu.games.engine.impl;
 
+import edu.games.engine.exception.ValidationException;
+import edu.games.engine.exception.RuleViolationException;
 import edu.games.engine.board.Board;
 import edu.games.engine.board.Tile;
 import edu.games.engine.dice.Dice;
@@ -25,11 +27,16 @@ public final class DefaultGame implements Game {
     this.strategy = Objects.requireNonNull(strategy);
     this.dice = Objects.requireNonNull(dice);
     this.players = new ArrayList<>(players);
+    if (players == null || players.isEmpty()) {
+      // throw new ValidationException("Player list is null or empty");
+    }
   }
 
   // In DefaultGame
   public int playTurn() {
-    if (winner != null) return 0;
+    if (winner != null) {
+      throw new RuleViolationException("Game already finished - winner is " + winner.getName());
+    }
 
     Player currentPlayer = currentPlayer();
     int rolledValue = dice.roll();
@@ -57,6 +64,9 @@ public final class DefaultGame implements Game {
 
   @Override
   public Player currentPlayer() {
+    if (players.isEmpty()) {
+      throw new ValidationException("No players added to the game");
+    }
     return players.get(currentIndex);
   }
 
@@ -71,7 +81,10 @@ public final class DefaultGame implements Game {
   }
 
   public void setCurrentPlayerIndex(int idx) {
-    if (players.isEmpty()) return;
+
+    if (players.isEmpty()) {
+      throw new ValidationException("No players - cannot set the current player index");
+    }
     currentIndex = Math.floorMod(idx, players.size());
   }
 
