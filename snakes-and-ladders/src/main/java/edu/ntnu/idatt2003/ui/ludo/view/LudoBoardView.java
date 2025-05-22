@@ -31,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -43,7 +44,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   private final DiceService diceService;
 
   // UI Components
-  private final Pane boardPane;
+  private StackPane gameBoardArea;
   private final Pane tokenPane;
   private final Pane overlayPane;
   private final VBox controlPanel;
@@ -69,20 +70,18 @@ public class LudoBoardView extends AbstractGameView implements GameView {
     this.animationService = animationService;
     this.diceService = diceService;
 
-    // Initialize UI components
     this.rootLayout = new BorderPane();
-    this.boardPane = new Pane();
     this.tokenPane = new Pane();
     this.overlayPane = new Pane();
-    this.controlPanel = new VBox(20);
+    this.gameBoardArea = new StackPane();
+
+    this.controlPanel = new VBox(15);
     this.diceContainer = new HBox(10);
     this.playerTurnBox = this.playerUIService.createCurrentPlayerTurnBox(null);
 
-    // Create buttons
     this.rollButton = new Button("Roll dice");
     this.playAgainButton = new Button("Play again");
 
-    // Build the UI
     buildUI();
   }
 
@@ -90,59 +89,61 @@ public class LudoBoardView extends AbstractGameView implements GameView {
     this(
         new LudoBoardUIService(),
         ViewServiceFactory.createPlayerUIService("LUDO"),
-        null, // Will be initialized properly after we have coordinates
+        null,
         ViewServiceFactory.createDiceService("LUDO"));
 
-    // Complete initialization after we have coordinates
     Map<Integer, Point2D> coordinates = boardUIService.getTileCoordinates();
-    AnimationService newAnimationService =
-        ViewServiceFactory.createAnimationService("LUDO", coordinates, tokenPane);
-
-    // Replace the null animation service with the proper one
-    this.animationService = newAnimationService;
+    this.animationService = ViewServiceFactory.createAnimationService(
+        "LUDO", coordinates, this.tokenPane);
   }
 
   private void buildUI() {
-    StackPane boardArea = boardUIService.createLudoBoardArea(boardPane, overlayPane, tokenPane);
+    boardUIService.initializeGameBoardArea(this.gameBoardArea, this.overlayPane, this.tokenPane);
+
     diceContainer.setAlignment(Pos.CENTER);
-    diceContainer.setPadding(new Insets(20));
+    diceContainer.setPadding(new Insets(10));
+    diceContainer.setMinHeight(220);
     diceContainer.getStyleClass().add("dice-box");
     diceService.initializeDice(diceContainer);
+
     rollButton.getStyleClass().add("roll-dice-button");
     playAgainButton.getStyleClass().add("play-again-button");
 
-    Button howToButton =
-        createHowToPlayButton(
-            "How to play - Ludo",
-            """
+    Button howToButton = createHowToPlayButton(
+        "How to play - Ludo",
+        """
             - Throw a 6 to get a piece out of your home.
             - If you land on an enemy player(s), they are sent back to their home.
             - The first player with all pieces in the goal is the winner!
             """);
 
     HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
-    buttonContainer.setSpacing(10);
     buttonContainer.setAlignment(Pos.CENTER);
 
     controlPanel.getChildren().addAll(howToButton, playerTurnBox, diceContainer, buttonContainer);
-    controlPanel.setSpacing(20);
     controlPanel.setAlignment(Pos.TOP_CENTER);
-    controlPanel.setPrefWidth(400);
+    controlPanel.setPadding(new Insets(10));
     controlPanel.getStyleClass().add("game-control");
 
-    rootLayout.setCenter(boardArea);
+    VBox.setVgrow(playerTurnBox, Priority.NEVER);
+    VBox.setVgrow(diceContainer, Priority.NEVER);
+    VBox.setVgrow(buttonContainer, Priority.NEVER);
+
+    rootLayout.setCenter(gameBoardArea);
     rootLayout.setRight(controlPanel);
-    rootLayout.setPadding(new Insets(20));
+    rootLayout.setPadding(new Insets(10, 15, 10, 15));
     rootLayout.getStyleClass().add("page-background");
 
     addNavigationAndHelpToBorderPane(rootLayout, true, howToButton);
 
-    BorderPane.setMargin(boardArea, new Insets(0, 20, 0, 0));
+    BorderPane.setAlignment(gameBoardArea, Pos.CENTER);
+    BorderPane.setMargin(gameBoardArea, new Insets(0, 10, 0, 0));
+    BorderPane.setMargin(controlPanel, new Insets(0, 0, 0, 10));
   }
 
   @Override
   public Scene getScene() {
-    Scene scene = new Scene(rootLayout, 1000, 700);
+    Scene scene = new Scene(rootLayout, 1100, 750);
     scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
     return scene;
   }
@@ -151,40 +152,30 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   public void setPlayers(List<PlayerView> players, List<OverlayParams> overlays) {
     this.players = new ArrayList<>(players);
 
-    // Clear existing tokens
-    tokenPane.getChildren().clear();
+    this.tokenPane.getChildren().clear();
     tokenImages.clear();
 
-    // Create tokens for each player
     for (PlayerView player : players) {
       List<ImageView> pieces = playerUIService.createPlayerPieces(player);
       tokenImages.put(player.token(), pieces);
 
-      // Setup click handlers for pieces
       for (int i = 0; i < pieces.size(); i++) {
         final int pieceIndex = i;
         ImageView piece = pieces.get(i);
-
         piece.setOnMouseClicked(e -> handlePieceClicked(player.token(), pieceIndex));
-
-        // Add to token pane
-        tokenPane.getChildren().add(piece);
+        this.tokenPane.getChildren().add(piece);
       }
-
-      // Place pieces according to their positions
       updatePiecePositions(player);
     }
 
-    // Add overlays
-    boardUIService.addOverlays(overlayPane, overlays);
-
-    // Update status label
+    boardUIService.addOverlays(this.overlayPane, overlays);
     updateStatusForCurrentPlayer();
   }
 
   private void updatePiecePositions(PlayerView player) {
     List<ImageView> pieces = tokenImages.get(player.token());
-    if (pieces == null) return;
+    if (pieces == null)
+      return;
 
     for (int i = 0; i < Math.min(player.piecePositions().size(), pieces.size()); i++) {
       int position = player.piecePositions().get(i);
@@ -197,9 +188,9 @@ public class LudoBoardView extends AbstractGameView implements GameView {
       }
 
       if (position <= 0) {
-        boardUIService.placePieceAtHome(tokenPane, piece, player.token(), i);
+        boardUIService.placePieceAtHome(this.tokenPane, piece, player.token(), i);
       } else {
-        boardUIService.placePieceOnBoard(tokenPane, piece, position, i);
+        boardUIService.placePieceOnBoard(this.tokenPane, piece, position, i);
       }
     }
   }
@@ -243,10 +234,12 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   @Override
   protected void handleDiceRolled(Object data) {
-    if (hasActiveAnimation) return;
+    if (hasActiveAnimation)
+      return;
 
     int[] diceValues = diceService.parseDiceRoll(data);
-    if (diceValues.length == 0) return;
+    if (diceValues.length == 0)
+      return;
 
     int dieValue = diceValues[0];
     lastRoll = dieValue;
@@ -287,7 +280,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   @Override
   protected void handlePlayerMoved(Object data) {
-    if (hasActiveAnimation) return;
+    if (hasActiveAnimation)
+      return;
 
     try {
       hasActiveAnimation = true;
@@ -302,7 +296,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
         // Build path
         List<Integer> path = new ArrayList<>();
-        if (fromId > 0) path.add(fromId);
+        if (fromId > 0)
+          path.add(fromId);
         path.add(toId);
 
         // Animate the move
@@ -382,7 +377,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   private void updatePieceHighlights(PlayerView player, boolean isCurrentPlayer) {
     List<ImageView> pieces = tokenImages.get(player.token());
-    if (pieces == null) return;
+    if (pieces == null)
+      return;
 
     for (int i = 0; i < pieces.size(); i++) {
       ImageView piece = pieces.get(i);
@@ -405,7 +401,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   @Override
   public void showDice(int value) {
-    diceService.showDice(diceContainer, new int[] {value});
+    diceService.showDice(diceContainer, new int[] { value });
     lastRoll = value;
   }
 
@@ -444,7 +440,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   public void animateMoveAlongPath(
       String tokenName, int pieceIndex, List<Integer> path, Runnable onFinished) {
     if (hasActiveAnimation) {
-      if (onFinished != null) onFinished.run();
+      if (onFinished != null)
+        onFinished.run();
       return;
     }
 
@@ -481,7 +478,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
     if (hasActiveAnimation) {
-      if (onFinished != null) onFinished.run();
+      if (onFinished != null)
+        onFinished.run();
       return;
     }
 
@@ -492,7 +490,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
         endId,
         () -> {
           hasActiveAnimation = false;
-          if (onFinished != null) onFinished.run();
+          if (onFinished != null)
+            onFinished.run();
         });
   }
 }

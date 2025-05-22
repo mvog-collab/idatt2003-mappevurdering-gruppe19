@@ -31,7 +31,8 @@ public class ChoosePlayerPage implements BoardGameObserver {
   private Button savePlayerButton;
   private Button loadPlayersButton;
   private Button continueButton;
-  private HBox addedPlayersBox;
+  private FlowPane addedPlayersBox;
+  private FlowPane tokenSelectionBox;
   private ToggleGroup tokenToggleGroup;
 
   // Gateway reference
@@ -136,6 +137,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     nameField = new TextField();
     nameField.setPromptText("Enter name");
     nameField.getStyleClass().add("name-field-style");
+    nameField.setPrefWidth(200);
     HBox nameBox = new HBox(10, playerName, nameField);
     nameBox.getStyleClass().add("player-info-box");
     nameBox.setAlignment(Pos.CENTER);
@@ -151,9 +153,10 @@ public class ChoosePlayerPage implements BoardGameObserver {
 
     // --- Token selection ---
     tokenToggleGroup = new ToggleGroup();
-    HBox tokenSelectionBox = new HBox(10);
+    tokenSelectionBox = new FlowPane(10, 10);
     tokenSelectionBox.setAlignment(Pos.CENTER);
     tokenSelectionBox.getStyleClass().add("token-selection-box");
+    tokenSelectionBox.setPrefWrapLength(450);
     for (String token : TOKEN_NAMES) {
       ToggleButton tb = buildTokenButton(token);
       tokenButtons.put(token, tb);
@@ -161,7 +164,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     }
 
     // --- Added players placeholder ---
-    addedPlayersBox = new HBox(30);
+    addedPlayersBox = new FlowPane(15, 10);
     addedPlayersBox.setAlignment(Pos.CENTER);
 
     // --- Buttons ---
@@ -199,13 +202,12 @@ public class ChoosePlayerPage implements BoardGameObserver {
             addedPlayersBox,
             actionBox,
             loadSaveBox);
-    popupContent.setAlignment(Pos.CENTER);
     popupContent.setPadding(new Insets(20));
+    popupContent.setSpacing(15);
 
     root.getStyleClass().add("page-background");
     root.getChildren().setAll(popupContent);
     root.setAlignment(Pos.CENTER);
-    root.setSpacing(20);
   }
 
   /** Creates a styled token button */
@@ -263,7 +265,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     return loadPlayersButton;
   }
 
-  public HBox getAddedPlayersBox() {
+  public FlowPane getAddedPlayersBox() {
     return addedPlayersBox;
   }
 

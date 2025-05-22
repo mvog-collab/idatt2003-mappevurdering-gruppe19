@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -74,7 +75,8 @@ public class DefaultPlayerUIService implements PlayerUIService {
 
   @Override
   public void updateTurnIndicator(Node playerBox, boolean hasTurn) {
-    if (!(playerBox instanceof VBox box)) return;
+    if (!(playerBox instanceof VBox box))
+      return;
 
     // Update style class
     if (hasTurn) {
@@ -115,39 +117,31 @@ public class DefaultPlayerUIService implements PlayerUIService {
 
   @Override
   public Node createCurrentPlayerTurnBox(PlayerView currentPlayer) {
-    // Create the main container
     VBox container = new VBox();
     container.setSpacing(10);
     container.setPadding(new Insets(15));
     container.setAlignment(Pos.CENTER);
     container.getStyleClass().add("current-player-box");
-    container.setUserData("current-player-turn-box"); // For identification
+    container.setUserData("current-player-turn-box");
 
-    // Create the token image view
     ImageView tokenImg = new ImageView();
     tokenImg.setFitWidth(50);
     tokenImg.setFitHeight(50);
     tokenImg.setPreserveRatio(true);
 
-    // Create the turn message label
     Label turnMessageLabel = new Label();
     turnMessageLabel.setWrapText(true);
     turnMessageLabel.getStyleClass().add("turn-message");
 
-    // Create content box to hold token and message side by side
     HBox contentBox = new HBox(15);
     contentBox.setAlignment(Pos.CENTER_LEFT);
     contentBox.getChildren().addAll(tokenImg, turnMessageLabel);
     HBox.setHgrow(turnMessageLabel, Priority.ALWAYS);
 
-    // Add the content to the container
     container.getChildren().add(contentBox);
 
-    // Set default properties
-    container.setMinHeight(100);
-    container.setPrefWidth(400);
+    container.setMinHeight(Region.USE_PREF_SIZE);
 
-    // Update with player data if present
     updateCurrentPlayerTurnBox(container, currentPlayer, null);
 
     return container;
@@ -155,7 +149,8 @@ public class DefaultPlayerUIService implements PlayerUIService {
 
   @Override
   public void updateCurrentPlayerTurnBox(Node turnBox, PlayerView currentPlayer, String message) {
-    if (!(turnBox instanceof VBox container)) return;
+    if (!(turnBox instanceof VBox container))
+      return;
 
     // Find the components
     HBox contentBox = null;
@@ -175,7 +170,8 @@ public class DefaultPlayerUIService implements PlayerUIService {
       }
     }
 
-    if (tokenImg == null || turnMessageLabel == null) return;
+    if (tokenImg == null || turnMessageLabel == null)
+      return;
 
     if (currentPlayer == null) {
       // No player has a turn - show default state

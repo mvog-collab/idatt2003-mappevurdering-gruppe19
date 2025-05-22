@@ -63,8 +63,6 @@
     -fx-spacing: 5px;
     -fx-alignment: center;
     -fx-background-color: transparent;
-    -fx-pref-width: 220;
-    -fx-min-width: 200;
     -fx-alignment: CENTER;
     -fx-spacing: 18;
 }
@@ -99,10 +97,9 @@
 
 /* Game Control Panel */
 .game-control {
-    -fx-pref-width: 400px;
-    -fx-pref-height: 700px;
     -fx-alignment: top-center;
-    -fx-spacing: 50;
+    -fx-spacing: 20;
+    -fx-padding: 10;
 }
 
 /* Tile Number White */
@@ -401,8 +398,6 @@
 
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.2, 0, 1);
     -fx-alignment: center;
-    -fx-min-width: 80px;
-    -fx-max-width: 200px;
 }
 
 .loaded-player {
@@ -420,8 +415,6 @@
 
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.2, 0, 1);
     -fx-alignment: center;
-    -fx-min-width: 80px;
-    -fx-max-width: 500px;
 }
 
 .added-players-label {

@@ -13,6 +13,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
 public abstract class AbstractView implements BoardGameObserver {
   protected CompleteBoardGame gateway;
@@ -32,8 +34,7 @@ public abstract class AbstractView implements BoardGameObserver {
   protected abstract void handleEvent(BoardGameEvent event);
 
   protected Button createHowToPlayButton(String title, String instructions) {
-    ImageView icon =
-        new ImageView(new Image(getClass().getResource("/images/question-sign.png").toString()));
+    ImageView icon = new ImageView(new Image(getClass().getResource("/images/question-sign.png").toString()));
     icon.setFitWidth(24);
     icon.setFitHeight(24);
     icon.setPreserveRatio(true);
@@ -53,8 +54,7 @@ public abstract class AbstractView implements BoardGameObserver {
   }
 
   private Button createGoToHomeButton() {
-    ImageView icon =
-        new ImageView(new Image(getClass().getResource("/images/home.png").toString()));
+    ImageView icon = new ImageView(new Image(getClass().getResource("/images/home.png").toString()));
     icon.setFitWidth(24);
     icon.setFitHeight(24);
     icon.setPreserveRatio(true);
@@ -67,8 +67,7 @@ public abstract class AbstractView implements BoardGameObserver {
   }
 
   private Button createGoBackToGameSetupButton() {
-    ImageView icon =
-        new ImageView(new Image(getClass().getResource("/images/back.png").toString()));
+    ImageView icon = new ImageView(new Image(getClass().getResource("/images/back.png").toString()));
     icon.setFitWidth(24);
     icon.setFitHeight(24);
     icon.setPreserveRatio(true);
@@ -81,30 +80,40 @@ public abstract class AbstractView implements BoardGameObserver {
   }
 
   protected HBox createTopBarWithNavigationAndHelp(
-      boolean includeBackButtonToGameSetup, Button helpButton) {
-    HBox navBox = new HBox(20);
-    navBox.setPadding(new Insets(10));
+      boolean includeBackButtonToGameSetup, Button helpButtonInstance) {
+    HBox topBar = new HBox();
+    topBar.setPadding(new Insets(10));
+    topBar.setAlignment(Pos.CENTER_LEFT);
 
+    HBox leftAlignedButtons = new HBox(10);
+    leftAlignedButtons.setAlignment(Pos.CENTER_LEFT);
     Button homeButton = createGoToHomeButton();
-    navBox.getChildren().add(homeButton);
+    leftAlignedButtons.getChildren().add(homeButton);
 
     if (includeBackButtonToGameSetup) {
       Button backButton = createGoBackToGameSetupButton();
-      navBox.getChildren().add(backButton);
+      leftAlignedButtons.getChildren().add(backButton);
     }
 
-    if (helpButton != null) {
-      HBox rightAlignBox = new HBox(helpButton);
-      navBox.getChildren().addAll(rightAlignBox);
-    }
+    topBar.getChildren().add(leftAlignedButtons);
 
-    return navBox;
+    if (helpButtonInstance != null) {
+      Region spacer = new Region();
+      HBox.setHgrow(spacer, Priority.ALWAYS);
+
+      HBox rightAlignedButton = new HBox(helpButtonInstance);
+      rightAlignedButton.setAlignment(Pos.CENTER_RIGHT);
+
+      topBar.getChildren().addAll(spacer, rightAlignedButton);
+    }
+    topBar.getStyleClass().add("page-background");
+
+    return topBar;
   }
 
   protected void addNavigationAndHelpToBorderPane(
       BorderPane root, boolean includeBackButtonToGameSetup, Button helpButton) {
     HBox topBar = createTopBarWithNavigationAndHelp(includeBackButtonToGameSetup, helpButton);
-    BorderPane.setAlignment(topBar, Pos.TOP_LEFT);
-    root.getChildren().add(topBar);
+    root.setTop(topBar);
   }
 }
