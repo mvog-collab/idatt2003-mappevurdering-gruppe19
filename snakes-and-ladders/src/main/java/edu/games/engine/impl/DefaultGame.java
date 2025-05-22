@@ -71,12 +71,12 @@ public final class DefaultGame implements Game {
   }
 
   @Override
-  public Optional<Player> winner() {
+  public Optional<Player> getWinner() {
     return Optional.ofNullable(winner);
   }
 
   @Override
-  public List<Player> players() {
+  public List<Player> getPlayers() {
     return players;
   }
 

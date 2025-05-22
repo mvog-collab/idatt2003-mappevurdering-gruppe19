@@ -4,16 +4,16 @@ import edu.games.engine.board.Tile;
 
 /** Represents an individual game piece for a player */
 public class PlayerPiece {
-  private final int id; // 0-3 to identify each piece
+  private final int playerPieceId;
   private Tile currentTile;
 
-  public PlayerPiece(int id) {
-    this.id = id;
+  public PlayerPiece(int playerPieceId) {
+    this.playerPieceId = playerPieceId;
     this.currentTile = null; // Start at home
   }
 
-  public int getId() {
-    return id;
+  public int getPlayerPieceId() {
+    return playerPieceId;
   }
 
   public Tile getCurrentTile() {

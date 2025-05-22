@@ -3,11 +3,11 @@ package edu.ntnu.idatt2003.ui.snl.controller;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractGameController;
-import edu.ntnu.idatt2003.ui.snl.view.BoardView;
+import edu.ntnu.idatt2003.ui.snl.view.SnlBoardView;
 
-public class BoardController extends AbstractGameController<BoardView> {
+public class SnlBoardController extends AbstractGameController<SnlBoardView> {
 
-  public BoardController(BoardView boardView, CompleteBoardGame gateway) {
+  public SnlBoardController(SnlBoardView boardView, CompleteBoardGame gateway) {
     super(boardView, gateway);
   }
 
@@ -30,7 +30,7 @@ public class BoardController extends AbstractGameController<BoardView> {
 
   private void handlePlayerMovement(PlayerView player, int rolled) {
     if (rolled != 12) {
-      String token = player.token();
+      String token = player.playerToken();
       int startId = player.tileId();
       int pathEndId = Math.min(startId + rolled, gateway.boardSize());
 
@@ -51,7 +51,7 @@ public class BoardController extends AbstractGameController<BoardView> {
     return gateway.players().stream().filter(PlayerView::hasTurn).findFirst().orElse(null);
   }
 
-  public BoardView getView() {
+  public SnlBoardView getView() {
     return view;
   }
 }

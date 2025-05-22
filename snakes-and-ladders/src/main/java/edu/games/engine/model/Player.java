@@ -15,10 +15,10 @@ public final class Player {
 
   public Player(String name, Token token, LocalDate birthday) {
     if (name == null || name.isBlank()) {
-      throw new ValidationException("Invalid name: cannot be empty");
+      throw new ValidationException("Invalid playerName: cannot be empty");
     }
     if (token == null) {
-      throw new ValidationException("Invalid token: cannot be null");
+      throw new ValidationException("Invalid playerToken: cannot be null");
     }
     if (birthday == null) {
       throw new ValidationException("Invalid birthday: cannot be null");
@@ -42,7 +42,7 @@ public final class Player {
     return token;
   }
 
-  public LocalDate getBirtday() {
+  public LocalDate getBirthday() {
     return birthday;
   }
 
@@ -83,7 +83,7 @@ public final class Player {
   }
 
   // Check if player has at least one piece at home
-  public boolean hasHomepieces() {
+  public boolean hasHomePieces() {
     return pieces.stream().anyMatch(PlayerPiece::isAtHome);
   }
 

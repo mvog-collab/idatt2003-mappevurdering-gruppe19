@@ -12,14 +12,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class SnlPage extends AbstractMenuView {
+public class SnlFrontPage extends AbstractMenuView {
   private Scene scene;
   private final Button chooseBoardButton;
   private final MenuUIService menuUIService;
   private BorderPane rootLayout;
   private ImageView boardPreview;
 
-  public SnlPage() {
+  public SnlFrontPage() {
     this.menuUIService = new MenuUIService();
     this.rootLayout = new BorderPane(); // Initialize BorderPane
     this.chooseBoardButton = menuUIService.createMenuButton("Choose board", "start-page-button");

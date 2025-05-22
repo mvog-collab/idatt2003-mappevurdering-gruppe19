@@ -70,7 +70,7 @@ public final class LudoPath implements MovementPath {
   }
 
   @Override
-  public Tile next(Tile from, int steps, LudoColor owner) {
+  public Tile nextTile(Tile from, int steps, LudoColor owner) {
     if (from == null) { // Piece is at home
       return (steps == 6) ? startingPoints.get(owner) : null;
     }
@@ -83,9 +83,9 @@ public final class LudoPath implements MovementPath {
       LudoTile candidateNextTile = null;
 
       if (currentTile instanceof LudoRingTile currentRingTile) {
-        if (currentRingTile.id() == ownerPreEntryPointRingId
+        if (currentRingTile.tileId() == ownerPreEntryPointRingId
             && currentRingTile.next(null) != null
-            && currentRingTile.next(null).id() == ownerEntryPointRingId) {
+            && currentRingTile.next(null).tileId() == ownerEntryPointRingId) {
           candidateNextTile = goals.get(owner).getFirst();
         } else {
           candidateNextTile = currentRingTile.next(null);

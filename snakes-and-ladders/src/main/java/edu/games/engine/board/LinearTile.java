@@ -1,19 +1,19 @@
 package edu.games.engine.board;
 
 public class LinearTile implements Tile {
-  private final int id;
-  LinearTile next;
+  private final int tileId;
+  LinearTile nextTile;
 
-  public LinearTile(int id) {
-    this.id = id;
+  public LinearTile(int tileId) {
+    this.tileId = tileId;
   }
 
   @Override
-  public int id() {
-    return id;
+  public int tileId() {
+    return tileId;
   }
 
   public LinearTile next() {
-    return next;
+    return nextTile;
   }
 }

@@ -51,7 +51,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     // Add player to gateway - model will notify observers
     gateway.addPlayer(name, token, birthday);
 
-    // Clear input field and disable token button
+    // Clear input field and disable playerToken button
     view.getNameField().clear();
     view.disableToken(token);
   }
@@ -68,7 +68,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     try {
       List<String[]> rows =
           gateway.players().stream()
-              .map(p -> new String[] {p.name(), p.token(), p.birthday().toString()})
+              .map(p -> new String[] {p.playerName(), p.playerToken(), p.birthday().toString()})
               .toList();
       PlayerCsv.save(rows, out.toPath());
     } catch (IOException ex) {

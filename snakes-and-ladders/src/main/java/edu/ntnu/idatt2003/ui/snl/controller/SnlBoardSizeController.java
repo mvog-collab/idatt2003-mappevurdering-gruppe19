@@ -2,11 +2,11 @@ package edu.ntnu.idatt2003.ui.snl.controller;
 
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractPopupController;
-import edu.ntnu.idatt2003.ui.snl.view.BoardSizePage;
+import edu.ntnu.idatt2003.ui.snl.view.SnlBoardSizePage;
 
-public class BoardSizeController extends AbstractPopupController<BoardSizePage> {
+public class SnlBoardSizeController extends AbstractPopupController<SnlBoardSizePage> {
 
-  public BoardSizeController(BoardSizePage view, CompleteBoardGame gateway) {
+  public SnlBoardSizeController(SnlBoardSizePage view, CompleteBoardGame gateway) {
     super(view, gateway);
   }
 

@@ -50,7 +50,7 @@ public final class SnlGateway extends AbstractGameGateway {
     String resource = "/boards/board" + size + ".json";
     BoardAdapter.MapData map = BoardFactory.loadFromClasspath(resource);
     this.gameStrategy = GameStrategyFactory.createSnlStrategy(map);
-    Board board = boardFactory.create(map.size());
+    Board board = boardFactory.create(map.boardSize());
     Dice dice = diceFactory.create();
     game = new DefaultGame(board, gameStrategy, new ArrayList<>(), dice);
 
@@ -61,7 +61,7 @@ public final class SnlGateway extends AbstractGameGateway {
 
   @Override
   public void newGame(BoardAdapter.MapData data) {
-    LinearBoard board = new LinearBoard(data.size());
+    LinearBoard board = new LinearBoard(data.boardSize());
     Dice dice = new RandomDice(2);
     game = new DefaultGame(board, gameStrategy, new ArrayList<>(), dice);
   }
@@ -69,7 +69,7 @@ public final class SnlGateway extends AbstractGameGateway {
   @Override
   public void resetGame() {
     if (game == null) return;
-    game.players().forEach(p -> p.moveTo(game.board().start()));
+    game.getPlayers().forEach(p -> p.moveTo(game.board().start()));
     game.setWinner(null);
     game.setCurrentPlayerIndex(0);
 
@@ -77,22 +77,22 @@ public final class SnlGateway extends AbstractGameGateway {
   }
 
   @Override
-  public void addPlayer(String name, String token, LocalDate birthday) {
+  public void addPlayer(String playerName, String playerToken, LocalDate birthday) {
     Objects.requireNonNull(game, "call newGame first");
-    Player newPlayer = new Player(name, mapStringToToken(token), birthday);
+    Player newPlayer = new Player(playerName, mapStringToToken(playerToken), birthday);
     newPlayer.moveTo(game.board().start()); // Set player on first tile
-    game.players().add(newPlayer);
+    game.getPlayers().add(newPlayer);
 
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.PLAYER_ADDED, newPlayer));
   }
 
   @Override
   public int rollDice() {
-    if (game == null || game.players().isEmpty()) return 0;
+    if (game == null || game.getPlayers().isEmpty()) return 0;
 
     // Save current player info for notifications
     Player currentPlayer = game.currentPlayer();
-    int startPosition = currentPlayer.getCurrentTile().id();
+    int startPosition = currentPlayer.getCurrentTile().tileId();
 
     // Use DefaultGame.playTurn() to handle the turn logic
     int rollValue = game.playTurn();
@@ -102,18 +102,18 @@ public final class SnlGateway extends AbstractGameGateway {
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.DICE_ROLLED, lastDiceValues));
 
     // Only send move notification if player actually moved
-    if (currentPlayer.getCurrentTile().id() != startPosition) {
+    if (currentPlayer.getCurrentTile().tileId() != startPosition) {
       notifyObservers(
           new BoardGameEvent(
               BoardGameEvent.EventType.PLAYER_MOVED,
               new PlayerMoveData(
-                  currentPlayer, startPosition, currentPlayer.getCurrentTile().id())));
+                  currentPlayer, startPosition, currentPlayer.getCurrentTile().tileId())));
     }
 
     // Check for winner
-    if (game.winner().isPresent()) {
+    if (game.getWinner().isPresent()) {
       notifyObservers(
-          new BoardGameEvent(BoardGameEvent.EventType.WINNER_DECLARED, game.winner().get()));
+          new BoardGameEvent(BoardGameEvent.EventType.WINNER_DECLARED, game.getWinner().get()));
     }
 
     // Notify about current player (might have changed)
@@ -127,25 +127,25 @@ public final class SnlGateway extends AbstractGameGateway {
   public int boardSize() {
     if (game == null) return 0;
     LinearBoard linearBoard = (LinearBoard) game.board();
-    return ((LinearTile) linearBoard.move(linearBoard.start(), Integer.MAX_VALUE)).id();
+    return ((LinearTile) linearBoard.move(linearBoard.start(), Integer.MAX_VALUE)).tileId();
   }
 
   @Override
   public List<PlayerView> players() {
-    if (game == null || game.players().isEmpty()) {
+    if (game == null || game.getPlayers().isEmpty()) {
       return List.of();
     }
 
     Token turnToken = game.currentPlayer().getToken();
 
-    return game.players().stream()
+    return game.getPlayers().stream()
         .map(
             p ->
                 new PlayerView(
                     p.getName(),
                     p.getToken().name(),
-                    p.getCurrentTile().id(),
-                    p.getBirtday(),
+                    p.getCurrentTile().tileId(),
+                    p.getBirthday(),
                     p.getToken() == turnToken))
         .toList();
   }

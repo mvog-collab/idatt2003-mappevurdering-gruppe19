@@ -32,21 +32,21 @@ class LinearBoardTest {
     @Test
     void shouldReturnStartTile() {
       Tile start = board.start();
-      assertEquals(0, start.id());
+      assertEquals(0, start.tileId());
     }
 
     @Test
     void shouldMoveCorrectNumberOfSteps() {
       Tile start = board.start();
       Tile moved = board.move(start, 3);
-      assertEquals(3, moved.id());
+      assertEquals(3, moved.tileId());
     }
 
     @Test
     void shouldStopAtLastTileIfStepsTooFar() {
       Tile start = board.start();
       Tile moved = board.move(start, 10);
-      assertEquals(5, moved.id());
+      assertEquals(5, moved.tileId());
     }
 
     @Test
@@ -59,7 +59,7 @@ class LinearBoardTest {
     void shouldThrowIfTileIsNotLinearTile() {
       Tile fakeTile = new Tile() {
         @Override
-        public int id() {
+        public int tileId() {
           return 0;
         }
       };
@@ -91,7 +91,7 @@ class LinearBoardTest {
       LinearBoard board = new LinearBoard(3);
       Tile fakeTile = new Tile() {
         @Override
-        public int id() {
+        public int tileId() {
           return 1;
         }
       };

@@ -51,12 +51,12 @@ public final class LudoRuleEngine implements RuleEngine {
   }
 
   private boolean isOnMainRing(Tile tile) {
-    int id = tile.id();
+    int id = tile.tileId();
     return id > 0 && id <= 52;
   }
 
   private void bumpOpponentsFromTile(Player currentPlayer, Tile tile, DefaultGame game) {
-    game.players().stream()
+    game.getPlayers().stream()
         .filter(other -> other != currentPlayer)
         .forEach(
             other ->
@@ -66,7 +66,7 @@ public final class LudoRuleEngine implements RuleEngine {
   }
 
   private boolean shouldBumpPiece(PlayerPiece piece, Tile tile) {
-    return piece.isOnBoard() && piece.getCurrentTile().id() == tile.id();
+    return piece.isOnBoard() && piece.getCurrentTile().tileId() == tile.tileId();
   }
 
   private void sendPieceHome(Player bumper, Player bumpedPlayer, PlayerPiece piece, Tile fromTile) {
@@ -76,7 +76,7 @@ public final class LudoRuleEngine implements RuleEngine {
             () ->
                 String.format(
                     "%s bumps %s's piece back to home from tile %d",
-                    bumper.getName(), bumpedPlayer.getName(), fromTile.id()));
+                    bumper.getName(), bumpedPlayer.getName(), fromTile.tileId()));
   }
 
   private int goalBaseId(Player player) {
@@ -91,7 +91,7 @@ public final class LudoRuleEngine implements RuleEngine {
 
   private boolean isPieceInFinalGoal(PlayerPiece piece, int goalBaseId, int finalGoalTileId) {
     return piece.isOnBoard()
-        && piece.getCurrentTile().id() >= goalBaseId
-        && piece.getCurrentTile().id() == finalGoalTileId;
+        && piece.getCurrentTile().tileId() >= goalBaseId
+        && piece.getCurrentTile().tileId() == finalGoalTileId;
   }
 }

@@ -68,7 +68,7 @@ public final class LudoGateway extends AbstractGameGateway {
     if (game == null)
       return;
 
-    game.players().forEach(p -> p.getPieces().forEach(piece -> piece.moveTo(null)));
+    game.getPlayers().forEach(p -> p.getPieces().forEach(piece -> piece.moveTo(null)));
     game.setCurrentPlayerIndex(0);
     winner = null;
 
@@ -77,17 +77,17 @@ public final class LudoGateway extends AbstractGameGateway {
 
   // Player management
   @Override
-  public void addPlayer(String name, String token, LocalDate birthday) {
+  public void addPlayer(String playerName, String playerToken, LocalDate birthday) {
     Objects.requireNonNull(game, "Call newGame before adding players");
-    Player player = new Player(name, mapStringToToken(token), birthday);
-    game.players().add(player);
+    Player player = new Player(playerName, mapStringToToken(playerToken), birthday);
+    game.getPlayers().add(player);
 
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.PLAYER_ADDED, player));
   }
 
   // UI interaction helpers
   public void selectPiece(int pieceIndex) {
-    if (game == null || game.players().isEmpty()) {
+    if (game == null || game.getPlayers().isEmpty()) {
       return;
     }
 
@@ -100,16 +100,16 @@ public final class LudoGateway extends AbstractGameGateway {
         new BoardGameEvent(BoardGameEvent.EventType.PIECE_SELECTED, selectedPieceIndex));
   }
 
-  // Gameplay – public entry points
+  //  Gameplay – public entry points
   @Override
   public int rollDice() {
-    if (game == null || game.players().isEmpty() || winner != null)
+    if (game == null || game.getPlayers().isEmpty() || winner != null)
       return 0;
     return performDiceRoll();
   }
 
   public int applyPieceMovement() {
-    if (game == null || game.players().isEmpty() || winner != null || selectedPieceIndex < 0) {
+    if (game == null || game.getPlayers().isEmpty() || winner != null || selectedPieceIndex < 0) {
       return 0;
     }
     int roll = lastDiceValues.get(0);
@@ -154,12 +154,12 @@ public final class LudoGateway extends AbstractGameGateway {
       return false;
     if (from == null)
       return true;
-    return to.id() != from.id();
+    return to.tileId() != from.tileId();
   }
 
   private void executeMove(PlayerPiece piece, Tile destination) {
-    if (game != null && game.players() != null) {
-      for (Player p : game.players()) {
+    if (game != null && game.getPlayers() != null) {
+      for (Player p : game.getPlayers()) {
         if (p.getPieces().contains(piece)) {
           break;
         }
@@ -197,7 +197,7 @@ public final class LudoGateway extends AbstractGameGateway {
   }
 
   private void passTurnToNextPlayer(Player current) {
-    int nextIdx = (game.players().indexOf(current) + 1) % game.players().size();
+    int nextIdx = (game.getPlayers().indexOf(current) + 1) % game.getPlayers().size();
     game.setCurrentPlayerIndex(nextIdx);
   }
 
@@ -222,18 +222,17 @@ public final class LudoGateway extends AbstractGameGateway {
 
   @Override
   public List<PlayerView> players() {
-    if (game == null || game.players().isEmpty())
-      return List.of();
+    if (game == null || game.getPlayers().isEmpty()) return List.of();
 
     Token turnToken = game.currentPlayer().getToken();
-    return game.players().stream().map(p -> mapToView(p, turnToken)).toList();
+    return game.getPlayers().stream().map(p -> mapToView(p, turnToken)).toList();
   }
 
   private PlayerView mapToView(Player p, Token turnToken) {
     List<Integer> positions = p.getPieces().stream()
         .map(
             piece -> {
-              return piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id();
+              return piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().tileId();
             })
         .toList();
     int activeIndex = p.getToken() == turnToken ? selectedPieceIndex : -1;
@@ -241,7 +240,7 @@ public final class LudoGateway extends AbstractGameGateway {
         p.getName(),
         p.getToken().name(),
         positions,
-        p.getBirtday(),
+        p.getBirthday(),
         p.getToken() == turnToken,
         activeIndex);
   }
