@@ -9,21 +9,45 @@ import edu.games.engine.model.PlayerPiece;
 import edu.ntnu.idatt2003.utils.Log;
 import java.util.List;
 
+/**
+ * Rule engine for Ludo, implementing color-specific goal paths,
+ * bumping logic, and win conditions.
+ */
 public final class LudoRuleEngine implements RuleEngine {
 
   private final LudoPath path;
 
+  /**
+   * Creates a new Ludo rule engine using the specified movement path.
+   *
+   * @param path the Ludo movement path
+   */
   public LudoRuleEngine(LudoPath path) {
     this.path = path;
   }
 
-  /** Grants an extra turn when the first (only) die shows a six. */
+  /**
+   * Grants an extra turn when the first (only) die shows a six.
+   *
+   * @param player the player taking the turn
+   * @param diceValues list of rolled dice values
+   * @param game the current game context
+   * @return true if an extra turn is granted
+   */
   @Override
   public boolean grantsExtraTurn(Player player, List<Integer> diceValues, DefaultGame game) {
     return !diceValues.isEmpty() && diceValues.get(0) == 6;
   }
 
-  /** Applies post-move effects such as bumping opponent pieces on the main ring. */
+  /**
+   * Applies post-move effects such as bumping opponent pieces
+   * from a shared tile on the main ring.
+   *
+   * @param player the player who moved
+   * @param piece the piece that was moved
+   * @param landedTile the tile the piece landed on
+   * @param game the current game context
+   */
   @Override
   public void applyPostLandingEffects(
       Player player, PlayerPiece piece, Tile landedTile, DefaultGame game) {
@@ -34,13 +58,20 @@ public final class LudoRuleEngine implements RuleEngine {
     }
   }
 
-  /** A player wins when all four of their pieces reach the final goal field for their colour. */
+  /**
+   * Checks if the player has won. A player wins when all
+   * four pieces reach the final tile in the goal path.
+   *
+   * @param player the player to check
+   * @param game the current game
+   * @return true if the player has won
+   */
   @Override
   public boolean hasWon(Player player, DefaultGame game) {
     if (player == null) return false;
 
     int goalBaseId = goalBaseId(player);
-    int finalGoalTileId = goalBaseId + 5; // index 5 in the goal stretch
+    int finalGoalTileId = goalBaseId + 5;
 
     return player.getPieces().stream()
         .allMatch(p -> isPieceInFinalGoal(p, goalBaseId, finalGoalTileId));
