@@ -92,7 +92,7 @@ public final class SnlGateway extends AbstractGameGateway {
 
     // Save current player info for notifications
     Player currentPlayer = game.currentPlayer();
-    int startPosition = currentPlayer.getCurrentTile().id();
+    int startPosition = currentPlayer.getCurrentTile().tileId();
 
     // Use DefaultGame.playTurn() to handle the turn logic
     int rollValue = game.playTurn();
@@ -102,12 +102,12 @@ public final class SnlGateway extends AbstractGameGateway {
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.DICE_ROLLED, lastDiceValues));
 
     // Only send move notification if player actually moved
-    if (currentPlayer.getCurrentTile().id() != startPosition) {
+    if (currentPlayer.getCurrentTile().tileId() != startPosition) {
       notifyObservers(
           new BoardGameEvent(
               BoardGameEvent.EventType.PLAYER_MOVED,
               new PlayerMoveData(
-                  currentPlayer, startPosition, currentPlayer.getCurrentTile().id())));
+                  currentPlayer, startPosition, currentPlayer.getCurrentTile().tileId())));
     }
 
     // Check for winner
@@ -127,7 +127,7 @@ public final class SnlGateway extends AbstractGameGateway {
   public int boardSize() {
     if (game == null) return 0;
     LinearBoard linearBoard = (LinearBoard) game.board();
-    return ((LinearTile) linearBoard.move(linearBoard.start(), Integer.MAX_VALUE)).id();
+    return ((LinearTile) linearBoard.move(linearBoard.start(), Integer.MAX_VALUE)).tileId();
   }
 
   @Override
@@ -144,7 +144,7 @@ public final class SnlGateway extends AbstractGameGateway {
                 new PlayerView(
                     p.getName(),
                     p.getToken().name(),
-                    p.getCurrentTile().id(),
+                    p.getCurrentTile().tileId(),
                     p.getBirtday(),
                     p.getToken() == turnToken))
         .toList();

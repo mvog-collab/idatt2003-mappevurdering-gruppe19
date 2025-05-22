@@ -12,7 +12,7 @@ public final class LudoRingTile implements LudoTile {
   }
 
   @Override
-  public int id() {
+  public int tileId() {
     return tileId;
   }
 
@@ -42,6 +42,6 @@ public final class LudoRingTile implements LudoTile {
           case YELLOW -> 40;
         };
 
-    return id() == entryPoint && currentId != entryPoint;
+    return tileId() == entryPoint && currentId != entryPoint;
   }
 }

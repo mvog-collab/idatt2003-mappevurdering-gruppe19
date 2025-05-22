@@ -249,8 +249,8 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
 
     if (data instanceof BoardGame.PlayerMoveData moveData) {
       String token = moveData.getPlayer().getToken().name();
-      int fromId = moveData.getFromTile().id();
-      int toId = moveData.getToTile().id();
+      int fromId = moveData.getFromTile().tileId();
+      int toId = moveData.getToTile().tileId();
 
       hasActiveAnimation = true;
 

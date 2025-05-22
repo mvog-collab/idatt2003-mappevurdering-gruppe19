@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class LinearTileTest {
 
   @Test
-  void shouldReturnCorrectId() {
+  void shouldReturnCorrectTileId() {
     LinearTile tile = new LinearTile(7);
-    assertEquals(7, tile.id());
+    assertEquals(7, tile.tileId());
   }
 
   @Test

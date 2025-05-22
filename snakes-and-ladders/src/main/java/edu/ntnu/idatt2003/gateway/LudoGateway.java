@@ -227,7 +227,7 @@ public final class LudoGateway extends AbstractGameGateway {
   private PlayerView mapToView(Player p, Token turnToken) {
     List<Integer> positions =
         p.getPieces().stream()
-            .map(piece -> piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id())
+            .map(piece -> piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().tileId())
             .toList();
     int activeIndex = p.getToken() == turnToken ? selectedPieceIndex : -1;
     return new PlayerView(

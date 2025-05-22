@@ -43,7 +43,7 @@ public final class SnlRuleEngine implements RuleEngine {
   }
 
   private Tile applySnakesOrLadders(Player player, Tile tile, LinearBoard board) {
-    int pos = tile.id();
+    int pos = tile.tileId();
     Integer newPos = snakes.getOrDefault(pos, ladders.get(pos));
 
     if (newPos != null) {
@@ -63,14 +63,14 @@ public final class SnlRuleEngine implements RuleEngine {
   }
 
   private void applyBumping(Player currentPlayer, Tile tile, LinearBoard board, DefaultGame game) {
-    if (tile.id() == board.start().id()) return;
+    if (tile.tileId() == board.start().tileId()) return;
 
     game.players().stream()
         .filter(
             p ->
                 p != currentPlayer
                     && p.getCurrentTile() != null
-                    && p.getCurrentTile().id() == tile.id())
+                    && p.getCurrentTile().tileId() == tile.tileId())
         .forEach(
             other -> {
               other.moveTo(board.start());
@@ -81,7 +81,7 @@ public final class SnlRuleEngine implements RuleEngine {
                               + " bumps "
                               + other.getName()
                               + " back to start from tile "
-                              + tile.id());
+                              + tile.tileId());
             });
   }
 

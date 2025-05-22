@@ -11,7 +11,7 @@ public final class LudoGoalTile implements LudoTile {
   }
 
   @Override
-  public int id() {
+  public int tileId() {
     return tileId;
   }
 
@@ -24,7 +24,7 @@ public final class LudoGoalTile implements LudoTile {
   }
 
   @Override
-  public LudoTile next(LudoColor ownerIgnored) {
+  public LudoTile next(LudoColor player) {
     return nextTile;
   }
 }

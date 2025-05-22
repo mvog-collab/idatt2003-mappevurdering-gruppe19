@@ -22,7 +22,7 @@ class BoardGameTest {
   private static class DummyTile implements Tile {
     private final int id;
     DummyTile(int id) { this.id = id; }
-    @Override public int id() { return id; }
+    @Override public int tileId() { return id; }
   }
 
   private static class TestableBoardGame extends BoardGame {

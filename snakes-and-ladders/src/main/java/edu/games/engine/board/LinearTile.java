@@ -9,7 +9,7 @@ public class LinearTile implements Tile {
   }
 
   @Override
-  public int id() {
+  public int tileId() {
     return tileId;
   }
 

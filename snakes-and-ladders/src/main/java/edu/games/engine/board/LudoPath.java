@@ -63,7 +63,7 @@ public final class LudoPath implements MovementPath {
               + " to enter goal at tile "
               + (entryIndex + 1)
               + " leading to goal tile "
-              + lane.getFirst().id());
+              + lane.getFirst().tileId());
     }
   }
 
@@ -103,9 +103,9 @@ public final class LudoPath implements MovementPath {
     for (int i = 0; i < steps; i++) {
       // Check if we're on the ring and about to pass our entry point
       if (tile instanceof LudoRingTile
-          && tile.id() != entryPointId
+          && tile.tileId() != entryPointId
           && // Not currently on entry point
-          tile.next(player).id() == entryPointId) { // Next would be the entry point
+          tile.next(player).tileId() == entryPointId) { // Next would be the entry point
 
         // Instead of continuing on the ring, we should enter the goal path
         tile = goals.get(player).getFirst();

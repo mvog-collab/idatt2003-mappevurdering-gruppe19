@@ -300,8 +300,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
       if (data instanceof PlayerMoveData moveData) {
         String tokenName = moveData.getPlayer().getToken().name();
-        int fromId = moveData.getFromTile() != null ? moveData.getFromTile().id() : 0;
-        int toId = moveData.getToTile() != null ? moveData.getToTile().id() : 0;
+        int fromId = moveData.getFromTile() != null ? moveData.getFromTile().tileId() : 0;
+        int toId = moveData.getToTile() != null ? moveData.getToTile().tileId() : 0;
 
         // Find piece index
         int pieceIndex = findPieceIndex(tokenName, fromId);
