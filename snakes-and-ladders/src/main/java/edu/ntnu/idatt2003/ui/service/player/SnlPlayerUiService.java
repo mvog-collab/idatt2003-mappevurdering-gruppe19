@@ -16,7 +16,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class DefaultPlayerUIService implements PlayerUIService {
+public class SnlPlayerUiService implements PlayerUIService {
 
   @Override
   public Node createPlayerBox(PlayerView player, boolean hasTurn) {
@@ -29,11 +29,11 @@ public class DefaultPlayerUIService implements PlayerUIService {
     box.setMaxWidth(150);
     box.setPrefHeight(50);
 
-    // Store token as user data for lookup
-    box.setUserData(player.token());
+    // Store playerToken as user data for lookup
+    box.setUserData(player.playerToken());
 
-    // Create token image
-    ImageView tokenImg = createTokenImage(player.token());
+    // Create playerToken image
+    ImageView tokenImg = createTokenImage(player.playerToken());
     tokenImg.setFitWidth(50);
     tokenImg.setFitHeight(50);
 
@@ -42,9 +42,9 @@ public class DefaultPlayerUIService implements PlayerUIService {
     turnLabel.getStyleClass().add("turn-indicator");
     turnLabel.setVisible(hasTurn);
 
-    // Create name label
-    Label nameLabel = new Label(player.name());
-    nameLabel.getStyleClass().add("player-name");
+    // Create playerName label
+    Label nameLabel = new Label(player.playerName());
+    nameLabel.getStyleClass().add("player-playerName");
 
     // Assemble box
     box.getChildren().addAll(turnLabel, tokenImg, nameLabel);
@@ -53,7 +53,7 @@ public class DefaultPlayerUIService implements PlayerUIService {
     if (hasTurn) {
       box.getStyleClass().add("current-player");
 
-      // Add glow effect to token
+      // Add glow effect to playerToken
       DropShadow glow = new DropShadow(20, Color.GOLD);
       glow.setSpread(0.5);
       tokenImg.setEffect(glow);
@@ -91,7 +91,7 @@ public class DefaultPlayerUIService implements PlayerUIService {
         label.setVisible(hasTurn);
       }
 
-      // Update token glow effect
+      // Update playerToken glow effect
       if (node instanceof ImageView token) {
         if (hasTurn) {
           DropShadow glow = new DropShadow(20, Color.GOLD);
@@ -182,8 +182,8 @@ public class DefaultPlayerUIService implements PlayerUIService {
         container.getStyleClass().remove("active");
       } else {
         // Player has a turn - update display
-        String playerName = currentPlayer.name();
-        String tokenName = currentPlayer.token();
+        String playerName = currentPlayer.playerName();
+        String tokenName = currentPlayer.playerToken();
 
         // Update the message
         if (message != null && !message.isEmpty()) {

@@ -8,16 +8,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class LudoRingTileTest {
 
   @Test
-  void shouldReturnCorrectId() {
+  void shouldReturnCorrectTileId() {
     LudoRingTile tile = new LudoRingTile(14);
-    assertEquals(14, tile.id());
+    assertEquals(14, tile.tileId());
   }
 
   @Test
   void shouldReturnNextTile() {
     LudoRingTile first = new LudoRingTile(1);
     LudoRingTile second = new LudoRingTile(2);
-    first.next(second);
+    first.setNext(second);
     assertSame(second, first.next(LudoColor.BLUE));
   }
 

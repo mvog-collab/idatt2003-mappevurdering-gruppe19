@@ -27,24 +27,26 @@ public class SnlBoardUIService implements BoardUIService {
 
   @Override
   public StackPane createBoardPane(int size) {
-    int width, height;
+    // Calculate dimensions based on board boardSize
+    int width;
+    int height;
     switch (size) {
-      case 64:
+      case 64 -> {
         width = 8;
         height = 8;
-        break;
-      case 90:
+      }
+      case 90 -> {
         width = 9;
         height = 10;
-        break;
-      case 120:
+      }
+      case 120 -> {
         width = 10;
         height = 12;
-        break;
-      default:
-        throw new IllegalArgumentException("Unsupported board size: " + size);
+      }
+      default -> throw new IllegalArgumentException("Unsupported board size: " + size);
     }
 
+    // Create the grid for the board
     GridPane boardGrid = new GridPane();
     boardGrid.getStyleClass().add("board-container");
 

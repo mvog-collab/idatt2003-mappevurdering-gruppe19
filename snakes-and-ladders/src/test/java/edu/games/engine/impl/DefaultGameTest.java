@@ -3,7 +3,6 @@ package edu.games.engine.impl;
 import edu.games.engine.board.Board;
 import edu.games.engine.board.Tile;
 import edu.games.engine.dice.Dice;
-import edu.games.engine.exception.RuleViolationException;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
 import edu.games.engine.rule.RuleEngine;
@@ -75,7 +74,7 @@ class DefaultGameTest {
   }
 
   @Test
-  void shouldDeclareWinner() {
+  void shouldDeclareGetWinner() {
     when(dice.roll()).thenReturn(3);
     when(strategy.movePiece(player, -1, 3, game)).thenReturn(tile);
     when(strategy.processDiceRoll(player, 3, game)).thenReturn(false);
@@ -83,7 +82,7 @@ class DefaultGameTest {
 
     game.playTurn();
 
-    assertEquals(Optional.of(player), game.winner());
+    assertEquals(Optional.of(player), game.getWinner());
   }
 
   @Test

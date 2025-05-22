@@ -14,6 +14,7 @@ import edu.ntnu.idatt2003.ui.service.player.PlayerUIService;
 import edu.ntnu.idatt2003.ui.shared.view.ViewServiceFactory;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -158,17 +159,16 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
       for (PlayerView player : players) {
         List<ImageView> pieces = playerUIService.createPlayerPieces(player);
-        tokenImages.put(player.token(), pieces);
+        tokenImages.put(player.playerToken(), pieces);
 
         for (int i = 0; i < pieces.size(); i++) {
           final int pieceIndex = i;
           ImageView piece = pieces.get(i);
-          piece.setOnMouseClicked(e -> handlePieceClicked(player.token(), pieceIndex));
+          piece.setOnMouseClicked(e -> handlePieceClicked(player.playerToken(), pieceIndex));
           this.tokenPane.getChildren().add(piece);
         }
         updatePiecePositions(player);
       }
-
       boardUIService.addOverlays(this.overlayPane, overlays);
       updateStatusForCurrentPlayer();
     } catch (Exception e) {
@@ -179,7 +179,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   private void updatePiecePositions(PlayerView player) {
     try {
-      List<ImageView> pieces = tokenImages.get(player.token());
+      List<ImageView> pieces = tokenImages.get(player.playerToken());
       if (pieces == null)
         return;
 
@@ -194,7 +194,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
         }
 
         if (position <= 0) {
-          boardUIService.placePieceAtHome(this.tokenPane, piece, player.token(), i);
+          boardUIService.placePieceAtHome(this.tokenPane, piece, player.playerToken(), i);
         } else {
           boardUIService.placePieceOnBoard(this.tokenPane, piece, position, i);
         }
@@ -208,7 +208,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   private void handlePieceClicked(String tokenName, int pieceIndex) {
     // Only respond to clicks from the current player's pieces
     PlayerView currentPlayer = getCurrentPlayer();
-    if (currentPlayer == null || !currentPlayer.token().equals(tokenName)) {
+    if (currentPlayer == null || !currentPlayer.playerToken().equals(tokenName)) {
       return;
     }
 
@@ -236,7 +236,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   private void updateStatusForCurrentPlayer() {
     PlayerView currentPlayer = getCurrentPlayer();
     if (currentPlayer != null) {
-      showStatusMessage(currentPlayer.name() + "'s turn");
+      showStatusMessage(currentPlayer.playerName() + "'s turn");
     } else {
       showStatusMessage("Roll the dice to start");
     }
@@ -267,16 +267,16 @@ public class LudoBoardView extends AbstractGameView implements GameView {
       boolean hasValidMove = checkForValidMoves(currentPlayer, dieValue);
 
       if (!hasValidMove) {
-        // No valid moves, proceed to next player
+        // No valid moves, proceed to nextTile player
         showStatusMessage("No valid moves available. Next player's turn.");
         enableRollButton();
       } else if (dieValue == 6) {
         // Player rolled a 6, which has special meaning in Ludo
-        showStatusMessage(currentPlayer.name() + " rolled a 6! Select a piece to move.");
+        showStatusMessage(currentPlayer.playerName() + " rolled a 6! Select a piece to move.");
       } else {
         // Normal roll
         showStatusMessage(
-            currentPlayer.name() + " rolled a " + dieValue + ". Select a piece to move.");
+            currentPlayer.playerName() + " rolled a " + dieValue + ". Select a piece to move.");
       }
     }
   }
@@ -298,8 +298,8 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
       if (data instanceof PlayerMoveData moveData) {
         String tokenName = moveData.getPlayer().getToken().name();
-        int fromId = moveData.getFromTile() != null ? moveData.getFromTile().id() : 0;
-        int toId = moveData.getToTile() != null ? moveData.getToTile().id() : 0;
+        int fromId = moveData.getFromTile() != null ? moveData.getFromTile().tileId() : 0;
+        int toId = moveData.getToTile() != null ? moveData.getToTile().tileId() : 0;
 
         // Find piece index
         int pieceIndex = findPieceIndex(tokenName, fromId);
@@ -333,7 +333,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
 
   private int findPieceIndex(String token, int tileId) {
     for (PlayerView player : players) {
-      if (player.token().equals(token)) {
+      if (player.playerToken().equals(token)) {
         // Find which piece is at the given tile
         for (int i = 0; i < player.piecePositions().size(); i++) {
           if (player.piecePositions().get(i) == tileId) {
@@ -371,11 +371,11 @@ public class LudoBoardView extends AbstractGameView implements GameView {
       // Update all players and their statuses
       for (PlayerView pv : players) {
         // Check if this is the new current player
-        boolean isCurrentPlayer = pv.token().equals(tokenName);
+        boolean isCurrentPlayer = pv.playerToken().equals(tokenName);
 
         // Update the UI accordingly
         if (isCurrentPlayer) {
-          showStatusMessage(pv.name() + "'s turn");
+          showStatusMessage(pv.playerName() + "'s turn");
         }
 
         // Update piece highlights for the current player
@@ -386,7 +386,7 @@ public class LudoBoardView extends AbstractGameView implements GameView {
   }
 
   private void updatePieceHighlights(PlayerView player, boolean isCurrentPlayer) {
-    List<ImageView> pieces = tokenImages.get(player.token());
+    List<ImageView> pieces = tokenImages.get(player.playerToken());
     if (pieces == null)
       return;
 

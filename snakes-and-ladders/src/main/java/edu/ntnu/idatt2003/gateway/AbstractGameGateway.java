@@ -53,24 +53,20 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   }
 
   protected void notifyObservers(BoardGameEvent event) {
-    LOG.finest(() -> "Notifying " + observers.size() + " observers of event: " + event.getType() +
-        (event.getData() != null ? " with data: "
-            + event.getData().toString().substring(0, Math.min(event.getData().toString().length(), 100)) : ""));
-    for (BoardGameObserver observer : new ArrayList<>(observers)) { // Iterate over a copy
+    for (BoardGameObserver observer : new ArrayList<>(observers)) {
       try {
         observer.update(event);
       } catch (Exception e) {
         LOG.log(Level.SEVERE,
-            "Error in observer " + observer.getClass().getName() + " during update for event " + event.getType(), e);
-        // Depending on severity, you might want to remove the faulty observer or take
-        // other actions
+            "Error in observer " + observer.getClass().getName() + " during update for event " + event.getTypeOfEvent(),
+            e);
       }
     }
   }
 
   @Override
   public boolean hasWinner() {
-    boolean hasWinner = game != null && game.winner().isPresent();
+    boolean hasWinner = game != null && game.getWinner().isPresent();
     LOG.finest(() -> "Checking for winner: " + hasWinner);
     return hasWinner;
   }
@@ -93,27 +89,26 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   public void savePlayers(Path out) {
     LOG.info("Attempting to save players to: " + out);
     try {
-      if (game != null && game.players() != null && !game.players().isEmpty()) {
-        playerStore.save(game.players(), out);
+      if (game != null && game.getPlayers() != null && !game.getPlayers().isEmpty()) {
+        playerStore.savePlayers(game.getPlayers(), out);
         LOG.info("Players saved successfully to: " + out);
       } else {
         LOG.warning("No players to save or game not initialized.");
       }
     } catch (StorageException e) {
       LOG.log(Level.SEVERE, "StorageException while saving players to " + out, e);
-      // This exception should be propagated or handled to inform the user
-      throw e; // Rethrow as it's a declared exception of PlayerStore
+
+      throw e;
     } catch (GameEngineException e) {
       LOG.log(Level.WARNING, "GameEngineException during savePlayers: " + e.getMessage(), e);
-      // Convert to a more general exception if needed, or handle
     }
   }
 
   @Override
   public void clearPlayers() {
-    if (game != null && game.players() != null) {
+    if (game != null && game.getPlayers() != null) {
       LOG.info("Clearing all players from the game.");
-      game.players().clear();
+      game.getPlayers().clear();
       notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.GAME_RESET, null)); // Or a more specific event
     } else {
       LOG.warning("Attempted to clear players, but game or players list is null.");
@@ -146,12 +141,6 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
       return loadedOverlays;
     } catch (Exception e) {
       LOG.log(Level.SEVERE, "Error loading overlays via provider for board size " + size, e);
-      // Depending on the OverlayProvider's contract, it might throw StorageException
-      // or other.
-      // If it's a checked exception not declared by OverlayProvider, it needs to be
-      // handled here.
-      // For now, assuming it might throw RuntimeException or specific
-      // StorageException handled by caller.
       if (e instanceof StorageException) {
         throw (StorageException) e;
       }

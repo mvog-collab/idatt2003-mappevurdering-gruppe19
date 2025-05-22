@@ -22,8 +22,8 @@ public class LudoPlayerUIService implements PlayerUIService {
 
   @Override
   public Node createPlayerBox(PlayerView player, boolean hasTurn) {
-    // Similar to DefaultPlayerUIService but with Ludo-specific styling if needed
-    return new DefaultPlayerUIService().createPlayerBox(player, hasTurn);
+    // Similar to SnlPlayerUiService but with Ludo-specific styling if needed
+    return new SnlPlayerUiService().createPlayerBox(player, hasTurn);
   }
 
   @Override
@@ -71,7 +71,7 @@ public class LudoPlayerUIService implements PlayerUIService {
   public List<ImageView> createPlayerPieces(PlayerView player) {
     // Create 4 pieces for each Ludo player
     List<ImageView> pieces = new ArrayList<>();
-    String tokenName = player.token();
+    String tokenName = player.playerToken();
 
     for (int i = 0; i < player.piecePositions().size(); i++) {
       String imgFile = tokenName.toLowerCase() + "Piece.png";
@@ -166,8 +166,8 @@ public class LudoPlayerUIService implements PlayerUIService {
       container.getStyleClass().remove("active");
     } else {
       // Player has a turn - update display
-      String playerName = currentPlayer.name();
-      String tokenName = currentPlayer.token();
+      String playerName = currentPlayer.playerName();
+      String tokenName = currentPlayer.playerToken();
 
       // Update the message
       if (message != null && !message.isEmpty()) {

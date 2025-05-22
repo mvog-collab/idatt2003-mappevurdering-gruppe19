@@ -25,7 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-public class BoardView extends AbstractGameView {
+public class SnlBoardView extends AbstractGameView { // AbstractGameView should extend AbstractView
   private final BoardUIService boardUIService;
   private final PlayerUIService playerUIService;
   private AnimationService animationService;
@@ -44,7 +44,7 @@ public class BoardView extends AbstractGameView {
   private boolean hasActiveAnimation = false;
   private List<PlayerView> currentPlayers = new ArrayList<>();
 
-  public BoardView(
+  public SnlBoardView(
       int boardSize,
       BoardUIService boardUIService,
       PlayerUIService playerUIService,
@@ -69,7 +69,7 @@ public class BoardView extends AbstractGameView {
     buildUI();
   }
 
-  public BoardView(int boardSize) {
+  public SnlBoardView(int boardSize) {
     this(
         boardSize,
         ViewServiceFactory.createBoardUIService("SNL", boardSize),
@@ -182,8 +182,8 @@ public class BoardView extends AbstractGameView {
     tokenImages.clear();
 
     for (PlayerView player : players) {
-      ImageView tokenImage = playerUIService.createTokenImage(player.token());
-      tokenImages.put(player.token(), tokenImage);
+      ImageView tokenImage = playerUIService.createTokenImage(player.playerToken());
+      tokenImages.put(player.playerToken(), tokenImage);
 
       if (player.tileId() > 0) {
         boardUIService.placeTokenOnTile(this.tokenPane, tokenImage, player.tileId());
@@ -219,7 +219,7 @@ public class BoardView extends AbstractGameView {
       int rolled = diceValues[0] + diceValues[1];
       int endPosition = Math.min(startPosition + rolled, boardSize);
 
-      String message = player.name() + " rolled " + rolled + "! ";
+      String message = player.playerName() + " rolled " + rolled + "! ";
       if (diceValues[0] == diceValues[1]) {
         if (diceValues[0] == 6) {
           message += "Double 6 - turn skipped!";
@@ -235,7 +235,7 @@ public class BoardView extends AbstractGameView {
         hasActiveAnimation = true;
 
         animationService.animateMove(
-            player.token(),
+            player.playerToken(),
             startPosition,
             endPosition,
             () -> {
@@ -243,7 +243,7 @@ public class BoardView extends AbstractGameView {
 
               // Check for winner
               if (gateway != null && gateway.hasWinner()) {
-                String winnerName = player.name();
+                String winnerName = player.playerName();
                 announceWinner(winnerName);
               } else {
                 enableRollButton();
@@ -262,8 +262,8 @@ public class BoardView extends AbstractGameView {
 
     if (data instanceof BoardGame.PlayerMoveData moveData) {
       String token = moveData.getPlayer().getToken().name();
-      int fromId = moveData.getFromTile().id();
-      int toId = moveData.getToTile().id();
+      int fromId = moveData.getFromTile().tileId();
+      int toId = moveData.getToTile().tileId();
 
       hasActiveAnimation = true;
 

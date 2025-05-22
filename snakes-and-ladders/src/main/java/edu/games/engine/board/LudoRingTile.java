@@ -3,21 +3,21 @@ package edu.games.engine.board;
 import edu.games.engine.model.LudoColor;
 
 public final class LudoRingTile implements LudoTile {
-  private final int id;
-  private LudoTile next;
+  private final int tileId;
+  private LudoTile nextTile;
   private LudoTile goalEntry;
 
-  public LudoRingTile(int id) {
-    this.id = id;
+  public LudoRingTile(int tileId) {
+    this.tileId = tileId;
   }
 
   @Override
-  public int id() {
-    return id;
+  public int tileId() {
+    return tileId;
   }
 
-  public void setNext(LudoTile next) {
-    this.next = next;
+  public void setNext(LudoTile nextTile) {
+    this.nextTile = nextTile;
   }
 
   public void goalEntry(LudoTile goalEntry) {
@@ -26,21 +26,21 @@ public final class LudoRingTile implements LudoTile {
 
   @Override
   public LudoTile next(LudoColor ownerIgnored) {
-    return next;
+    return nextTile;
   }
 
   // Add a new method to check if we should enter the goal path
-  public boolean shouldEnterGoalPath(int currentId, LudoColor owner) {
+  public boolean shouldEnterGoalPath(int currentId, LudoColor player) {
     // Check if we're passing the entry point (not just landing on it)
     int entryPoint =
-        switch (owner) {
+        switch (player) {
           case BLUE -> 1;
           case RED -> 14;
           case GREEN -> 27;
           case YELLOW -> 40;
         };
 
-    return id() == entryPoint && currentId != entryPoint;
+    return tileId() == entryPoint && currentId != entryPoint;
   }
 
   public LudoTile goalEntry() {

@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class LudoGoalTileTest {
 
   @Test
-  void shouldReturnCorrectId() {
+  void shouldReturnCorrectTileId() {
     LudoGoalTile tile = new LudoGoalTile(42);
-    assertEquals(42, tile.id());
+    assertEquals(42, tile.tileId());
   }
 
   @Test

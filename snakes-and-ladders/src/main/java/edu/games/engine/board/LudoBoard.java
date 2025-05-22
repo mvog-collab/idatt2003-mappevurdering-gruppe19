@@ -23,7 +23,7 @@ public final class LudoBoard implements Board {
   @Override
   public Tile move(Tile from, int steps) {
     // This method shouldn't be used directly anymore
-    // Use path.next() with the appropriate color instead
+    // Use path.nextTile() with the appropriate color instead
     // We'll return the same tile to prevent unintended movement
     return from;
   }
@@ -37,7 +37,7 @@ public final class LudoBoard implements Board {
    * @return The destination tile
    */
   public Tile move(Tile from, int steps, LudoColor color) {
-    return path.next(from, steps, color);
+    return path.nextTile(from, steps, color);
   }
 
   /**

@@ -61,7 +61,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
   public void update(BoardGameEvent event) {
     Platform.runLater(
         () -> {
-          switch (event.getType()) {
+          switch (event.getTypeOfEvent()) {
             case PLAYER_ADDED:
               LOG.fine("Player added event received, updating display.");
               handlePlayerAdded();
@@ -71,7 +71,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
               handleGameReset();
               break;
             default:
-              LOG.finest("Received unhandled event type: " + event.getType());
+              LOG.finest("Received unhandled event type: " + event.getTypeOfEvent());
               break;
           }
         });
@@ -96,13 +96,13 @@ public class ChoosePlayerPage implements BoardGameObserver {
     for (PlayerView pv : sorted) {
       VBox playerBox = createPlayerBox(pv);
       addedPlayersBox.getChildren().add(playerBox);
-      disableToken(pv.token());
+      disableToken(pv.playerToken());
     }
   }
 
   private VBox createPlayerBox(PlayerView player) {
     int yearsOld = java.time.Period.between(player.birthday(), LocalDate.now()).getYears();
-    Label name = new Label(player.name());
+    Label name = new Label(player.playerName());
     name.getStyleClass().add("player-name");
     Label age = new Label(yearsOld + " yrs");
     age.getStyleClass().add("player-age");

@@ -19,7 +19,7 @@ public class JsonBoardHandler implements FileHandler<BoardAdapter.MapData> {
   public void save(BoardAdapter.MapData data, Path out) throws JsonParsingException {
     LOG.info("Saving board data to JSON file: " + out.toString());
     try {
-      mapper.writeValue(out.toFile(), BoardAdapter.toDto(data.size(), data.snakes(), data.ladders()));
+      mapper.writeValue(out.toFile(), BoardAdapter.toDto(data.boardSize(), data.snakes(), data.ladders()));
       LOG.info("Successfully saved board data to: " + out.toString());
     } catch (IOException e) {
       LOG.log(Level.SEVERE, "Failed to save board data to JSON file: " + out.toString(), e);

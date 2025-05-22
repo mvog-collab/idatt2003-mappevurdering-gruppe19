@@ -36,12 +36,12 @@ public final class BoardFactory {
 
       for (TileDTO tile : dto.tiles()) {
         if (tile.snakeTo() != null)
-          snakes.put(tile.id(), tile.snakeTo());
+          snakes.put(tile.tileId(), tile.snakeTo());
         if (tile.ladderTo() != null)
-          ladders.put(tile.id(), tile.ladderTo());
+          ladders.put(tile.tileId(), tile.ladderTo());
       }
       LOG.info("Successfully loaded and parsed board data from: " + resourcePath);
-      return new BoardAdapter.MapData(dto.size(), snakes, ladders);
+      return new BoardAdapter.MapData(dto.boardSize(), snakes, ladders);
 
     } catch (IOException e) {
       LOG.log(Level.SEVERE, "Failed to read or parse board JSON from resource: " + resourcePath, e);

@@ -21,7 +21,7 @@ public final class CsvPlayerStore implements PlayerStore {
   private static final Logger LOG = Logger.getLogger(CsvPlayerStore.class.getName());
 
   @Override
-  public void save(List<Player> players, Path out) throws StorageException {
+  public void savePlayers(List<Player> players, Path out) throws StorageException {
     if (players == null || players.isEmpty()) {
       LOG.warning("Attempted to save null or empty player list.");
       throw new ValidationException("Players list is null or empty.");
@@ -34,7 +34,7 @@ public final class CsvPlayerStore implements PlayerStore {
     try (BufferedWriter w = Files.newBufferedWriter(out)) {
       for (Player p : players) {
         w.write("%s%s%s%s%s%n".formatted(
-            p.getName(), SEP, p.getToken().name(), SEP, p.getBirtday().toString()));
+            p.getName(), SEP, p.getToken(), SEP, p.getBirthday()));
       }
       LOG.info("Successfully saved players to " + out.toString());
     } catch (IOException e) {
@@ -44,7 +44,7 @@ public final class CsvPlayerStore implements PlayerStore {
   }
 
   @Override
-  public List<Player> load(Path in) throws StorageException {
+  public List<Player> loadPlayers(Path in) throws StorageException {
     if (in == null) {
       LOG.warning("Attempted to load players with null input path.");
       throw new ValidationException("Input path is null.");

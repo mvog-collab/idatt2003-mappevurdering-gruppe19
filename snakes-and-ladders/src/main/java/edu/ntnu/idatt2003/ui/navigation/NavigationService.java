@@ -8,7 +8,7 @@ import edu.ntnu.idatt2003.ui.HomePage;
 import edu.ntnu.idatt2003.ui.ludo.controller.LudoPageController;
 import edu.ntnu.idatt2003.ui.ludo.view.LudoPage;
 import edu.ntnu.idatt2003.ui.snl.controller.SnlPageController;
-import edu.ntnu.idatt2003.ui.snl.view.SnlPage;
+import edu.ntnu.idatt2003.ui.snl.view.SnlFrontPage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Scene;
@@ -112,11 +112,11 @@ public class NavigationService {
     }
     try {
       CompleteBoardGame snlGateway = (CompleteBoardGame) SnlGatewayFactory.createDefault();
-      SnlPage snlPage = new SnlPage();
-      snlPage.connectToModel(snlGateway);
-      new SnlPageController(snlPage, snlGateway);
+      SnlFrontPage snlFrontPage = new SnlFrontPage();
+      snlFrontPage.connectToModel(snlGateway);
+      new SnlPageController(snlFrontPage, snlGateway);
 
-      Scene snlPageScene = snlPage.getScene();
+      Scene snlPageScene = snlFrontPage.getScene();
       snlPageScene.setUserData("SNL_PAGE");
       this.previousGameSetupSceneCache = snlPageScene;
       this.currentGameType = "SNL";

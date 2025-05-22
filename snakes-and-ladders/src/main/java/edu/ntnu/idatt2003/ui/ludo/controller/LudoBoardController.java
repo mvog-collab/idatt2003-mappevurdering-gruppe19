@@ -46,14 +46,14 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       view.enableRollButton();
       return;
     }
-    LOG.info("Current player for dice roll: " + currentPlayer.name());
+    LOG.info("Current player for dice roll: " + currentPlayer.playerName());
 
     try {
       lastRolledValue = gateway.rollDice();
       view.showDice(lastRolledValue);
-      LOG.log(Level.INFO, () -> currentPlayer.name() + " rolled: " + lastRolledValue);
+      LOG.log(Level.INFO, () -> currentPlayer.playerName() + " rolled: " + lastRolledValue);
 
-      LudoColor color = LudoColor.valueOf(currentPlayer.token());
+      LudoColor color = LudoColor.valueOf(currentPlayer.playerToken());
       boolean hasHomePieces = playerHasPiecesAtHome(currentPlayer);
       boolean hasMoveableBoardPieces = playerHasMoveablePiecesOnBoard(currentPlayer, color);
 
@@ -63,11 +63,11 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
         handleNormalRoll(currentPlayer, hasMoveableBoardPieces, hasHomePieces);
       }
     } catch (IllegalArgumentException e) {
-      LOG.log(Level.WARNING, "Invalid LudoColor token for player: " + currentPlayer.token(), e);
+      LOG.log(Level.WARNING, "Invalid LudoColor token for player: " + currentPlayer.playerToken(), e);
       view.showAlert("Game Error", "Invalid player color detected. Cannot proceed.");
       view.enableRollButton();
     } catch (Exception e) {
-      LOG.log(Level.SEVERE, "Error during dice roll processing for player " + currentPlayer.name(), e);
+      LOG.log(Level.SEVERE, "Error during dice roll processing for player " + currentPlayer.playerName(), e);
       Errors.handle("An error occurred while processing the dice roll.", e);
       view.enableRollButton(); // Try to allow user to recover or try again
     }
@@ -84,20 +84,21 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
   private void handleRollOfSix(
       PlayerView currentPlayer, boolean hasHomePieces, boolean hasMoveableBoardPieces) {
-    LOG.info(currentPlayer.name() + " rolled a 6. Has home pieces: " + hasHomePieces + ", Has moveable board pieces: "
-        + hasMoveableBoardPieces);
+    LOG.info(
+        currentPlayer.playerName() + " rolled a 6. Has home pieces: " + hasHomePieces + ", Has moveable board pieces: "
+            + hasMoveableBoardPieces);
     waitingForPieceSelection = true;
     if (hasHomePieces) {
       view.showStatusMessage(
-          currentPlayer.name() + " rolled a 6! Select a piece to move (can move from home).");
+          currentPlayer.playerName() + " rolled a 6! Select a piece to move (can move from home).");
     } else if (hasMoveableBoardPieces) {
-      view.showStatusMessage(currentPlayer.name() + " rolled a 6! Select a piece to move.");
+      view.showStatusMessage(currentPlayer.playerName() + " rolled a 6! Select a piece to move.");
       tryAutoSelectOnlyMovablePiece(currentPlayer);
     } else {
-      LOG.warning(currentPlayer.name()
+      LOG.warning(currentPlayer.playerName()
           + " rolled a 6 but has no valid moves. All pieces might be finished or in an unexpected state.");
       view.showStatusMessage(
-          currentPlayer.name() + " rolled a 6 but has no valid moves (all pieces finished?).");
+          currentPlayer.playerName() + " rolled a 6 but has no valid moves (all pieces finished?).");
       view.enableRollButton();
     }
   }
@@ -105,10 +106,11 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   private void handleNormalRoll(
       PlayerView currentPlayer, boolean hasMoveableBoardPieces, boolean hasHomePieces) {
     LOG.info(
-        currentPlayer.name() + " rolled " + lastRolledValue + ". Has moveable board pieces: " + hasMoveableBoardPieces);
+        currentPlayer.playerName() + " rolled " + lastRolledValue + ". Has moveable board pieces: "
+            + hasMoveableBoardPieces);
     if (hasMoveableBoardPieces) {
       waitingForPieceSelection = true;
-      view.showStatusMessage(currentPlayer.name() + " - select a piece to move.");
+      view.showStatusMessage(currentPlayer.playerName() + " - select a piece to move.");
       tryAutoSelectOnlyMovablePiece(currentPlayer);
     } else {
       handleNoValidMoves(currentPlayer, hasHomePieces);
@@ -117,22 +119,22 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
   private void tryAutoSelectOnlyMovablePiece(PlayerView currentPlayer) {
     try {
-      LudoColor color = LudoColor.valueOf(currentPlayer.token());
+      LudoColor color = LudoColor.valueOf(currentPlayer.playerToken());
       List<Integer> boardPieceIndices = getBoardPieceIndices(currentPlayer, color);
       if (boardPieceIndices.size() == 1) {
         selectedPieceIndex = boardPieceIndices.get(0);
         LOG.log(Level.INFO, () -> "Auto-selecting piece: " + selectedPieceIndex +
-            " for " + currentPlayer.name());
+            " for " + currentPlayer.playerName());
         processSelectedPiece();
       }
     } catch (IllegalArgumentException e) {
-      LOG.log(Level.WARNING, "Invalid LudoColor token for auto-selection: " + currentPlayer.token(), e);
+      LOG.log(Level.WARNING, "Invalid LudoColor token for auto-selection: " + currentPlayer.playerToken(), e);
     }
   }
 
   private void handleNoValidMoves(PlayerView currentPlayer, boolean hasHomePieces) {
-    LOG.log(Level.INFO, () -> currentPlayer.name() + " has no valid moves with roll " + lastRolledValue);
-    view.showStatusMessage(currentPlayer.name() + " has no valid moves.");
+    LOG.log(Level.INFO, () -> currentPlayer.playerName() + " has no valid moves with roll " + lastRolledValue);
+    view.showStatusMessage(currentPlayer.playerName() + " has no valid moves.");
 
     if (hasHomePieces && gateway instanceof LudoGateway ludoGw) {
       // Select the first home piece for processing (which will skip the turn in
@@ -176,11 +178,11 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       LOG.warning("Piece selected but no current player. Ignoring click.");
       return;
     }
-    LOG.info("Piece " + pieceIndex + " selected by player " + currentPlayer.name());
+    LOG.info("Piece " + pieceIndex + " selected by player " + currentPlayer.playerName());
 
     try {
       if (!isValidPieceSelection(currentPlayer, pieceIndex, lastRolledValue)) {
-        LOG.warning("Invalid piece selection: piece " + pieceIndex + " by " + currentPlayer.name() + " with roll "
+        LOG.warning("Invalid piece selection: piece " + pieceIndex + " by " + currentPlayer.playerName() + " with roll "
             + lastRolledValue);
         return;
       }
@@ -188,7 +190,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       processSelectedPiece();
     } catch (Exception e) {
       LOG.log(Level.SEVERE,
-          "Error processing piece selection for player " + currentPlayer.name() + ", piece " + pieceIndex, e);
+          "Error processing piece selection for player " + currentPlayer.playerName() + ", piece " + pieceIndex, e);
       Errors.handle("An error occurred while selecting the piece.", e);
       // Reset state to be safe
       waitingForPieceSelection = false;
@@ -203,7 +205,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     }
 
     int position = player.piecePositions().get(pieceIndex);
-    LudoColor color = LudoColor.valueOf(player.token());
+    LudoColor color = LudoColor.valueOf(player.playerToken());
 
     if (position <= 0 && currentRoll != 6) {
       view.showAlert("Invalid Move", "You need to roll a 6 to move a piece from home.");
@@ -224,14 +226,15 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
     PlayerView currentPlayer = getCurrentPlayer();
     if (currentPlayer == null || selectedPieceIndex < 0) {
       LOG.warning("processSelectedPiece called with no current player or invalid selectedPieceIndex. Current player: "
-          + (currentPlayer != null ? currentPlayer.name() : "null") + ", selectedPieceIndex: " + selectedPieceIndex);
+          + (currentPlayer != null ? currentPlayer.playerName() : "null") + ", selectedPieceIndex: "
+          + selectedPieceIndex);
       view.enableRollButton();
       return;
     }
 
-    String playerColorToken = currentPlayer.token();
+    String playerColorToken = currentPlayer.playerToken();
     int initialPosition = currentPlayer.piecePositions().get(selectedPieceIndex);
-    LOG.info("Player " + currentPlayer.name() + " moving piece " + selectedPieceIndex + " from " + initialPosition
+    LOG.info("Player " + currentPlayer.playerName() + " moving piece " + selectedPieceIndex + " from " + initialPosition
         + " with roll " + lastRolledValue);
 
     try {
@@ -246,7 +249,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       }
 
       PlayerView playerAfterMove = gateway.players().stream()
-          .filter(p -> p.token().equals(playerColorToken))
+          .filter(p -> p.playerToken().equals(playerColorToken))
           .findFirst()
           .orElse(null);
 
@@ -259,7 +262,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       int finalPosition = playerAfterMove.piecePositions().get(selectedPieceIndex);
       LOG.info("Piece " + selectedPieceIndex + " for " + playerColorToken + " moved to " + finalPosition);
       PlayerView newCurrentPlayer = getCurrentPlayer();
-      boolean playerKeepsTurn = newCurrentPlayer != null && newCurrentPlayer.token().equals(playerColorToken);
+      boolean playerKeepsTurn = newCurrentPlayer != null && newCurrentPlayer.playerToken().equals(playerColorToken);
 
       boolean movedFromHomeToStart = initialPosition <= 0 && finalPosition > 0 && lastRolledValue == 6;
 
@@ -275,12 +278,13 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
       }
 
     } catch (Exception e) {
-      LOG.log(Level.SEVERE, "Error during piece movement processing for player " + currentPlayer.name(), e);
+      LOG.log(Level.SEVERE, "Error during piece movement processing for player " + currentPlayer.playerName(), e);
       Errors.handle("An error occurred while moving the piece.", e);
       // Attempt to recover UI state
       handlePostMoveUI(playerColorToken,
-          getCurrentPlayer() != null && getCurrentPlayer().token().equals(playerColorToken)); // Use current state if
-                                                                                              // possible
+          getCurrentPlayer() != null && getCurrentPlayer().playerToken().equals(playerColorToken)); // Use current state
+                                                                                                    // if
+      // possible
     } finally {
       selectedPieceIndex = -1;
     }
@@ -305,15 +309,15 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
   }
 
   private void handlePostMoveUI(String playerMovedToken, boolean playerKeepsTurn) {
-    refreshTokens(); // Update all token positions from model
+    refreshTokens(); // Update all playerToken positions from model
 
     if (gateway.hasWinner()) {
-      // Find the winner's name from the potentially updated player list
+      // Find the winner's playerName from the potentially updated player list
       gateway.players().stream()
           .filter(
-              p -> p.token().equals(playerMovedToken)) // Assuming winner is the one who just moved
+              p -> p.playerToken().equals(playerMovedToken)) // Assuming winner is the one who just moved
           .findFirst()
-          .ifPresent(winner -> view.announceWinner(winner.name()));
+          .ifPresent(winner -> view.announceWinner(winner.playerName()));
       // Roll button likely stays disabled or game ends.
     } else {
       PlayerView actualCurrentPlayer = getCurrentPlayer(); // Get the player whose turn it is NOW
@@ -324,9 +328,9 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
       if (playerKeepsTurn) { // The same player who moved still has the turn
         view.enableRollButton();
-        view.showStatusMessage(actualCurrentPlayer.name() + "'s turn continues - roll again!");
+        view.showStatusMessage(actualCurrentPlayer.playerName() + "'s turn continues - roll again!");
       } else { // Turn has passed to someone else
-        view.showStatusMessage(actualCurrentPlayer.name() + "'s turn - please roll");
+        view.showStatusMessage(actualCurrentPlayer.playerName() + "'s turn - please roll");
         view.enableRollButton(); // Enable for the new current player
       }
     }
@@ -448,7 +452,7 @@ public final class LudoBoardController extends AbstractGameController<LudoBoardV
 
       PlayerView currentPlayer = getCurrentPlayer();
       if (currentPlayer != null) {
-        view.showStatusMessage(currentPlayer.name() + "'s turn");
+        view.showStatusMessage(currentPlayer.playerName() + "'s turn");
       } else {
         LOG.info("No current player after token refresh, game might have ended or is in an intermediate state.");
       }

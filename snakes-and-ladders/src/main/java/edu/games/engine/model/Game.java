@@ -8,7 +8,7 @@ public interface Game {
 
   Player currentPlayer();
 
-  Optional<Player> winner();
+  Optional<Player> getWinner();
 
-  List<Player> players();
+  List<Player> getPlayers();
 }

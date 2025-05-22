@@ -80,7 +80,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     LOG.info("Attempting to save players to: " + out.getAbsolutePath());
     try {
       List<String[]> rows = gateway.players().stream()
-          .map(p -> new String[] { p.name(), p.token(), p.birthday().toString() })
+          .map(p -> new String[] { p.playerName(), p.playerToken(), p.birthday().toString() })
           .toList();
       PlayerCsv.save(rows, out.toPath());
       LOG.info("Players saved successfully to: " + out.getAbsolutePath());

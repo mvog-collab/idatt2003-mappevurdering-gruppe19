@@ -36,11 +36,11 @@ public class PlayerMoveData {
 
   // Convenience methods
   public int getFromTileId() {
-    return (fromTile instanceof Tile) ? ((Tile) fromTile).id() : (Integer) fromTile;
+    return (fromTile instanceof Tile) ? ((Tile) fromTile).tileId() : (Integer) fromTile;
   }
 
   public int getToTileId() {
-    return (toTile instanceof Tile) ? ((Tile) toTile).id() : (Integer) toTile;
+    return (toTile instanceof Tile) ? ((Tile) toTile).tileId() : (Integer) toTile;
   }
 
   public Tile getFromTile() {

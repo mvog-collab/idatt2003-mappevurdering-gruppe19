@@ -8,17 +8,17 @@ public final class LinearBoard implements Board {
 
   private final Map<Integer, LinearTile> tiles = new HashMap<>();
 
-  /** builds a 1-based, linear board of the given size */
+  /** builds a 1-based, linear board of the given boardSize */
   public LinearBoard(int size) {
     if (size < 2) {
-      throw new ValidationException("Invalid size: cannot be less than 2");
+      throw new ValidationException("Invalid boardSize: cannot be less than 2");
     }
     LinearTile prev = null;
     for (int i = 0; i <= size; i++) {
       LinearTile tile = new LinearTile(i);
       tiles.put(i, tile);
       if (prev != null) {
-        prev.next = tile;
+        prev.nextTile = tile;
       }
       prev = tile;
     }

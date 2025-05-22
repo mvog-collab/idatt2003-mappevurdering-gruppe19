@@ -67,11 +67,11 @@ public final class DefaultGame implements Game {
 
     Tile destinationTile = strategy.movePiece(currentPlayer, -1, rolledValue, this);
     if (destinationTile != null) {
-      LOG.fine(() -> currentPlayer.getName() + " attempting to move to tile " + destinationTile.id());
+      LOG.fine(() -> currentPlayer.getName() + " attempting to move to tile " + destinationTile.tileId());
       Tile oldTile = currentPlayer.getCurrentTile();
       currentPlayer.moveTo(destinationTile);
       LOG.info(() -> currentPlayer.getName() + " moved from " +
-          (oldTile != null ? oldTile.id() : "Start/Home") + " to tile " + destinationTile.id());
+          (oldTile != null ? oldTile.tileId() : "Start/Home") + " to tile " + destinationTile.tileId());
       strategy.applySpecialRules(currentPlayer, null, destinationTile, this);
     } else {
       LOG.info(() -> currentPlayer.getName() + " could not move with roll " + rolledValue + " (destination was null).");
@@ -111,12 +111,12 @@ public final class DefaultGame implements Game {
   }
 
   @Override
-  public Optional<Player> winner() {
+  public Optional<Player> getWinner() {
     return Optional.ofNullable(winner);
   }
 
   @Override
-  public List<Player> players() {
+  public List<Player> getPlayers() {
     return players;
   }
 

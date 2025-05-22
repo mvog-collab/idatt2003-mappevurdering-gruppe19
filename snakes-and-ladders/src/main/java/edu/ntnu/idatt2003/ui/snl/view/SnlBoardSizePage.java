@@ -11,8 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-/** View component for board size selection */
-public class BoardSizePage implements BoardGameObserver {
+/** View component for board boardSize selection */
+public class SnlBoardSizePage implements BoardGameObserver {
 
   // UI components
   private Button sixtyFourTiles;
@@ -26,7 +26,7 @@ public class BoardSizePage implements BoardGameObserver {
   private VBox root;
 
   /** Constructor - initializes the UI */
-  public BoardSizePage() {
+  public SnlBoardSizePage() {
     buildUI();
   }
 
@@ -40,7 +40,7 @@ public class BoardSizePage implements BoardGameObserver {
   public void update(BoardGameEvent event) {
     Platform.runLater(
         () -> {
-          switch (event.getType()) {
+          switch (event.getTypeOfEvent()) {
             case GAME_STARTED:
               handleGameStarted(event.getData());
               break;
@@ -48,7 +48,7 @@ public class BoardSizePage implements BoardGameObserver {
         });
   }
 
-  /** Updates the UI when a game is started with a specific board size */
+  /** Updates the UI when a game is started with a specific board boardSize */
   private void handleGameStarted(Object data) {
     if (data instanceof Integer) {
       int boardSize = (Integer) data;
@@ -56,14 +56,14 @@ public class BoardSizePage implements BoardGameObserver {
     }
   }
 
-  /** Updates the UI to highlight the selected board size */
+  /** Updates the UI to highlight the selected board boardSize */
   private void updateSelectedBoardSize(int size) {
     // Reset all button styles
     sixtyFourTiles.getStyleClass().remove("selected-board-size");
     ninetyTiles.getStyleClass().remove("selected-board-size");
     oneTwentyTiles.getStyleClass().remove("selected-board-size");
 
-    // Highlight the selected board size
+    // Highlight the selected board boardSize
     switch (size) {
       case 64:
         sixtyFourTiles.getStyleClass().add("selected-board-size");

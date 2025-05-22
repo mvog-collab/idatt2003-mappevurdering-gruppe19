@@ -13,16 +13,16 @@ public class BoardGameEvent {
     PIECE_SELECTED
   }
 
-  private final EventType type;
+  private final EventType typeOfEvent;
   private final Object data;
 
-  public BoardGameEvent(EventType type, Object data) {
-    this.type = type;
+  public BoardGameEvent(EventType typeOfEvent, Object data) {
+    this.typeOfEvent = typeOfEvent;
     this.data = data;
   }
 
-  public EventType getType() {
-    return type;
+  public EventType getTypeOfEvent() {
+    return typeOfEvent;
   }
 
   public Object getData() {
