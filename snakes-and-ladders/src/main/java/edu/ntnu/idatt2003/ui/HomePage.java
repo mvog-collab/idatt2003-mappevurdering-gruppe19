@@ -1,6 +1,11 @@
 package edu.ntnu.idatt2003.ui;
 
+import edu.ntnu.idatt2003.exception.ResourceNotFoundException;
 import edu.ntnu.idatt2003.ui.navigation.NavigationService;
+import edu.ntnu.idatt2003.utils.Errors;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -16,6 +21,8 @@ import javafx.stage.Stage;
 
 public class HomePage extends Application {
 
+    private static final Logger LOG = Logger.getLogger(HomePage.class.getName());
+
     private Label title;
     private ImageView laddersBtn;
     private ImageView ludoBtn;
@@ -25,17 +32,42 @@ public class HomePage extends Application {
 
     @Override
     public void start(Stage stage) {
-        NavigationService.getInstance().initialize(stage);
-        stage.setScene(createScene(stage));
-        stage.setTitle("Retro Roll & Rise");
-        stage.show();
+        LOG.info("HomePage starting...");
+        try {
+            NavigationService.getInstance().initialize(stage);
+            stage.setScene(createScene(stage));
+            stage.setTitle("Retro Roll & Rise");
+            stage.show();
+            LOG.info("HomePage started successfully.");
+        } catch (ResourceNotFoundException e) {
+            LOG.log(Level.SEVERE, "Failed to load resources for HomePage", e);
+            Errors.handle(
+                    "Could not load essential resources for the home page. The application might not work correctly.",
+                    e);
+            // Optionally, show a dialog here directly if Errors.handle doesn't, or rethrow
+            // to be caught by main
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "An unexpected error occurred during HomePage startup", e);
+            Errors.handle("An unexpected error occurred while starting the application.", e);
+        }
     }
 
     public Scene createScene(Stage stageForEventHandlers) {
+        LOG.fine("Creating Home Scene...");
         buildUI();
         setupEventHandlers(stageForEventHandlers);
         homeScene = new Scene(root, 800, 600);
-        homeScene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+        try {
+            String cssPath = "/styles/style.css";
+            String cssExternalForm = getClass().getResource(cssPath).toExternalForm();
+            if (cssExternalForm == null) {
+                throw new ResourceNotFoundException(cssPath);
+            }
+            homeScene.getStylesheets().add(cssExternalForm);
+        } catch (NullPointerException | ResourceNotFoundException e) {
+            LOG.log(Level.WARNING, "Failed to load stylesheet /styles/style.css", e);
+            // Application can continue without stylesheet, but log a warning.
+        }
 
         double imageButtonWidthFactor = 0.22;
         double imageButtonHeightFactor = 0.30;
@@ -81,7 +113,7 @@ public class HomePage extends Application {
                                         homeScene.widthProperty().doubleValue() * 0.05),
                                 homeScene.widthProperty(),
                                 homeScene.heightProperty()));
-
+        LOG.fine("Home Scene created.");
         return homeScene;
     }
 
@@ -100,7 +132,13 @@ public class HomePage extends Application {
     }
 
     private ImageView createGameButton(String imageName) {
-        ImageView button = new ImageView(new Image(getClass().getResourceAsStream("/images/" + imageName)));
+        String imagePath = "/images/" + imageName;
+        InputStream imageStream = getClass().getResourceAsStream(imagePath);
+        if (imageStream == null) {
+            LOG.log(Level.SEVERE, "Game button image not found: " + imagePath);
+            throw new ResourceNotFoundException(imagePath);
+        }
+        ImageView button = new ImageView(new Image(imageStream));
         button.setFitWidth(250);
         button.setFitHeight(250);
         button.setPickOnBounds(true);
@@ -121,9 +159,15 @@ public class HomePage extends Application {
 
     private void setupEventHandlers(Stage stage) {
         laddersBtn.setOnMouseClicked(
-                (MouseEvent e) -> NavigationService.getInstance().navigateToSnlPage());
+                (MouseEvent e) -> {
+                    LOG.info("Ladders button clicked.");
+                    NavigationService.getInstance().navigateToSnlPage();
+                });
 
         ludoBtn.setOnMouseClicked(
-                (MouseEvent e) -> NavigationService.getInstance().navigateToLudoPage());
+                (MouseEvent e) -> {
+                    LOG.info("Ludo button clicked.");
+                    NavigationService.getInstance().navigateToLudoPage();
+                });
     }
 }

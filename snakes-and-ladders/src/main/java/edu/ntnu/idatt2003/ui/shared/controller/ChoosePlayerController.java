@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2003.ui.shared.controller;
 
+import edu.ntnu.idatt2003.exception.CsvOperationException;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.ui.common.controller.AbstractPopupController;
 import edu.ntnu.idatt2003.ui.shared.view.ChoosePlayerPage;
@@ -9,17 +10,20 @@ import edu.ntnu.idatt2003.utils.Errors;
 import edu.ntnu.idatt2003.utils.UiDialogs;
 import edu.ntnu.idatt2003.utils.csv.PlayerCsv;
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class ChoosePlayerController extends AbstractPopupController<ChoosePlayerPage> {
 
+  private static final Logger LOG = Logger.getLogger(ChoosePlayerController.class.getName());
+
   public ChoosePlayerController(ChoosePlayerPage view, CompleteBoardGame gateway) {
     super(view, gateway);
-    // Display initial player list
+    LOG.info("ChoosePlayerController initialized.");
     view.updatePlayerDisplay(gateway.players());
   }
 
@@ -33,59 +37,79 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
   }
 
   private void addPlayer() {
+    LOG.fine("Attempting to add player.");
     String name = view.getNameField().getText().trim();
     String token = view.getSelectedToken();
     LocalDate birthday = view.getBirthdayPicker().getValue();
-    boolean invalid =
-        name.isEmpty()
-            || birthday == null
-            || birthday.isAfter(LocalDate.now())
-            || token == null
-            || token.isEmpty();
+    boolean invalid = name.isEmpty()
+        || birthday == null
+        || birthday.isAfter(LocalDate.now())
+        || token == null
+        || token.isEmpty();
 
     if (invalid) {
+      LOG.warning("Invalid player setup data provided.");
       alert("Invalid setup", "Please choose a valid name, birthday and token.");
       return;
     }
 
-    // Add player to gateway - model will notify observers
-    gateway.addPlayer(name, token, birthday);
-
-    // Clear input field and disable playerToken button
-    view.getNameField().clear();
-    view.disableToken(token);
+    try {
+      gateway.addPlayer(name, token, birthday);
+      LOG.info("Player added: " + name + " with token " + token);
+      view.getNameField().clear();
+      view.disableToken(token);
+    } catch (Exception ex) {
+      LOG.log(Level.SEVERE, "Error adding player " + name, ex);
+      Errors.handle("Could not add player: " + ex.getMessage(), ex);
+    }
   }
 
   private void savePlayers() {
+    LOG.info("Save players button clicked. Opening file chooser.");
     FileChooser fc = new FileChooser();
     fc.setTitle("Save players");
     fc.setInitialFileName("players.csv");
     fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files", "*.csv"));
 
     File out = fc.showSaveDialog(view.getAddPlayerButton().getScene().getWindow());
-    if (out == null) return;
+    if (out == null) {
+      LOG.info("Save players dialog cancelled by user.");
+      return;
+    }
 
+    LOG.info("Attempting to save players to: " + out.getAbsolutePath());
     try {
-      List<String[]> rows =
-          gateway.players().stream()
-              .map(p -> new String[] {p.playerName(), p.playerToken(), p.birthday().toString()})
-              .toList();
+      List<String[]> rows = gateway.players().stream()
+          .map(p -> new String[] { p.playerName(), p.playerToken(), p.birthday().toString() })
+          .toList();
       PlayerCsv.save(rows, out.toPath());
-    } catch (IOException ex) {
-      alert("Invalid player save", "Could not save players: " + ex.getMessage());
+      LOG.info("Players saved successfully to: " + out.getAbsolutePath());
+      Dialogs.info("Players Saved", "Players saved to " + out.getName());
+    } catch (CsvOperationException ex) {
+      LOG.log(Level.WARNING, "Could not save players to " + out.getAbsolutePath(), ex);
+      alert("Save Error", "Could not save players: " + ex.getMessage());
+    } catch (Exception ex) {
+      LOG.log(Level.SEVERE, "Unexpected error saving players to " + out.getAbsolutePath(), ex);
+      Errors.handle("An unexpected error occurred while saving players.", ex);
     }
   }
 
   private void loadPlayers() {
+    LOG.info("Load players button clicked. Opening file chooser.");
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Load players");
     fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files", "*.csv"));
 
     File in = fileChooser.showOpenDialog(view.getAddPlayerButton().getScene().getWindow());
-    if (in == null) return;
+    if (in == null) {
+      LOG.info("Load players dialog cancelled by user.");
+      return;
+    }
 
+    LOG.info("Attempting to load players from: " + in.getAbsolutePath());
     try {
       List<String[]> rows = PlayerCsv.load(in.toPath());
+      LOG.info("Players data loaded from file: " + in.getAbsolutePath() + ". Found " + rows.size() + " entries.");
 
       LoadedPlayersPage loadedPlayersPage = new LoadedPlayersPage(rows);
       Stage popup = UiDialogs.createModalPopup("Players", loadedPlayersPage.getView(), 650, 550);
@@ -94,25 +118,37 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
           .getAddSelectedButton()
           .setOnAction(
               ev -> {
+                List<String[]> selectedRows = loadedPlayersPage.getSelectedRows();
+                LOG.info("Adding " + selectedRows.size() + " selected players from loaded file.");
                 gateway.clearPlayers();
-                gateway.loadPlayers(loadedPlayersPage.getSelectedRows());
+                gateway.loadPlayers(selectedRows);
                 popup.close();
+                LOG.info("Selected players added and popup closed.");
               });
-      loadedPlayersPage.getCancelButton().setOnAction(ev -> popup.close());
+      loadedPlayersPage.getCancelButton().setOnAction(ev -> {
+        LOG.info("Load players from file popup cancelled.");
+        popup.close();
+      });
 
       popup.showAndWait();
-    } catch (IOException ex) {
-      Errors.handle("Could not load players from file.", ex);
+    } catch (CsvOperationException ex) {
+      LOG.log(Level.WARNING, "Could not load players from file " + in.getAbsolutePath(), ex);
+      Errors.handle("Could not load players from file: " + ex.getMessage(), ex);
+    } catch (Exception ex) {
+      LOG.log(Level.SEVERE, "Unexpected error loading players from " + in.getAbsolutePath(), ex);
+      Errors.handle("An unexpected error occurred while loading players.", ex);
     }
   }
 
   @Override
   public void confirm() {
+    LOG.info("ChoosePlayer dialog confirmed.");
     close(view.getContinueButton());
   }
 
   @Override
   public void cancel() {
+    LOG.info("ChoosePlayer dialog cancelled.");
     close(view.getCancelButton());
   }
 

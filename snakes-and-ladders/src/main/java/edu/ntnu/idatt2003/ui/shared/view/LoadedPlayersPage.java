@@ -1,7 +1,10 @@
 package edu.ntnu.idatt2003.ui.shared.view;
 
+import edu.ntnu.idatt2003.utils.ResourcePaths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -12,15 +15,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class LoadedPlayersPage {
+  private static final Logger LOG = Logger.getLogger(LoadedPlayersPage.class.getName());
   private final VBox view = new VBox(20);
   private final VBox playersListBox = new VBox(5);
   private final List<CheckBox> playerBoxes = new ArrayList<>();
   private final Button addSelectedButton = new Button("Add selected");
   private final Button cancelButton = new Button("Back");
 
-  /** Tar imot spiller-objektene som nettopp ble lest fra fil */
   public LoadedPlayersPage(List<String[]> rows) {
-
     Label title = new Label("Load players");
     title.getStyleClass().add("choose-player-title-label");
 
@@ -42,7 +44,13 @@ public class LoadedPlayersPage {
     view.setPadding(new Insets(30));
     view.setAlignment(Pos.CENTER);
     view.getStyleClass().add("page-background");
-    view.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+
+    java.net.URL cssUrl = getClass().getResource(ResourcePaths.STYLE_SHEET);
+    if (cssUrl != null) {
+      view.getStylesheets().add(cssUrl.toExternalForm());
+    } else {
+      LOG.warning("Stylesheet not found: " + ResourcePaths.STYLE_SHEET);
+    }
   }
 
   public VBox getView() {

@@ -1,7 +1,11 @@
 package edu.ntnu.idatt2003.ui.ludo.view;
 
+import edu.ntnu.idatt2003.exception.ResourceNotFoundException;
 import edu.ntnu.idatt2003.ui.MenuUIService;
 import edu.ntnu.idatt2003.ui.common.view.AbstractMenuView;
+import edu.ntnu.idatt2003.utils.ResourcePaths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,6 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class LudoPage extends AbstractMenuView {
+  private static final Logger LOG = Logger.getLogger(LudoPage.class.getName());
   private Scene scene;
   private final MenuUIService menuUIService;
   private BorderPane rootLayout;
@@ -25,10 +30,16 @@ public class LudoPage extends AbstractMenuView {
   }
 
   private void buildUi() {
-
     Label titleLabel = menuUIService.createTitleLabel("Ludo", "ludo-page-title");
     titleLabel.setWrapText(true);
-    boardPreview = menuUIService.createBoardPreview("/images/ludoBoard.jpg", 400, 400);
+    try {
+      boardPreview = menuUIService.createBoardPreview("/images/ludoBoard.jpg", 400, 400);
+    } catch (ResourceNotFoundException e) {
+      LOG.log(Level.WARNING, "Ludo board preview image not found, using placeholder.", e);
+      boardPreview = new ImageView(); // Placeholder or default image
+      boardPreview.setFitWidth(400);
+      boardPreview.setFitHeight(400);
+    }
     boardPreview.setPreserveRatio(true);
 
     startButton = menuUIService.createMenuButton("Start game", "confirm-button");
@@ -62,7 +73,10 @@ public class LudoPage extends AbstractMenuView {
     addNavigationAndHelpToBorderPane(rootLayout, false, howToButton);
 
     scene = new Scene(rootLayout, 1100, 750);
-    scene.getStylesheets().add(getStylesheet());
+    String cssPath = getStylesheet();
+    if (cssPath != null) {
+      scene.getStylesheets().add(cssPath);
+    }
   }
 
   @Override

@@ -2,13 +2,18 @@ package edu.ntnu.idatt2003.ui.shared.view;
 
 import edu.games.engine.observer.BoardGameEvent;
 import edu.games.engine.observer.BoardGameObserver;
+import edu.ntnu.idatt2003.exception.ResourceNotFoundException;
 import edu.ntnu.idatt2003.gateway.CompleteBoardGame;
 import edu.ntnu.idatt2003.gateway.view.PlayerView;
+import edu.ntnu.idatt2003.utils.ResourcePaths;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,12 +23,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 public class ChoosePlayerPage implements BoardGameObserver {
+  private static final Logger LOG = Logger.getLogger(ChoosePlayerPage.class.getName());
 
   private final VBox root;
   private final Map<String, ToggleButton> tokenButtons = new HashMap<>();
   private final String[] TOKEN_NAMES;
 
-  // UI components
   private TextField nameField;
   private DatePicker birthdayPicker;
   private Button cancelButton;
@@ -35,103 +40,85 @@ public class ChoosePlayerPage implements BoardGameObserver {
   private FlowPane tokenSelectionBox;
   private ToggleGroup tokenToggleGroup;
 
-  // Gateway reference
   private CompleteBoardGame gameGateway;
 
-  /** Constructor with custom playerToken names */
   public ChoosePlayerPage(String[] TOKEN_NAMES) {
     this.TOKEN_NAMES = TOKEN_NAMES;
     this.root = new VBox();
     buildUI();
   }
 
-  /** Default constructor with standard tokens */
   public ChoosePlayerPage() {
-    this(new String[] {"BLUE", "GREEN", "YELLOW", "RED", "PURPLE"});
+    this(new String[] { "BLUE", "GREEN", "YELLOW", "RED", "PURPLE" });
   }
 
-  /** Connects this view to the model and registers as an observer */
   public void connectToModel(CompleteBoardGame gateway) {
     this.gameGateway = gateway;
     gateway.addObserver(this);
   }
 
-  /** Handles model events by delegating to specific handlers */
   @Override
   public void update(BoardGameEvent event) {
     Platform.runLater(
         () -> {
           switch (event.getTypeOfEvent()) {
             case PLAYER_ADDED:
+              LOG.fine("Player added event received, updating display.");
               handlePlayerAdded();
               break;
             case GAME_RESET:
+              LOG.fine("Game reset event received, resetting player UI.");
               handleGameReset();
+              break;
+            default:
+              LOG.finest("Received unhandled event type: " + event.getTypeOfEvent());
               break;
           }
         });
   }
 
-  /** Updates the UI when a player is added to the model */
   private void handlePlayerAdded() {
     if (gameGateway != null) {
       updatePlayerDisplay(gameGateway.players());
     }
   }
 
-  /** Resets the UI when the game is reset */
   private void handleGameReset() {
-    // Clear player list
     addedPlayersBox.getChildren().clear();
-
-    // Re-enable all playerToken buttons
     tokenButtons.values().forEach(tb -> tb.setDisable(false));
   }
 
-  /** Updates the player display with the current list of players */
   public void updatePlayerDisplay(List<PlayerView> players) {
-    // Sort players by birthday (oldest first)
-    List<PlayerView> sorted =
-        players.stream().sorted(Comparator.comparing(PlayerView::birthday).reversed()).toList();
+    List<PlayerView> sorted = players.stream().sorted(Comparator.comparing(PlayerView::birthday).reversed()).toList();
 
-    // Clear and rebuild player display
     addedPlayersBox.getChildren().clear();
 
     for (PlayerView pv : sorted) {
       VBox playerBox = createPlayerBox(pv);
       addedPlayersBox.getChildren().add(playerBox);
-
-      // Disable used tokens
       disableToken(pv.playerToken());
     }
   }
 
-  /** Creates a player box UI component for a player */
   private VBox createPlayerBox(PlayerView player) {
     int yearsOld = java.time.Period.between(player.birthday(), LocalDate.now()).getYears();
-
     Label name = new Label(player.playerName());
     name.getStyleClass().add("player-name");
-
     Label age = new Label(yearsOld + " yrs");
     age.getStyleClass().add("player-age");
-
     VBox box = new VBox(name, age);
     box.setAlignment(Pos.CENTER);
     box.setSpacing(2);
     return box;
   }
 
-  /** Constructs the UI components */
   private void buildUI() {
-    // --- Title ---
     Label title = new Label("Add Players");
     title.getStyleClass().add("choose-player-title-label");
     title.setAlignment(Pos.CENTER);
     HBox titleBox = new HBox(title);
     titleBox.setAlignment(Pos.CENTER);
 
-    // --- Name & birthday fields ---
     Label playerName = new Label("Player Name");
     playerName.getStyleClass().add("popup-label");
     nameField = new TextField();
@@ -151,7 +138,6 @@ public class ChoosePlayerPage implements BoardGameObserver {
     birthdayBox.getStyleClass().add("player-info-box");
     birthdayBox.setAlignment(Pos.CENTER);
 
-    // --- Token selection ---
     tokenToggleGroup = new ToggleGroup();
     tokenSelectionBox = new FlowPane(10, 10);
     tokenSelectionBox.setAlignment(Pos.CENTER);
@@ -163,60 +149,56 @@ public class ChoosePlayerPage implements BoardGameObserver {
       tokenSelectionBox.getChildren().add(tb);
     }
 
-    // --- Added players placeholder ---
     addedPlayersBox = new FlowPane(15, 10);
     addedPlayersBox.setAlignment(Pos.CENTER);
 
-    // --- Buttons ---
     addPlayerButton = new Button("Add Player");
     addPlayerButton.getStyleClass().add("add-player-button");
-
     continueButton = new Button("Confirm");
     continueButton.getStyleClass().add("confirm-button");
-
     cancelButton = new Button("Cancel");
     cancelButton.getStyleClass().add("exit-button");
-
     savePlayerButton = new Button("Save Players");
     savePlayerButton.getStyleClass().add("board-size-button");
-
     loadPlayersButton = new Button("Load Players");
     loadPlayersButton.getStyleClass().add("board-size-button");
 
     HBox actionBox = new HBox(20, cancelButton, addPlayerButton, continueButton);
     actionBox.setAlignment(Pos.CENTER);
     actionBox.setPadding(new Insets(10));
-
     HBox loadSaveBox = new HBox(20, savePlayerButton, loadPlayersButton);
     loadSaveBox.setAlignment(Pos.CENTER);
     loadSaveBox.setPadding(new Insets(10));
 
-    // --- Assemble popup ---
-    VBox popupContent =
-        new VBox(
-            15,
-            titleBox,
-            nameBox,
-            birthdayBox,
-            tokenSelectionBox,
-            addedPlayersBox,
-            actionBox,
-            loadSaveBox);
+    VBox popupContent = new VBox(
+        15,
+        titleBox,
+        nameBox,
+        birthdayBox,
+        tokenSelectionBox,
+        addedPlayersBox,
+        actionBox,
+        loadSaveBox);
     popupContent.setPadding(new Insets(20));
     popupContent.setSpacing(15);
 
     root.getStyleClass().add("page-background");
     root.getChildren().setAll(popupContent);
     root.setAlignment(Pos.CENTER);
+    // Stylesheet typically applied by UiDialogs or scene creator
   }
 
-  /** Creates a styled playerToken button */
   private ToggleButton buildTokenButton(String token) {
     ToggleButton tb = new ToggleButton();
-    ImageView iv =
-        new ImageView(
-            new Image(
-                getClass().getResourceAsStream("/images/" + token.toLowerCase() + "Piece.png")));
+    String imagePath = ResourcePaths.IMAGE_DIR + token.toLowerCase() + "Piece.png";
+    InputStream imageStream = getClass().getResourceAsStream(imagePath);
+    ImageView iv;
+    if (imageStream == null) {
+      LOG.warning("Token image not found: " + imagePath + ". Using placeholder.");
+      iv = new ImageView(); // Placeholder
+    } else {
+      iv = new ImageView(new Image(imageStream));
+    }
     iv.setFitWidth(50);
     iv.setFitHeight(50);
     tb.setGraphic(iv);
@@ -225,8 +207,6 @@ public class ChoosePlayerPage implements BoardGameObserver {
     tb.getStyleClass().add("token-button");
     return tb;
   }
-
-  // --- Getters and utility methods ---
 
   public VBox getView() {
     return root;
@@ -263,10 +243,6 @@ public class ChoosePlayerPage implements BoardGameObserver {
 
   public Button getLoadPlayersButton() {
     return loadPlayersButton;
-  }
-
-  public FlowPane getAddedPlayersBox() {
-    return addedPlayersBox;
   }
 
   public TextField getNameField() {

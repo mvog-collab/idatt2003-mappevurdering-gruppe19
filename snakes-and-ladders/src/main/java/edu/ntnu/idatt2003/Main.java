@@ -2,19 +2,42 @@ package edu.ntnu.idatt2003;
 
 import edu.ntnu.idatt2003.ui.HomePage;
 import edu.ntnu.idatt2003.utils.Errors;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Main {
 
+  private static final Logger LOG = Logger.getLogger(Main.class.getName());
+
   static {
-    System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$s] %5$s %n");
-    java.util.logging.LogManager.getLogManager()
-        .getLogger("")
-        .setLevel(java.util.logging.Level.INFO);
+    try (InputStream is = Main.class.getClassLoader().getResourceAsStream("logging.properties")) {
+      if (is == null) {
+        System.err.println("Warning: logging.properties not found. Using default logging configuration.");
+      } else {
+        LogManager.getLogManager().readConfiguration(is);
+      }
+    } catch (Exception e) {
+      System.err.println("Error loading logging configuration: " + e.getMessage());
+      e.printStackTrace();
+    }
   }
 
   public static void main(String[] args) {
-    HomePage.launch(args);
+    LOG.info("Application starting...");
     Thread.setDefaultUncaughtExceptionHandler(
-        (t, e) -> Errors.handle("Unexpected problem – please restart the game.", (Exception) e));
+        (t, e) -> {
+          LOG.log(Level.SEVERE, "Uncaught exception in thread " + t.getName(), e);
+          Errors.handle("An unexpected problem occurred. Please restart the game.", (Exception) e);
+        });
+
+    try {
+      HomePage.launch(args);
+    } catch (Exception e) {
+      LOG.log(Level.SEVERE, "Failed to launch application", e);
+      Errors.handle("Application failed to launch. Please check logs for details.", e);
+    }
+    LOG.info("Application main method finished. If UI is not showing, check previous logs for errors.");
   }
 }
