@@ -76,9 +76,9 @@ public final class LudoGateway extends AbstractGameGateway {
 
   //  Player management
   @Override
-  public void addPlayer(String name, String token, LocalDate birthday) {
+  public void addPlayer(String playerName, String playerToken, LocalDate birthday) {
     Objects.requireNonNull(game, "Call newGame before adding players");
-    Player player = new Player(name, mapStringToToken(token), birthday);
+    Player player = new Player(playerName, mapStringToToken(playerToken), birthday);
     game.getPlayers().add(player);
 
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.PLAYER_ADDED, player));

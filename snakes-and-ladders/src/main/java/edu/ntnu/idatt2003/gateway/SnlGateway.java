@@ -77,9 +77,9 @@ public final class SnlGateway extends AbstractGameGateway {
   }
 
   @Override
-  public void addPlayer(String name, String token, LocalDate birthday) {
+  public void addPlayer(String playerName, String playerToken, LocalDate birthday) {
     Objects.requireNonNull(game, "call newGame first");
-    Player newPlayer = new Player(name, mapStringToToken(token), birthday);
+    Player newPlayer = new Player(playerName, mapStringToToken(playerToken), birthday);
     newPlayer.moveTo(game.board().start()); // Set player on first tile
     game.getPlayers().add(newPlayer);
 
