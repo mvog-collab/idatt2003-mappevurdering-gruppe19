@@ -65,6 +65,16 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     }
   }
 
+  private void resetGame() {
+    try {
+      gateway.newGame(0);
+      LOG.info("Ludo game reset in gateway.");
+    } catch (Exception ex) {
+      LOG.log(Level.SEVERE, "Error resetting Ludo game.", ex);
+      Errors.handle("An error occurred while resetting the game.", ex);
+    }
+  }
+
   @Override
   protected void initializeEventHandlers() {
     LOG.fine("Initializing LudoPage event handlers.");
@@ -78,13 +88,7 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     });
     view.resetButton().setOnAction(e -> {
       LOG.info("Reset game button clicked.");
-      try {
-        gateway.resetGame();
-        LOG.info("Ludo game reset in gateway.");
-      } catch (Exception ex) {
-        LOG.log(Level.SEVERE, "Error resetting Ludo game.", ex);
-        Errors.handle("An error occurred while resetting the game.", ex);
-      }
+      resetGame();
     });
   }
 }

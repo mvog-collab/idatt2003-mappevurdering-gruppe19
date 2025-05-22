@@ -12,7 +12,6 @@ import edu.games.engine.impl.overlay.OverlayProvider;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
 import edu.games.engine.observer.BoardGameEvent;
-import edu.games.engine.rule.factory.RuleFactory;
 import edu.games.engine.store.PlayerStore;
 import edu.games.engine.strategy.GameStrategy;
 import edu.games.engine.strategy.SnlGameStrategy;
@@ -30,18 +29,15 @@ import java.util.Objects;
 public final class SnlGateway extends AbstractGameGateway {
   private final JsonBoardLoader boardFactory;
   private final DiceFactory diceFactory;
-  private final RuleFactory ruleFactory;
   private GameStrategy gameStrategy;
 
   public SnlGateway(
       JsonBoardLoader boardFactory,
-      RuleFactory ruleFactory,
       DiceFactory diceFactory,
       PlayerStore playerStore,
       OverlayProvider overlayProvider) {
     super(playerStore, overlayProvider);
     this.boardFactory = boardFactory;
-    this.ruleFactory = ruleFactory;
     this.diceFactory = diceFactory;
   }
 
@@ -68,7 +64,8 @@ public final class SnlGateway extends AbstractGameGateway {
 
   @Override
   public void resetGame() {
-    if (game == null) return;
+    if (game == null)
+      return;
     game.getPlayers().forEach(p -> p.moveTo(game.board().start()));
     game.setWinner(null);
     game.setCurrentPlayerIndex(0);
@@ -88,7 +85,8 @@ public final class SnlGateway extends AbstractGameGateway {
 
   @Override
   public int rollDice() {
-    if (game == null || game.getPlayers().isEmpty()) return 0;
+    if (game == null || game.getPlayers().isEmpty())
+      return 0;
 
     // Save current player info for notifications
     Player currentPlayer = game.currentPlayer();
@@ -125,7 +123,8 @@ public final class SnlGateway extends AbstractGameGateway {
 
   @Override
   public int boardSize() {
-    if (game == null) return 0;
+    if (game == null)
+      return 0;
     LinearBoard linearBoard = (LinearBoard) game.board();
     return ((LinearTile) linearBoard.move(linearBoard.start(), Integer.MAX_VALUE)).tileId();
   }
@@ -140,13 +139,12 @@ public final class SnlGateway extends AbstractGameGateway {
 
     return game.getPlayers().stream()
         .map(
-            p ->
-                new PlayerView(
-                    p.getName(),
-                    p.getToken().name(),
-                    p.getCurrentTile().tileId(),
-                    p.getBirthday(),
-                    p.getToken() == turnToken))
+            p -> new PlayerView(
+                p.getName(),
+                p.getToken().name(),
+                p.getCurrentTile().tileId(),
+                p.getBirthday(),
+                p.getToken() == turnToken))
         .toList();
   }
 

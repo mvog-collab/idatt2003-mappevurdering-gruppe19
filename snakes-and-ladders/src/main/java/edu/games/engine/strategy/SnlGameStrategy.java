@@ -39,6 +39,9 @@ public class SnlGameStrategy implements GameStrategy {
     if (player == null || game == null || player.getCurrentTile() == null || game.board() == null) {
       return null;
     }
+    if (diceValue == 12) {
+      return game.board().move(player.getCurrentTile(), 0);
+    }
     return game.board().move(player.getCurrentTile(), diceValue);
   }
 
