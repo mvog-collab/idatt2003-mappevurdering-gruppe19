@@ -3,9 +3,10 @@ package edu.games.engine.impl;
 import edu.games.engine.board.Board;
 import edu.games.engine.board.Tile;
 import edu.games.engine.dice.Dice;
+import edu.games.engine.exception.RuleViolationException;
+import edu.games.engine.exception.ValidationException;
 import edu.games.engine.model.Player;
 import edu.games.engine.model.Token;
-import edu.games.engine.rule.RuleEngine;
 import edu.games.engine.strategy.GameStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,6 @@ class DefaultGameTest {
   private Tile tile;
   private Dice dice;
   private Board board;
-  private RuleEngine rules;
   private GameStrategy strategy;
   private DefaultGame game;
 
@@ -33,7 +33,6 @@ class DefaultGameTest {
     tile = mock(Tile.class);
     dice = mock(Dice.class);
     board = mock(Board.class);
-    rules = mock(RuleEngine.class);
     strategy = mock(GameStrategy.class);
 
     game = new DefaultGame(board, strategy, List.of(player), dice);
@@ -54,9 +53,7 @@ class DefaultGameTest {
     int rolled = game.playTurn();
 
     assertEquals(4, rolled);
-    // Merk: vi kan ikke bruke verify(player).moveTo(tile) siden Player er ekte
     assertEquals(tile, player.getCurrentTile());
-    // verify på strategy
     verify(strategy).applySpecialRules(eq(player), isNull(), eq(tile), eq(game));
   }
 
@@ -89,5 +86,34 @@ class DefaultGameTest {
   void shouldSetCurrentPlayerIndex() {
     game.setCurrentPlayerIndex(0);
     assertEquals(player, game.currentPlayer());
+  }
+
+  @Test
+  void shouldThrowWhenNoPlayersInCurrentPlayer() {
+    DefaultGame emptyGame = new DefaultGame(board, strategy, List.of(), dice);
+    assertThrows(ValidationException.class, emptyGame::currentPlayer);
+  }
+
+  @Test
+  void shouldThrowWhenSettingIndexWithNoPlayers() {
+    DefaultGame emptyGame = new DefaultGame(board, strategy, List.of(), dice);
+    assertThrows(ValidationException.class, () -> emptyGame.setCurrentPlayerIndex(1));
+  }
+
+  @Test
+  void shouldThrowIfPlayTurnAfterGameIsOver() {
+    when(dice.roll()).thenReturn(3);
+    when(strategy.movePiece(player, -1, 3, game)).thenReturn(tile);
+    when(strategy.processDiceRoll(player, 3, game)).thenReturn(false);
+    when(strategy.checkWinCondition(player, game)).thenReturn(true);
+
+    game.playTurn();
+
+    assertThrows(RuleViolationException.class, game::playTurn);
+  }
+
+  @Test
+  void shouldThrowIfPlayersListIsNull() {
+    assertThrows(NullPointerException.class, () -> new DefaultGame(board, strategy, null, dice));
   }
 }

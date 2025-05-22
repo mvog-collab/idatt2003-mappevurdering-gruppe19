@@ -37,4 +37,33 @@ class LudoGoalTileTest {
       assertSame(second, first.next(color));
     }
   }
+
+  @Test
+  void nextShouldReturnNullIfNotLinked_evenWithColor() {
+    LudoGoalTile tile = new LudoGoalTile(7);
+    for (LudoColor color : LudoColor.values()) {
+      assertNull(tile.next(color), "Expected null when next is not linked");
+    }
+  }
+
+  @Test
+  void shouldHandleSelfLinkingGracefully() {
+    LudoGoalTile tile = new LudoGoalTile(3);
+    tile.linkNext(tile); // next tile is itself
+    assertSame(tile, tile.next());
+    assertSame(tile, tile.next(LudoColor.RED));
+  }
+
+  @Test
+  void shouldAllowOverwritingNextTile() {
+    LudoGoalTile tile = new LudoGoalTile(5);
+    LudoGoalTile firstNext = new LudoGoalTile(6);
+    LudoGoalTile secondNext = new LudoGoalTile(7);
+
+    tile.linkNext(firstNext);
+    assertSame(firstNext, tile.next());
+
+    tile.linkNext(secondNext);
+    assertSame(secondNext, tile.next());
+  }
 }

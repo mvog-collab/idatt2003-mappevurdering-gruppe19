@@ -96,10 +96,30 @@ class BoardGameTest {
   void shouldNotAddSameObserverTwice() {
     TestObserver observer = new TestObserver();
     boardGame.addObserver(observer);
-    boardGame.addObserver(observer); // Skal ikke legges til to ganger
+    boardGame.addObserver(observer); // Should not be added twice
 
     boardGame.simulatePlayerMove(player, fromTile, toTile);
 
     assertEquals(1, observer.getEvents().size());
+  }
+
+  // --- Negative test cases ---
+
+  @Test
+  void shouldHandleNullObserverGracefully() {
+    assertDoesNotThrow(() -> boardGame.addObserver(null)); // Expect it to handle nulls
+  }
+
+  @Test
+  void shouldNotThrowIfNoObserversRegistered() {
+    assertDoesNotThrow(() -> boardGame.simulatePlayerMove(player, fromTile, toTile)); // No observers, but no crash
+  }
+
+  @Test
+  void playerMoveDataShouldReturnCorrectValues() {
+    BoardGame.PlayerMoveData moveData = new BoardGame.PlayerMoveData(player, fromTile, toTile);
+    assertEquals(player, moveData.getPlayer());
+    assertEquals(fromTile, moveData.getFromTile());
+    assertEquals(toTile, moveData.getToTile());
   }
 }
