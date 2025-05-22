@@ -39,22 +39,22 @@ public class MenuUIService {
     menu.getChildren().addAll(buttons);
     menu.setAlignment(Pos.CENTER_RIGHT);
     menu.getStyleClass().add("menu-start-buttons");
+    menu.setMaxWidth(350);
     return menu;
   }
 
   // Creates a container for the title and board preview.
   public VBox createLeftPanel(Label title, ImageView boardPreview) {
-    VBox leftPanel = new VBox(20, title, boardPreview);
-    leftPanel.setAlignment(Pos.TOP_CENTER);
-    leftPanel.setPadding(new Insets(10));
+    VBox leftPanel = new VBox(10, title, boardPreview);
+    leftPanel.setAlignment(Pos.CENTER);
     return leftPanel;
   }
 
   // Creates the main layout combining the left panel and menu.
   public HBox createMainLayout(VBox leftPanel, VBox menuPanel) {
-    HBox layout = new HBox(leftPanel, menuPanel);
+    HBox layout = new HBox(10, leftPanel, menuPanel);
     layout.setAlignment(Pos.CENTER);
-    layout.setPadding(new Insets(40));
+    layout.setPadding(new Insets(20));
     layout.getStyleClass().add("page-background");
     return layout;
   }

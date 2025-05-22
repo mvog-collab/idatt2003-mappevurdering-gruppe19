@@ -88,7 +88,6 @@ class DefaultGameTest {
     assertEquals(player, game.currentPlayer());
   }
 
-
   @Test
   void shouldThrowWhenNoPlayersInCurrentPlayer() {
     DefaultGame emptyGame = new DefaultGame(board, strategy, List.of(), dice);
@@ -108,7 +107,7 @@ class DefaultGameTest {
     when(strategy.processDiceRoll(player, 3, game)).thenReturn(false);
     when(strategy.checkWinCondition(player, game)).thenReturn(true);
 
-    game.playTurn(); // spiller vinner
+    game.playTurn();
 
     assertThrows(RuleViolationException.class, game::playTurn);
   }
