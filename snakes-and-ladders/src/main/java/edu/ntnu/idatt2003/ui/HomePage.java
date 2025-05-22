@@ -55,6 +55,7 @@ public class HomePage extends Application {
         new ImageView(new Image(getClass().getResourceAsStream("/images/" + imageName)));
     button.setFitWidth(250);
     button.setFitHeight(250);
+    button.setPickOnBounds(true);
     button.getStyleClass().add("menu-button-image");
     button.setOnMouseEntered(
         e -> {
