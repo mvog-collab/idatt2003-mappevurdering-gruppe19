@@ -34,7 +34,7 @@ class PlayerTest {
   @Test
   void shouldGetSpecificPieceById() {
     PlayerPiece piece = player.getPiece(2);
-    assertEquals(2, piece.getId());
+    assertEquals(2, piece.getPlayerPieceId());
   }
 
   @Test

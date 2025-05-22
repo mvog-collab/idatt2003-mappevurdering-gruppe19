@@ -11,7 +11,7 @@ class PlayerPieceTest {
   @Test
   void shouldReturnCorrectId() {
     PlayerPiece piece = new PlayerPiece(2);
-    assertEquals(2, piece.getId());
+    assertEquals(2, piece.getPlayerPieceId());
   }
 
   @Test
