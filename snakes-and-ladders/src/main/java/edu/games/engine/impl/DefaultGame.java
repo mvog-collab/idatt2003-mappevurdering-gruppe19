@@ -15,6 +15,10 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * DefaultGame manages the lifecycle of a game session.
+ * It handles turns, dice rolls, movement, rules, and win conditions.
+ */
 public final class DefaultGame implements Game {
 
   private static final Logger LOG = Logger.getLogger(DefaultGame.class.getName());
@@ -26,6 +30,14 @@ public final class DefaultGame implements Game {
   private int currentIndex = 0;
   private Player winner;
 
+  /**
+   * Constructs a new DefaultGame with the given components.
+   *
+   * @param board the game board
+   * @param strategy the game rules and logic
+   * @param initialPlayers the initial list of players
+   * @param dice the dice mechanism
+   */
   public DefaultGame(Board board, GameStrategy strategy, List<Player> initialPlayers, Dice dice) {
     this.board = Objects.requireNonNull(board, "Board cannot be null.");
     this.strategy = Objects.requireNonNull(strategy, "GameStrategy cannot be null.");
@@ -44,6 +56,12 @@ public final class DefaultGame implements Game {
     }
   }
 
+  /**
+   * Plays a turn for the current player.
+   * Rolls the dice, attempts a move, applies special rules, and determines if the player gets another turn.
+   *
+   * @return the rolled value
+   */
   @Override
   public int playTurn() {
     LOG.fine("playTurn called.");
@@ -93,6 +111,11 @@ public final class DefaultGame implements Game {
     return rolledValue;
   }
 
+  /**
+   * Returns the player whose turn it currently is.
+   *
+   * @return the current player
+   */
   @Override
   public Player currentPlayer() {
     if (players.isEmpty()) {
@@ -110,16 +133,31 @@ public final class DefaultGame implements Game {
     return players.get(currentIndex);
   }
 
+  /**
+   * Returns the winner of the game, if the game is finished.
+   *
+   * @return an Optional containing the winner, or empty if no one has won yet
+   */
   @Override
   public Optional<Player> getWinner() {
     return Optional.ofNullable(winner);
   }
 
+  /**
+   * Returns the list of all players in the game.
+   *
+   * @return list of players
+   */
   @Override
   public List<Player> getPlayers() {
     return players;
   }
 
+  /**
+   * Manually sets the current player index.
+   *
+   * @param idx index to set
+   */
   public void setCurrentPlayerIndex(int idx) {
     if (players.isEmpty()) {
       LOG.severe("Cannot set current player index: No players in the game.");
@@ -134,6 +172,11 @@ public final class DefaultGame implements Game {
     }
   }
 
+  /**
+   * Manually sets or clears the winner.
+   *
+   * @param winner the winning player, or null to clear the winner
+   */
   public void setWinner(Player winner) {
     Player oldWinner = this.winner;
     this.winner = winner;
@@ -144,14 +187,29 @@ public final class DefaultGame implements Game {
     }
   }
 
+  /**
+   * Returns the game strategy.
+   *
+   * @return the strategy used to control the game
+   */
   public GameStrategy getStrategy() {
     return strategy;
   }
 
+  /**
+   * Returns the board used in this game.
+   *
+   * @return the game board
+   */
   public Board board() {
     return board;
   }
 
+  /**
+   * Returns the dice used in this game.
+   *
+   * @return the dice instance
+   */
   public Dice dice() {
     return dice;
   }

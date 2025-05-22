@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.games.engine.exception.StorageException;
 import edu.ntnu.idatt2003.ui.fx.OverlayParams;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,17 +13,33 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Loads graphical overlay data for game boards from JSON resources.
+ * Each overlay describes an image placed on a specific tile.
+ */
 public final class JsonOverlayProvider implements OverlayProvider {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private final String baseDir;
   private static final Logger LOG = Logger.getLogger(JsonOverlayProvider.class.getName());
 
+  /**
+   * Creates a new overlay provider that looks for overlay files in a given resource folder.
+   *
+   * @param baseResourceDir the base directory in the classpath where overlay files are located
+   */
   public JsonOverlayProvider(String baseResourceDir) {
     this.baseDir = baseResourceDir.endsWith("/") ? baseResourceDir : baseResourceDir + "/";
     LOG.info("JsonOverlayProvider initialized with base directory: " + this.baseDir);
   }
 
+  /**
+   * Loads overlay parameters for a specific board size.
+   *
+   * @param size the size of the board (used to determine which file to load)
+   * @return a list of overlay parameters, or an empty list if no file is found
+   * @throws StorageException if the file can't be read or parsed
+   */
   @Override
   public List<OverlayParams> overlaysForBoard(int size) throws StorageException {
     String resource = baseDir + "overlays" + size + ".json";
