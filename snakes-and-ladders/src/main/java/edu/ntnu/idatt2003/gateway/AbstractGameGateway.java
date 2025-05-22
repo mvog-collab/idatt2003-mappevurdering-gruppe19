@@ -73,7 +73,7 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
   public void savePlayers(Path out) {
     try {
       if (game != null) {
-        playerStore.save(game.getPlayers(), out);
+        playerStore.savePlayers(game.getPlayers(), out);
       }
     } catch (GameEngineException gameEngineException) {
       LOG.log(Level.WARNING, gameEngineException.getMessage());

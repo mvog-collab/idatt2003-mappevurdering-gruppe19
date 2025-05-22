@@ -72,7 +72,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
               .toList();
       PlayerCsv.save(rows, out.toPath());
     } catch (IOException ex) {
-      alert("Invalid player save", "Could not save players: " + ex.getMessage());
+      alert("Invalid player savePlayers", "Could not savePlayers players: " + ex.getMessage());
     }
   }
 
