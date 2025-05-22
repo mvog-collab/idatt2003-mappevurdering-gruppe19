@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2003.ui.shared.view;
+package edu.ntnu.idatt2003.ui.service;
 
 import edu.ntnu.idatt2003.ui.service.animation.AnimationService;
 import edu.ntnu.idatt2003.ui.service.animation.BoardAnimationService;
@@ -19,6 +19,8 @@ import javafx.scene.layout.Pane;
 
 public class ViewServiceFactory {
   private static final Logger LOG = Logger.getLogger(ViewServiceFactory.class.getName());
+
+  private ViewServiceFactory() {}
 
   public static BoardUIService createBoardUIService(String gameType, int boardSize) {
     LOG.info(() -> "Creating BoardUIService for gameType: " + gameType + ", boardSize: " + boardSize);
