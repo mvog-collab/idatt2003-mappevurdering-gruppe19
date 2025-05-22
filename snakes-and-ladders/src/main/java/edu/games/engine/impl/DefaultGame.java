@@ -27,9 +27,9 @@ public final class DefaultGame implements Game {
     this.strategy = Objects.requireNonNull(strategy);
     this.dice = Objects.requireNonNull(dice);
     this.players = new ArrayList<>(players);
-    //if (players == null || players.isEmpty()) {
-      //throw new ValidationException("Player list is null or empty");
-    //}
+    if (players == null || players.isEmpty()) {
+      // throw new ValidationException("Player list is null or empty");
+    }
   }
 
   // In DefaultGame

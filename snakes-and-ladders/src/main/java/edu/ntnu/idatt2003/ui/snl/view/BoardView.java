@@ -25,20 +25,19 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-public class BoardView extends AbstractGameView { // AbstractGameView should extend AbstractView
+public class BoardView extends AbstractGameView {
   private final BoardUIService boardUIService;
   private final PlayerUIService playerUIService;
   private AnimationService animationService;
   private final DiceService diceService;
 
-  private BorderPane rootLayout; // Change mainLayout to BorderPane and use as root
+  private BorderPane rootLayout;
   private StackPane boardStack;
-  private Pane boardPane;
+  private Node playerTurnBox;
   private final Pane tokenPane;
   private final Pane overlayPane;
   private final VBox controlPanel;
   private final HBox diceContainer;
-  private FlowPane playerPanel;
 
   private final int boardSize;
   private final Map<String, ImageView> tokenImages = new HashMap<>();
@@ -57,11 +56,11 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
     this.animationService = animationService;
     this.diceService = diceService;
 
-    this.rootLayout = new BorderPane(); // Initialize rootLayout
-    this.boardStack = new StackPane();
+    this.rootLayout = new BorderPane();
     this.tokenPane = new Pane();
     this.overlayPane = new Pane();
-    this.controlPanel = new VBox(20);
+
+    this.controlPanel = new VBox(15);
     this.diceContainer = new HBox(10);
 
     this.rollButton = new Button("Roll Dice");
@@ -79,54 +78,52 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
         ViewServiceFactory.createDiceService("SNL"));
 
     Map<Integer, Point2D> coordinates = boardUIService.getTileCoordinates();
-    AnimationService newAnimationService =
-        ViewServiceFactory.createAnimationService("SNL", coordinates, tokenPane);
+    AnimationService newAnimationService = ViewServiceFactory.createAnimationService("SNL", coordinates,
+        this.tokenPane);
     this.animationService = newAnimationService;
   }
 
   private void buildUI() {
-    boardStack = boardUIService.createBoardPane(boardSize);
-    if (!boardStack.getChildren().isEmpty()) {
-      boardPane = (Pane) boardStack.getChildren().get(0);
-    } else {
-      boardPane = new GridPane();
-      boardStack.getChildren().add(boardPane);
-    }
+    // boardUIService.createBoardPane returns a StackPane containing the GridPane
+    // (visual board)
+    this.boardStack = boardUIService.createBoardPane(boardSize);
+    Pane visualBoardPane = (Pane) this.boardStack.getChildren().get(0); // This is the GridPane
 
-    double boardWidth = boardPane.getPrefWidth();
-    double boardHeight = boardPane.getPrefHeight();
-    boardStack.setPrefSize(boardWidth, boardHeight);
-    boardStack.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    boardStack.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    overlayPane.setPrefSize(boardWidth, boardHeight);
-    overlayPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    overlayPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    tokenPane.setPrefSize(boardWidth, boardHeight);
-    tokenPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    tokenPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    boardStack.getChildren().clear();
-    boardStack.getChildren().addAll(boardPane, overlayPane, tokenPane);
+    double boardDisplayWidth = visualBoardPane.getPrefWidth(); // Assuming service sets prefSize on GridPane
+    double boardDisplayHeight = visualBoardPane.getPrefHeight();
 
-    playerPanel = new FlowPane();
-    playerPanel.setHgap(15);
-    playerPanel.setVgap(15);
-    playerPanel.setPrefWrapLength(300);
+    // Configure the view's overlayPane and tokenPane
+    this.overlayPane.setPrefSize(boardDisplayWidth, boardDisplayHeight);
+    this.overlayPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE); // Allow shrinking
+    this.overlayPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE); // Allow growing
+
+    this.tokenPane.setPrefSize(boardDisplayWidth, boardDisplayHeight);
+    this.tokenPane.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    this.tokenPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+    // Add the view's overlay and token panes to the boardStack from the service
+    this.boardStack.getChildren().addAll(this.overlayPane, this.tokenPane);
+
+    // Ensure the main boardStack itself has its size fixed
+    this.boardStack.setPrefSize(boardDisplayWidth, boardDisplayHeight);
+    this.boardStack.setMinSize(boardDisplayWidth, boardDisplayHeight);
+    this.boardStack.setMaxSize(boardDisplayWidth, boardDisplayHeight);
+
+    PlayerView currentPlayer = getCurrentPlayer(); // Can be null
+    playerTurnBox = playerUIService.createCurrentPlayerTurnBox(currentPlayer);
 
     diceContainer.setAlignment(Pos.CENTER);
-    diceContainer.setPadding(new Insets(20));
+    diceContainer.setPadding(new Insets(10));
     diceContainer.getStyleClass().add("dice-box");
-    diceContainer.setPrefSize(250, 250);
-    diceContainer.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    diceContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    diceContainer.setMinHeight(220);
     diceService.initializeDice(diceContainer);
 
     rollButton.getStyleClass().add("roll-dice-button");
     playAgainButton.getStyleClass().add("play-again-button");
 
-    Button howToButton =
-        createHowToPlayButton(
-            "How to play - Snakes & Ladders",
-            """
+    Button howToButton = createHowToPlayButton(
+        "How to play - Snakes & Ladders",
+        """
             - Roll the dice and be the first to the goal!
             - If you land on an enemy player(s), they are sent back to start.
             - Roll a pair for an extra turn.
@@ -137,78 +134,82 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
     HBox buttonContainer = new HBox(10, rollButton, playAgainButton);
     buttonContainer.setAlignment(Pos.CENTER);
 
-    controlPanel.getChildren().addAll(howToButton, playerPanel, diceContainer, buttonContainer);
+    controlPanel.getChildren().addAll(howToButton, playerTurnBox, diceContainer, buttonContainer);
     controlPanel.setAlignment(Pos.TOP_CENTER);
-    controlPanel.setPrefWidth(400);
+    controlPanel.setPadding(new Insets(10));
     controlPanel.getStyleClass().add("game-control");
+    VBox.setVgrow(playerTurnBox, Priority.NEVER);
+    VBox.setVgrow(diceContainer, Priority.NEVER);
+    VBox.setVgrow(buttonContainer, Priority.NEVER);
 
-    // Set up rootLayout (BorderPane)
     rootLayout.setCenter(boardStack);
     rootLayout.setRight(controlPanel);
-    rootLayout.setPadding(new Insets(20));
-    rootLayout.getStyleClass().add("page-background"); // Add main-box if needed
+    rootLayout.setPadding(new Insets(10, 15, 10, 15));
+    rootLayout.getStyleClass().add("page-background");
 
-    // Add navigation controls to the top of the BorderPane
-    addNavigationAndHelpToBorderPane(
-        rootLayout, true, howToButton); // true = include "Back to Game Setup"
+    addNavigationAndHelpToBorderPane(rootLayout, true, howToButton);
 
-    BorderPane.setMargin(boardStack, new Insets(0, 20, 0, 0));
+    BorderPane.setAlignment(boardStack, Pos.CENTER);
+    BorderPane.setMargin(boardStack, new Insets(0, 10, 0, 0));
+    BorderPane.setMargin(controlPanel, new Insets(0, 0, 0, 10));
+  }
+
+  private Optional<PlayerView> getOptCurrentPlayer() {
+    return currentPlayers.stream().filter(PlayerView::hasTurn).findFirst();
+  }
+
+  private PlayerView getCurrentPlayer() {
+    return currentPlayers.stream().filter(PlayerView::hasTurn).findFirst().orElse(null);
+  }
+
+  private void updatePlayerTurnDisplay() {
+    PlayerView currentPlayer = getOptCurrentPlayer().orElse(null);
+    playerUIService.updateCurrentPlayerTurnBox(playerTurnBox, currentPlayer, null);
   }
 
   @Override
   public Scene getScene() {
-    Scene scene = new Scene(rootLayout, 1000, 700); // Use rootLayout
+    Scene scene = new Scene(rootLayout, 1200, 800);
     scene.getStylesheets().add(getClass().getResource(ResourcePaths.STYLE_SHEET).toExternalForm());
     return scene;
   }
 
   @Override
   public void setPlayers(List<PlayerView> players, List<OverlayParams> overlays) {
-    // Store current players
     this.currentPlayers = new ArrayList<>(players);
 
-    // Clear existing player UI
-    playerPanel.getChildren().clear();
-
-    // Clear token pane and token images
-    tokenPane.getChildren().clear();
+    this.tokenPane.getChildren().clear();
     tokenImages.clear();
 
-    // Create player boxes
     for (PlayerView player : players) {
-      VBox playerBox = (VBox) playerUIService.createPlayerBox(player, player.hasTurn());
-      playerPanel.getChildren().add(playerBox);
-
-      // Create token image and add to token pane
       ImageView tokenImage = playerUIService.createTokenImage(player.token());
       tokenImages.put(player.token(), tokenImage);
 
-      // Place token on board
       if (player.tileId() > 0) {
-        boardUIService.placeTokenOnTile(tokenPane, tokenImage, player.tileId());
+        boardUIService.placeTokenOnTile(this.tokenPane, tokenImage, player.tileId());
       } else {
-        boardUIService.placeTokenAtStart(tokenPane, tokenImage);
+        boardUIService.placeTokenAtStart(this.tokenPane, tokenImage);
       }
     }
-
-    // Add overlays to overlay pane
-    boardUIService.addOverlays(overlayPane, overlays);
+    boardUIService.addOverlays(this.overlayPane, overlays); // Use the view's overlayPane
+    updatePlayerTurnDisplay();
   }
 
   @Override
   protected void handleDiceRolled(Object data) {
-    if (hasActiveAnimation) return;
+    if (hasActiveAnimation)
+      return;
 
     // Parse dice values
     int[] diceValues = diceService.parseDiceRoll(data);
-    if (diceValues.length < 2) return;
-
+    if (diceValues.length < 2) {
+      return;
+    }
     // Show dice
     diceService.showDice(diceContainer, diceValues);
 
     // Find current player
-    Optional<PlayerView> currentPlayer =
-        currentPlayers.stream().filter(PlayerView::hasTurn).findFirst();
+    Optional<PlayerView> currentPlayer = currentPlayers.stream().filter(PlayerView::hasTurn).findFirst();
 
     if (currentPlayer.isPresent()) {
       PlayerView player = currentPlayer.get();
@@ -217,6 +218,17 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
       int startPosition = player.tileId();
       int rolled = diceValues[0] + diceValues[1];
       int endPosition = Math.min(startPosition + rolled, boardSize);
+
+      String message = player.name() + " rolled " + rolled + "! ";
+      if (diceValues[0] == diceValues[1]) {
+        if (diceValues[0] == 6) {
+          message += "Double 6 - turn skipped!";
+        } else {
+          message += "Got a double - gets an extra turn!";
+        }
+      }
+
+      playerUIService.updateCurrentPlayerTurnBox(playerTurnBox, player, message);
 
       // Animate move (unless it's special case)
       if (rolled != 12) { // Example special case
@@ -245,7 +257,8 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
 
   @Override
   protected void handlePlayerMoved(Object data) {
-    if (hasActiveAnimation) return;
+    if (hasActiveAnimation)
+      return;
 
     if (data instanceof BoardGame.PlayerMoveData moveData) {
       String token = moveData.getPlayer().getToken().name();
@@ -282,37 +295,15 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
 
   @Override
   protected void handleTurnChanged(Object data) {
-    if (hasActiveAnimation) return;
-
-    if (data instanceof Player currentPlayer) {
-      String currentToken = currentPlayer.getToken().name();
-
-      // Update player UI to show current player
-      for (PlayerView player : currentPlayers) {
-        boolean isCurrentPlayer = player.token().equals(currentToken);
-        Node playerBox =
-            playerPanel.getChildren().stream()
-                .filter(
-                    node -> {
-                      if (node instanceof VBox box) {
-                        return box.getUserData() != null
-                            && box.getUserData().equals(player.token());
-                      }
-                      return false;
-                    })
-                .findFirst()
-                .orElse(null);
-
-        if (playerBox != null) {
-          playerUIService.updateTurnIndicator(playerBox, isCurrentPlayer);
-        }
-      }
+    if (hasActiveAnimation) {
+      return;
     }
+    updatePlayerTurnDisplay();
   }
 
   @Override
   public void showDice(int values) {
-    diceService.showDice(diceContainer, new int[] {values});
+    diceService.showDice(diceContainer, new int[] { values });
   }
 
   @Override
@@ -343,7 +334,8 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
 
   public void animateMove(String tokenName, int startId, int endId, Runnable onFinished) {
     if (hasActiveAnimation) {
-      if (onFinished != null) onFinished.run();
+      if (onFinished != null)
+        onFinished.run();
       return;
     }
 
@@ -354,7 +346,8 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
         endId,
         () -> {
           hasActiveAnimation = false;
-          if (onFinished != null) onFinished.run();
+          if (onFinished != null)
+            onFinished.run();
         });
   }
 
@@ -374,7 +367,7 @@ public class BoardView extends AbstractGameView { // AbstractGameView should ext
   }
 
   public void showDice(int value1, int value2) {
-    diceService.showDice(diceContainer, new int[] {value1, value2});
+    diceService.showDice(diceContainer, new int[] { value1, value2 });
   }
 
   public BoardUIService getBoardUIService() {

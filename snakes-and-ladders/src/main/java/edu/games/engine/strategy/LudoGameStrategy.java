@@ -40,7 +40,11 @@ public class LudoGameStrategy implements GameStrategy {
     LudoColor color = LudoColor.valueOf(player.getToken().name());
 
     if (piece.isAtHome()) {
-      return (diceValue == 6) ? board.getStartTile(color) : null;
+      if (diceValue == 6) {
+        return board.getStartTile(color);
+      } else {
+        return null;
+      }
     } else {
       return board.move(piece.getCurrentTile(), diceValue, color);
     }

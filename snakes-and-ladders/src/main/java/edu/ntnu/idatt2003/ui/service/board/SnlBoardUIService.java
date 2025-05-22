@@ -27,39 +27,43 @@ public class SnlBoardUIService implements BoardUIService {
 
   @Override
   public StackPane createBoardPane(int size) {
-    // Calculate dimensions based on board size
-    int width;
-    int height;
+    int width, height;
     switch (size) {
-      case 64 -> {
+      case 64:
         width = 8;
         height = 8;
-      }
-      case 90 -> {
+        break;
+      case 90:
         width = 9;
         height = 10;
-      }
-      case 120 -> {
+        break;
+      case 120:
         width = 10;
         height = 12;
-      }
-      default -> throw new IllegalArgumentException("Unsupported board size: " + size);
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported board size: " + size);
     }
 
-    // Create the grid for the board
     GridPane boardGrid = new GridPane();
     boardGrid.getStyleClass().add("board-container");
 
-    double boardWidth = width * TILE_SIZE;
-    double boardHeight = height * TILE_SIZE;
+    double boardDisplayWidth = width * TILE_SIZE;
+    double boardDisplayHeight = height * TILE_SIZE;
 
-    boardGrid.setPrefSize(boardWidth, boardHeight);
+    boardGrid.setPrefSize(boardDisplayWidth, boardDisplayHeight);
+    boardGrid.setMinSize(boardDisplayWidth, boardDisplayHeight);
+    boardGrid.setMaxSize(boardDisplayWidth, boardDisplayHeight);
 
-    // Build the tiles
     buildTiles(boardGrid, width, height);
 
-    // Return the board container
-    return new StackPane(boardGrid);
+    StackPane boardStack = new StackPane(boardGrid);
+
+    boardStack.setPrefSize(boardDisplayWidth, boardDisplayHeight);
+    boardStack.setMinSize(boardDisplayWidth, boardDisplayHeight);
+    boardStack.setMaxSize(boardDisplayWidth, boardDisplayHeight);
+
+    return boardStack;
   }
 
   private void buildTiles(GridPane grid, int width, int height) {

@@ -25,12 +25,12 @@ import java.util.Objects;
 
 public final class LudoGateway extends AbstractGameGateway {
 
-  //  Fields
+  // Fields
   private final DiceFactory diceFactory;
   private int selectedPieceIndex = -1;
   private Player winner = null;
 
-  //  Construction
+  // Construction
   public LudoGateway(
       DiceFactory diceFactory, PlayerStore playerStore, OverlayProvider overlayProvider) {
     super(playerStore, overlayProvider);
@@ -44,7 +44,7 @@ public final class LudoGateway extends AbstractGameGateway {
         new edu.games.engine.impl.overlay.JsonOverlayProvider("/overlays/"));
   }
 
-  //  Game lifecycle
+  // Game lifecycle
   @Override
   public void newGame(int ignored) {
     LudoPath path = new LudoPath();
@@ -65,7 +65,8 @@ public final class LudoGateway extends AbstractGameGateway {
 
   @Override
   public void resetGame() {
-    if (game == null) return;
+    if (game == null)
+      return;
 
     game.players().forEach(p -> p.getPieces().forEach(piece -> piece.moveTo(null)));
     game.setCurrentPlayerIndex(0);
@@ -74,7 +75,7 @@ public final class LudoGateway extends AbstractGameGateway {
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.GAME_RESET, null));
   }
 
-  //  Player management
+  // Player management
   @Override
   public void addPlayer(String name, String token, LocalDate birthday) {
     Objects.requireNonNull(game, "Call newGame before adding players");
@@ -84,7 +85,7 @@ public final class LudoGateway extends AbstractGameGateway {
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.PLAYER_ADDED, player));
   }
 
-  //  UI interaction helpers
+  // UI interaction helpers
   public void selectPiece(int pieceIndex) {
     if (game == null || game.players().isEmpty()) {
       return;
@@ -99,21 +100,12 @@ public final class LudoGateway extends AbstractGameGateway {
         new BoardGameEvent(BoardGameEvent.EventType.PIECE_SELECTED, selectedPieceIndex));
   }
 
-  //  Gameplay – public entry points
+  // Gameplay – public entry points
   @Override
   public int rollDice() {
-    if (game == null || game.players().isEmpty() || winner != null) return 0;
-
-    int roll = performDiceRoll();
-
-    if (selectedPieceIndex >= 0) {
-      moveSelectedPiece(roll);
-    } else {
-      advanceTurnIfNoExtraTurn(game.currentPlayer(), roll);
-      notifyTurnChanged();
-    }
-
-    return roll;
+    if (game == null || game.players().isEmpty() || winner != null)
+      return 0;
+    return performDiceRoll();
   }
 
   public int applyPieceMovement() {
@@ -125,7 +117,7 @@ public final class LudoGateway extends AbstractGameGateway {
     return roll;
   }
 
-  //  Gameplay – internal helpers
+  // Gameplay – internal helpers
   private int performDiceRoll() {
     final int roll = game.dice().roll();
     lastDiceValues = game.dice().lastValues();
@@ -158,10 +150,21 @@ public final class LudoGateway extends AbstractGameGateway {
   }
 
   private boolean hasMoved(Tile from, Tile to) {
-    return to != null && to != from;
+    if (to == null)
+      return false;
+    if (from == null)
+      return true;
+    return to.id() != from.id();
   }
 
   private void executeMove(PlayerPiece piece, Tile destination) {
+    if (game != null && game.players() != null) {
+      for (Player p : game.players()) {
+        if (p.getPieces().contains(piece)) {
+          break;
+        }
+      }
+    }
     piece.moveTo(destination);
   }
 
@@ -189,7 +192,8 @@ public final class LudoGateway extends AbstractGameGateway {
 
   private void advanceTurnIfNoExtraTurn(Player player, int roll) {
     boolean extraTurn = game.getStrategy().processDiceRoll(player, roll, game);
-    if (!extraTurn) passTurnToNextPlayer(player);
+    if (!extraTurn)
+      passTurnToNextPlayer(player);
   }
 
   private void passTurnToNextPlayer(Player current) {
@@ -218,17 +222,20 @@ public final class LudoGateway extends AbstractGameGateway {
 
   @Override
   public List<PlayerView> players() {
-    if (game == null || game.players().isEmpty()) return List.of();
+    if (game == null || game.players().isEmpty())
+      return List.of();
 
     Token turnToken = game.currentPlayer().getToken();
     return game.players().stream().map(p -> mapToView(p, turnToken)).toList();
   }
 
   private PlayerView mapToView(Player p, Token turnToken) {
-    List<Integer> positions =
-        p.getPieces().stream()
-            .map(piece -> piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id())
-            .toList();
+    List<Integer> positions = p.getPieces().stream()
+        .map(
+            piece -> {
+              return piece.getCurrentTile() == null ? 0 : piece.getCurrentTile().id();
+            })
+        .toList();
     int activeIndex = p.getToken() == turnToken ? selectedPieceIndex : -1;
     return new PlayerView(
         p.getName(),
