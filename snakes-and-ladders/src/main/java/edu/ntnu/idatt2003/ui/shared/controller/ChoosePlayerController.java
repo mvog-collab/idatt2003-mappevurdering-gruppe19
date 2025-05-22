@@ -44,7 +44,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
             || token.isEmpty();
 
     if (invalid) {
-      alert("Invalid setup", "Please choose a valid playerName, birthday and playerToken.");
+      alert("Invalid setup", "Please choose a valid name, birthday and token.");
       return;
     }
 
@@ -72,7 +72,7 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
               .toList();
       PlayerCsv.save(rows, out.toPath());
     } catch (IOException ex) {
-      alert("Invalid player savePlayers", "Could not savePlayers players: " + ex.getMessage());
+      alert("Invalid player save", "Could not save players: " + ex.getMessage());
     }
   }
 

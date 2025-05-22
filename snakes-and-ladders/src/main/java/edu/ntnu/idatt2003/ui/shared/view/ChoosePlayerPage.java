@@ -110,7 +110,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     int yearsOld = java.time.Period.between(player.birthday(), LocalDate.now()).getYears();
 
     Label name = new Label(player.playerName());
-    name.getStyleClass().add("player-playerName");
+    name.getStyleClass().add("player-name");
 
     Label age = new Label(yearsOld + " yrs");
     age.getStyleClass().add("player-age");
@@ -134,8 +134,8 @@ public class ChoosePlayerPage implements BoardGameObserver {
     Label playerName = new Label("Player Name");
     playerName.getStyleClass().add("popup-label");
     nameField = new TextField();
-    nameField.setPromptText("Enter playerName");
-    nameField.getStyleClass().add("playerName-field-style");
+    nameField.setPromptText("Enter name");
+    nameField.getStyleClass().add("name-field-style");
     HBox nameBox = new HBox(10, playerName, nameField);
     nameBox.getStyleClass().add("player-info-box");
     nameBox.setAlignment(Pos.CENTER);
@@ -153,7 +153,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     tokenToggleGroup = new ToggleGroup();
     HBox tokenSelectionBox = new HBox(10);
     tokenSelectionBox.setAlignment(Pos.CENTER);
-    tokenSelectionBox.getStyleClass().add("playerToken-selection-box");
+    tokenSelectionBox.getStyleClass().add("token-selection-box");
     for (String token : TOKEN_NAMES) {
       ToggleButton tb = buildTokenButton(token);
       tokenButtons.put(token, tb);
@@ -175,10 +175,10 @@ public class ChoosePlayerPage implements BoardGameObserver {
     cancelButton.getStyleClass().add("exit-button");
 
     savePlayerButton = new Button("Save Players");
-    savePlayerButton.getStyleClass().add("board-boardSize-button");
+    savePlayerButton.getStyleClass().add("board-size-button");
 
     loadPlayersButton = new Button("Load Players");
-    loadPlayersButton.getStyleClass().add("board-boardSize-button");
+    loadPlayersButton.getStyleClass().add("board-size-button");
 
     HBox actionBox = new HBox(20, cancelButton, addPlayerButton, continueButton);
     actionBox.setAlignment(Pos.CENTER);
@@ -220,7 +220,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     tb.setGraphic(iv);
     tb.setUserData(token);
     tb.setToggleGroup(tokenToggleGroup);
-    tb.getStyleClass().add("playerToken-button");
+    tb.getStyleClass().add("token-button");
     return tb;
   }
 
