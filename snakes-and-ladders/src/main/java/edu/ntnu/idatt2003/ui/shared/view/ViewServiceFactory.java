@@ -8,7 +8,7 @@ import edu.ntnu.idatt2003.ui.service.board.SnlBoardUIService;
 import edu.ntnu.idatt2003.ui.service.dice.DefaultDiceService;
 import edu.ntnu.idatt2003.ui.service.dice.DiceService;
 import edu.ntnu.idatt2003.ui.service.dice.LudoDiceService;
-import edu.ntnu.idatt2003.ui.service.player.DefaultPlayerUIService;
+import edu.ntnu.idatt2003.ui.service.player.SnlPlayerUiService;
 import edu.ntnu.idatt2003.ui.service.player.LudoPlayerUIService;
 import edu.ntnu.idatt2003.ui.service.player.PlayerUIService;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class ViewServiceFactory {
 
   public static PlayerUIService createPlayerUIService(String gameType) {
     return switch (gameType.toUpperCase()) {
-      case "SNL" -> new DefaultPlayerUIService();
+      case "SNL" -> new SnlPlayerUiService();
       case "LUDO" -> new LudoPlayerUIService();
       default -> throw new IllegalArgumentException("Unknown game type: " + gameType);
     };

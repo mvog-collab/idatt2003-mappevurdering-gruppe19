@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class DefaultPlayerUIService implements PlayerUIService {
+public class SnlPlayerUiService implements PlayerUIService {
 
   @Override
   public Node createPlayerBox(PlayerView player, boolean hasTurn) {

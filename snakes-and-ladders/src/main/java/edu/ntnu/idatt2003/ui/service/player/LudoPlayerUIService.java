@@ -17,8 +17,8 @@ public class LudoPlayerUIService implements PlayerUIService {
 
   @Override
   public Node createPlayerBox(PlayerView player, boolean hasTurn) {
-    // Similar to DefaultPlayerUIService but with Ludo-specific styling if needed
-    return new DefaultPlayerUIService().createPlayerBox(player, hasTurn);
+    // Similar to SnlPlayerUiService but with Ludo-specific styling if needed
+    return new SnlPlayerUiService().createPlayerBox(player, hasTurn);
   }
 
   @Override
@@ -33,7 +33,7 @@ public class LudoPlayerUIService implements PlayerUIService {
 
   @Override
   public void updateTurnIndicator(Node playerBox, boolean hasTurn) {
-    // Similar to DefaultPlayerUIService
+    // Similar to SnlPlayerUiService
     if (!(playerBox instanceof VBox box)) return;
 
     // Update style class
