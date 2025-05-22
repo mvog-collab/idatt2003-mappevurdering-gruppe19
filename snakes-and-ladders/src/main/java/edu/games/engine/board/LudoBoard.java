@@ -37,7 +37,7 @@ public final class LudoBoard implements Board {
    * @return The destination tile
    */
   public Tile move(Tile from, int steps, LudoColor color) {
-    return path.next(from, steps, color);
+    return path.nextTile(from, steps, color);
   }
 
   /**

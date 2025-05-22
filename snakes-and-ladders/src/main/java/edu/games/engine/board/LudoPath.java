@@ -82,7 +82,7 @@ public final class LudoPath implements MovementPath {
   }
 
   @Override
-  public Tile next(Tile from, int steps, LudoColor player) {
+  public Tile nextTile(Tile from, int steps, LudoColor player) {
     // If player is at home, they need a 6 to get out
     if (from == null) {
       if (steps != 6) {
