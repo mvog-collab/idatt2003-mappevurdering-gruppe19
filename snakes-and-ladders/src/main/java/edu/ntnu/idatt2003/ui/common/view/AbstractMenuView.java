@@ -23,7 +23,7 @@ public abstract class AbstractMenuView extends AbstractView implements MenuView 
   public void handleEvent(BoardGameEvent event) {
     Platform.runLater(
         () -> {
-          switch (event.getType()) {
+          switch (event.getTypeOfEvent()) {
             case GAME_STARTED:
               handleGameStarted();
               break;

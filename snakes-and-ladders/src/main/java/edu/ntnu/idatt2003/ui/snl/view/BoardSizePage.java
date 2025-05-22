@@ -40,7 +40,7 @@ public class BoardSizePage implements BoardGameObserver {
   public void update(BoardGameEvent event) {
     Platform.runLater(
         () -> {
-          switch (event.getType()) {
+          switch (event.getTypeOfEvent()) {
             case GAME_STARTED:
               handleGameStarted(event.getData());
               break;

@@ -60,7 +60,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
   public void update(BoardGameEvent event) {
     Platform.runLater(
         () -> {
-          switch (event.getType()) {
+          switch (event.getTypeOfEvent()) {
             case PLAYER_ADDED:
               handlePlayerAdded();
               break;

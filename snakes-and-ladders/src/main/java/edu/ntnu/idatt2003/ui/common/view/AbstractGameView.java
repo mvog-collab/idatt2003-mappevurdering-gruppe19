@@ -10,7 +10,7 @@ public abstract class AbstractGameView extends AbstractView implements GameView 
 
   @Override
   protected void handleEvent(BoardGameEvent event) {
-    switch (event.getType()) {
+    switch (event.getTypeOfEvent()) {
       case DICE_ROLLED:
         handleDiceRolled(event.getData());
         break;
