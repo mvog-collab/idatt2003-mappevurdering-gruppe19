@@ -82,14 +82,14 @@ public final class LudoPath implements MovementPath {
   }
 
   @Override
-  public Tile next(Tile from, int steps, LudoColor owner) {
+  public Tile next(Tile from, int steps, LudoColor player) {
     // If player is at home, they need a 6 to get out
     if (from == null) {
       if (steps != 6) {
         return null;
       }
       // Return the starting point for this color
-      return startingPoints.get(owner);
+      return startingPoints.get(player);
     }
 
     // If the player is already on the board
@@ -97,7 +97,7 @@ public final class LudoPath implements MovementPath {
     LudoTile tile = currentTile;
 
     // Get the entry point for this color
-    int entryPointId = getEntryPointId(owner);
+    int entryPointId = getEntryPointId(player);
 
     // Move the specified number of steps
     for (int i = 0; i < steps; i++) {
@@ -105,15 +105,15 @@ public final class LudoPath implements MovementPath {
       if (tile instanceof LudoRingTile
           && tile.id() != entryPointId
           && // Not currently on entry point
-          tile.next(owner).id() == entryPointId) { // Next would be the entry point
+          tile.next(player).id() == entryPointId) { // Next would be the entry point
 
         // Instead of continuing on the ring, we should enter the goal path
-        tile = goals.get(owner).getFirst();
+        tile = goals.get(player).getFirst();
         System.out.println(
-            "Player " + owner + " entering goal path at step " + (i + 1) + " of " + steps);
+            "Player " + player + " entering goal path at step " + (i + 1) + " of " + steps);
       } else {
         // Regular movement
-        LudoTile next = tile.next(owner);
+        LudoTile next = tile.next(player);
         if (next == null) {
           // We're at the very last goal-tile; can't go any further
           return tile;
