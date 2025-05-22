@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,6 +24,7 @@ class PlayerTest {
     player = new Player("Alice", token, birthday);
   }
 
+  // --- Constructor Validations ---
   @Test
   void shouldCreatePlayerWithValidData() {
     assertEquals("Alice", player.getName());
@@ -32,16 +34,33 @@ class PlayerTest {
   }
 
   @Test
+  void shouldThrowIfNameIsNullOrBlank() {
+    assertThrows(ValidationException.class, () -> new Player(null, token, birthday));
+    assertThrows(ValidationException.class, () -> new Player("   ", token, birthday));
+  }
+
+  @Test
+  void shouldThrowIfTokenIsNull() {
+    assertThrows(ValidationException.class, () -> new Player("Bob", null, birthday));
+  }
+
+  @Test
+  void shouldThrowIfBirthdayIsNull() {
+    assertThrows(ValidationException.class, () -> new Player("Bob", token, null));
+  }
+
+  // --- Piece Logic ---
+  @Test
   void shouldGetSpecificPieceById() {
     PlayerPiece piece = player.getPiece(2);
     assertEquals(2, piece.getPlayerPieceId());
   }
 
   @Test
-  void shouldMoveFirstPieceToTileAndGetCurrentTile() {
+  void shouldThrowIfPieceIdOutOfRange() {
     Tile tile = mock(Tile.class);
-    player.moveTo(tile);
-    assertEquals(tile, player.getCurrentTile());
+    assertThrows(ValidationException.class, () -> player.movePiece(-1, tile));
+    assertThrows(ValidationException.class, () -> player.movePiece(4, tile));
   }
 
   @Test
@@ -52,11 +71,13 @@ class PlayerTest {
   }
 
   @Test
-  void shouldThrowIfInvalidPieceId() {
+  void shouldMoveFirstBoardPieceOrFirstHomePiece() {
     Tile tile = mock(Tile.class);
-    assertThrows(ValidationException.class, () -> player.movePiece(99, tile));
+    player.moveTo(tile);
+    assertEquals(tile, player.getCurrentTile());
   }
 
+  // --- Piece State Checks ---
   @Test
   void shouldDetectHomeAndBoardPiecesCorrectly() {
     assertTrue(player.hasHomePieces());
@@ -67,8 +88,21 @@ class PlayerTest {
 
     assertFalse(player.getHomePieces().isEmpty());
     assertFalse(player.getBoardPieces().isEmpty());
+
+    List<PlayerPiece> boardPieces = player.getBoardPieces();
+    List<PlayerPiece> homePieces = player.getHomePieces();
+
+    assertEquals(1, boardPieces.size());
+    assertEquals(3, homePieces.size());
   }
 
+  @Test
+  void getCurrentTileShouldReturnNullIfAllAtHome() {
+    Player freshPlayer = new Player("Dana", Token.GREEN, LocalDate.of(1999, 5, 5));
+    assertNull(freshPlayer.getCurrentTile());
+  }
+
+  // --- Equality & String ---
   @Test
   void shouldComparePlayersByNameAndBirthday() {
     Player p2 = new Player("Alice", Token.BLUE, birthday);
@@ -82,9 +116,21 @@ class PlayerTest {
   }
 
   @Test
+  void shouldNotBeEqualIfBirthdayDiffers() {
+    Player p2 = new Player("Alice", Token.RED, LocalDate.of(1999, 1, 1));
+    assertNotEquals(player, p2);
+  }
+
+  @Test
   void toStringShouldContainNameAndToken() {
     String s = player.toString();
     assertTrue(s.contains("Alice"));
     assertTrue(s.contains("RED"));
+  }
+
+  @Test
+  void hashCodeShouldBeConsistentWithEquals() {
+    Player same = new Player("Alice", token, birthday);
+    assertEquals(player.hashCode(), same.hashCode());
   }
 }
