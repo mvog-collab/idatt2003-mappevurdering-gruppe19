@@ -11,14 +11,21 @@ import edu.ntnu.idatt2003.persistence.BoardAdapter;
 
 public class GameStrategyFactory {
 
-  private GameStrategyFactory() {}
+  private GameStrategyFactory() {
+  }
 
   public static GameStrategy createLudoStrategy(LudoPath ludoPath) {
+    if (ludoPath == null) {
+      throw new NullPointerException("LudoPath cannot be null.");
+    }
     RuleEngine ludoRuleEngine = new LudoRuleEngine(ludoPath);
     return new LudoGameStrategy(ludoRuleEngine);
   }
 
   public static GameStrategy createSnlStrategy(BoardAdapter.MapData mapData) {
+    if (mapData == null) {
+      throw new NullPointerException("Map-data cannot be null.");
+    }
     RuleEngine snlRuleEngine = new SnlRuleEngine(mapData.snakes(), mapData.ladders());
     return new SnlGameStrategy(snlRuleEngine, mapData.snakes(), mapData.ladders());
   }
