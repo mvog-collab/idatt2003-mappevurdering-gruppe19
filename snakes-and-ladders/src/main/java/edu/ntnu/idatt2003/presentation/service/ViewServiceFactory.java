@@ -17,11 +17,31 @@ import java.util.logging.Logger;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 
+/**
+ * Factory for creating game-specific view services.
+ * <p>
+ * Provides centralized creation of UI services based on game type,
+ * ensuring appropriate implementations are used for each game variant.
+ * </p>
+ */
 public class ViewServiceFactory {
+  /** Logger for this factory */
   private static final Logger LOG = Logger.getLogger(ViewServiceFactory.class.getName());
 
-  private ViewServiceFactory() {}
+  /**
+   * Private constructor to prevent instantiation.
+   */
+  private ViewServiceFactory() {
+  }
 
+  /**
+   * Creates a board UI service for the specified game type.
+   *
+   * @param gameType  the type of game (SNL, LUDO)
+   * @param boardSize the size of the board
+   * @return the appropriate board UI service implementation
+   * @throws IllegalArgumentException if game type is unknown
+   */
   public static BoardUIService createBoardUIService(String gameType, int boardSize) {
     LOG.info(() -> "Creating BoardUIService for gameType: " + gameType + ", boardSize: " + boardSize);
     String normalizedGameType = gameType.toUpperCase();
@@ -36,6 +56,16 @@ public class ViewServiceFactory {
     }
   }
 
+  /**
+   * Creates an animation service for the specified game type.
+   *
+   * @param gameType    the type of game
+   * @param coordinates map of tile coordinates for positioning
+   * @param tokenPane   the pane containing game tokens
+   * @return the appropriate animation service implementation
+   * @throws IllegalArgumentException if parameters are null or game type is
+   *                                  unknown
+   */
   public static AnimationService createAnimationService(
       String gameType, Map<Integer, Point2D> coordinates, Pane tokenPane) {
     LOG.info(() -> "Creating AnimationService for gameType: " + gameType);
@@ -54,6 +84,13 @@ public class ViewServiceFactory {
     }
   }
 
+  /**
+   * Creates a player UI service for the specified game type.
+   *
+   * @param gameType the type of game
+   * @return the appropriate player UI service implementation
+   * @throws IllegalArgumentException if game type is unknown
+   */
   public static PlayerUIService createPlayerUIService(String gameType) {
     LOG.info(() -> "Creating PlayerUIService for gameType: " + gameType);
     String normalizedGameType = gameType.toUpperCase();
@@ -68,6 +105,13 @@ public class ViewServiceFactory {
     }
   }
 
+  /**
+   * Creates a dice service for the specified game type.
+   *
+   * @param gameType the type of game
+   * @return the appropriate dice service implementation
+   * @throws IllegalArgumentException if game type is unknown
+   */
   public static DiceService createDiceService(String gameType) {
     LOG.info(() -> "Creating DiceService for gameType: " + gameType);
     String normalizedGameType = gameType.toUpperCase();

@@ -12,14 +12,24 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+/**
+ * Board UI service implementation for Snakes and Ladders games.
+ * <p>
+ * Manages grid-based board layout with snake and ladder styling,
+ * dynamic tile creation, and special tile effects.
+ * </p>
+ */
 public class SnlBoardUIService implements BoardUIService {
+
   private static final int TILE_SIZE = 50;
   private static final double START_OFFSET_X = -40;
   private static final double START_OFFSET_Y = 0;
-
   private final Map<Integer, Point2D> tileCoordinates = new HashMap<>();
   private final Map<Integer, StackPane> tiles = new HashMap<>();
 
+  /**
+   * Constructs a new SnlBoardUIService.
+   */
   public SnlBoardUIService() {
   }
 
@@ -65,6 +75,13 @@ public class SnlBoardUIService implements BoardUIService {
     return boardStack;
   }
 
+  /**
+   * Builds tiles in serpentine pattern for the board grid.
+   *
+   * @param grid   the grid to add tiles to
+   * @param width  the grid width
+   * @param height the grid height
+   */
   private void buildTiles(GridPane grid, int width, int height) {
     boolean leftToRight = true;
     int id = 1;
@@ -83,6 +100,13 @@ public class SnlBoardUIService implements BoardUIService {
     }
   }
 
+  /**
+   * Applies special styling for snakes and ladders tiles.
+   *
+   * @param snakes      map of snake head to tail positions
+   * @param ladders     map of ladder bottom to top positions
+   * @param overlayPane pane for overlay elements
+   */
   public void applySpecialTileStyling(
       Map<Integer, Integer> snakes, Map<Integer, Integer> ladders, Pane overlayPane) {
     // Clear any existing overlays first
@@ -112,6 +136,14 @@ public class SnlBoardUIService implements BoardUIService {
     }
   }
 
+  /**
+   * Adds a single tile to the grid.
+   *
+   * @param grid the grid to add to
+   * @param row  the row position
+   * @param col  the column position
+   * @param id   the tile identifier
+   */
   private void addTile(GridPane grid, int row, int col, int id) {
     StackPane tile = createTile(id, (row + col) % 2 == 0);
     grid.add(tile, col, row);

@@ -13,9 +13,21 @@ import edu.ntnu.idatt2003.utils.UiDialogs;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Ludo main page. Manages the flow from player selection to
+ * game start
+ * and supports resetting the game.
+ */
 public final class LudoPageController extends AbstractPageController<LudoPage> {
+
   private static final Logger LOG = Logger.getLogger(LudoPageController.class.getName());
 
+  /**
+   * Constructs the controller and initializes the Ludo game via the gateway.
+   *
+   * @param view    the Ludo page view
+   * @param gateway the gateway providing game setup and control
+   */
   public LudoPageController(LudoPage view, CompleteBoardGame gateway) {
     super(view, gateway);
     LOG.info("LudoPageController initialized.");
@@ -29,6 +41,10 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     }
   }
 
+  /**
+   * Opens a modal dialog for selecting players and registers them with the
+   * gateway.
+   */
   private void showPlayerDialog() {
     LOG.info("Showing player dialog for Ludo.");
     try {
@@ -44,12 +60,16 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     }
   }
 
+  /**
+   * Starts the Ludo game by navigating to the board view if enough players are
+   * present.
+   */
   private void startGame() {
     LOG.info("Starting Ludo game.");
     try {
       if (gateway.players().size() < 2) {
         LOG.warning("Attempted to start Ludo game with insufficient players: " + gateway.players().size());
-        Dialogs.warn("Cannot Start Game", "Ludo requires at least " + 2 + " players.");
+        Dialogs.warn("Cannot Start Game", "Ludo requires at least 2 players.");
         return;
       }
       LudoBoardView boardView = new LudoBoardView();
@@ -65,6 +85,9 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     }
   }
 
+  /**
+   * Resets the game state to allow a new session.
+   */
   private void resetGame() {
     try {
       gateway.newGame(0);
@@ -75,6 +98,9 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     }
   }
 
+  /**
+   * Registers UI event handlers for player selection, start, and reset actions.
+   */
   @Override
   protected void initializeEventHandlers() {
     LOG.fine("Initializing LudoPage event handlers.");

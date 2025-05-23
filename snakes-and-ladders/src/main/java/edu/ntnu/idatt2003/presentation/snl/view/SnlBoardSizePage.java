@@ -11,7 +11,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-/** View component for board boardSize selection */
+/**
+ * View component for selecting the board size in Snakes and Ladders.
+ * Presents three board size options (64, 90, or 120 tiles) and allows
+ * the user to choose which one they want to play on. Updates the UI
+ * to highlight the selected board size and provides feedback to the user.
+ */
 public class SnlBoardSizePage implements BoardGameObserver {
 
   // UI components
@@ -25,17 +30,32 @@ public class SnlBoardSizePage implements BoardGameObserver {
   // Root container for the view
   private VBox root;
 
-  /** Constructor - initializes the UI */
+  /**
+   * Creates a new board size selection page.
+   * Initializes all UI components and sets up the layout.
+   */
   public SnlBoardSizePage() {
     buildUI();
   }
 
-  /** Connects this view to the model and registers as an observer */
+  /**
+   * Connects this view to the game model and registers as an observer.
+   * This allows the view to receive updates when game events occur,
+   * like when a board size is selected and a game is started.
+   *
+   * @param gateway the game gateway to observe
+   */
   public void connectToModel(GameGateway gateway) {
     gateway.addObserver(this);
   }
 
-  /** Handles model events */
+  /**
+   * Handles events from the game model.
+   * Currently responds to GAME_STARTED events to update the UI
+   * with the selected board size.
+   *
+   * @param event the board game event that occurred
+   */
   @Override
   public void update(BoardGameEvent event) {
     Platform.runLater(
@@ -48,7 +68,13 @@ public class SnlBoardSizePage implements BoardGameObserver {
         });
   }
 
-  /** Updates the UI when a game is started with a specific board boardSize */
+  /**
+   * Updates the UI when a game is started with a specific board size.
+   * Extracts the board size from the event data and highlights the
+   * corresponding button in the interface.
+   *
+   * @param data the event data containing the board size
+   */
   private void handleGameStarted(Object data) {
     if (data instanceof Integer) {
       int boardSize = (Integer) data;
@@ -56,14 +82,18 @@ public class SnlBoardSizePage implements BoardGameObserver {
     }
   }
 
-  /** Updates the UI to highlight the selected board boardSize */
+  /**
+   * Updates the UI to highlight the selected board size.
+   * Removes highlighting from all buttons, then adds it to the selected one.
+   * Also updates the status message to show which size was chosen.
+   *
+   * @param size the selected board size (64, 90, or 120)
+   */
   private void updateSelectedBoardSize(int size) {
-    // Reset all button styles
     sixtyFourTiles.getStyleClass().remove("selected-board-size");
     ninetyTiles.getStyleClass().remove("selected-board-size");
     oneTwentyTiles.getStyleClass().remove("selected-board-size");
 
-    // Highlight the selected board boardSize
     switch (size) {
       case 64:
         sixtyFourTiles.getStyleClass().add("selected-board-size");
@@ -76,11 +106,14 @@ public class SnlBoardSizePage implements BoardGameObserver {
         break;
     }
 
-    // Update status message
     statusLabel.setText("Selected board size: " + size + " tiles");
   }
 
-  /** Constructs the UI components */
+  /**
+   * Constructs all the UI components and arranges them in the layout.
+   * Creates the title, board size buttons, control buttons, status label,
+   * and organizes them in containers with proper spacing and styling.
+   */
   private void buildUI() {
     Label title = new Label("Choose Board");
     title.getStyleClass().add("popup-title");
@@ -104,11 +137,9 @@ public class SnlBoardSizePage implements BoardGameObserver {
     continueButton = new Button("Confirm");
     continueButton.getStyleClass().add("confirm-button");
 
-    // Status label
     statusLabel = new Label("Please select a board size");
     statusLabel.getStyleClass().add("status-label");
 
-    // Layout containers
     VBox buttonBox = new VBox(20, sixtyFourTiles, ninetyTiles, oneTwentyTiles, statusLabel);
     buttonBox.setAlignment(Pos.CENTER);
 
@@ -127,33 +158,69 @@ public class SnlBoardSizePage implements BoardGameObserver {
     root.setPadding(new Insets(30, 20, 30, 20));
   }
 
-  /** Returns the root container of this view */
+  /**
+   * Returns the root container of this view.
+   * This is what should be added to the scene or parent container
+   * to display the board size selection interface.
+   *
+   * @return the root VBox containing all UI elements
+   */
   public VBox getBoardSizeView() {
     return root;
   }
 
-  // --- Getters and setters ---
+  // --- Getters for UI components ---
 
+  /**
+   * Gets the 64 tiles board size button.
+   * 
+   * @return the button for selecting 64-tile board
+   */
   public Button getSixtyFourTiles() {
     return sixtyFourTiles;
   }
 
+  /**
+   * Gets the 90 tiles board size button.
+   * 
+   * @return the button for selecting 90-tile board
+   */
   public Button getNinetyTiles() {
     return ninetyTiles;
   }
 
+  /**
+   * Gets the 120 tiles board size button.
+   * 
+   * @return the button for selecting 120-tile board
+   */
   public Button getOneTwentyTiles() {
     return oneTwentyTiles;
   }
 
+  /**
+   * Gets the cancel button.
+   * 
+   * @return the button for canceling board size selection
+   */
   public Button getCancelButton() {
     return cancelButton;
   }
 
+  /**
+   * Gets the continue/confirm button.
+   * 
+   * @return the button for confirming the selected board size
+   */
   public Button getContinueButton() {
     return continueButton;
   }
 
+  /**
+   * Gets the status label that shows feedback to the user.
+   * 
+   * @return the label displaying current selection status
+   */
   public Label getStatusLabel() {
     return statusLabel;
   }

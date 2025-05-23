@@ -20,13 +20,22 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+/**
+ * JavaFX view for player selection and management interface.
+ * <p>
+ * Provides UI elements for adding players, selecting tokens, managing
+ * birthdays, and displaying current player roster. Observes game
+ * events to update the display automatically.
+ * </p>
+ */
 public class ChoosePlayerPage implements BoardGameObserver {
-  private static final Logger LOG = Logger.getLogger(ChoosePlayerPage.class.getName());
 
+  private static final Logger LOG = Logger.getLogger(ChoosePlayerPage.class.getName());
   private final VBox root;
   private final Map<String, ToggleButton> tokenButtons = new HashMap<>();
   private final String[] TOKEN_NAMES;
 
+  // UI Components
   private TextField nameField;
   private DatePicker birthdayPicker;
   private Button cancelButton;
@@ -38,23 +47,42 @@ public class ChoosePlayerPage implements BoardGameObserver {
   private FlowPane tokenSelectionBox;
   private ToggleGroup tokenToggleGroup;
 
+  /** Connected game gateway */
   private CompleteBoardGame gameGateway;
 
+  /**
+   * Constructs a new ChoosePlayerPage with the specified token names.
+   *
+   * @param TOKEN_NAMES array of available token names for player selection
+   */
   public ChoosePlayerPage(String[] TOKEN_NAMES) {
     this.TOKEN_NAMES = TOKEN_NAMES;
     this.root = new VBox();
     buildUI();
   }
 
+  /**
+   * Constructs a new ChoosePlayerPage with default token names.
+   */
   public ChoosePlayerPage() {
     this(new String[] { "BLUE", "GREEN", "YELLOW", "RED", "PURPLE" });
   }
 
+  /**
+   * Connects this view to the specified game gateway.
+   *
+   * @param gateway the game gateway to observe for updates
+   */
   public void connectToModel(CompleteBoardGame gateway) {
     this.gameGateway = gateway;
     gateway.addObserver(this);
   }
 
+  /**
+   * Handles game events and updates the UI accordingly.
+   *
+   * @param event the board game event to process
+   */
   @Override
   public void update(BoardGameEvent event) {
     Platform.runLater(
@@ -75,17 +103,28 @@ public class ChoosePlayerPage implements BoardGameObserver {
         });
   }
 
+  /**
+   * Handles player added events by updating the display.
+   */
   private void handlePlayerAdded() {
     if (gameGateway != null) {
       updatePlayerDisplay(gameGateway.players());
     }
   }
 
+  /**
+   * Handles game reset events by clearing the UI state.
+   */
   private void handleGameReset() {
     addedPlayersBox.getChildren().clear();
     tokenButtons.values().forEach(tb -> tb.setDisable(false));
   }
 
+  /**
+   * Updates the player display with the provided list of players.
+   *
+   * @param players list of players to display
+   */
   public void updatePlayerDisplay(List<PlayerView> players) {
     List<PlayerView> sorted = players.stream().sorted(Comparator.comparing(PlayerView::birthday).reversed()).toList();
 
@@ -98,6 +137,12 @@ public class ChoosePlayerPage implements BoardGameObserver {
     }
   }
 
+  /**
+   * Creates a visual representation box for a player.
+   *
+   * @param player the player to create a box for
+   * @return the created player display box
+   */
   private VBox createPlayerBox(PlayerView player) {
     int yearsOld = java.time.Period.between(player.birthday(), LocalDate.now()).getYears();
     Label name = new Label(player.playerName());
@@ -110,6 +155,9 @@ public class ChoosePlayerPage implements BoardGameObserver {
     return box;
   }
 
+  /**
+   * Constructs the complete UI layout and components.
+   */
   private void buildUI() {
     Label title = new Label("Add Players");
     title.getStyleClass().add("choose-player-title-label");
@@ -186,6 +234,12 @@ public class ChoosePlayerPage implements BoardGameObserver {
     // Stylesheet typically applied by UiDialogs or scene creator
   }
 
+  /**
+   * Creates a toggle button for token selection with appropriate image.
+   *
+   * @param token the token name to create a button for
+   * @return the created toggle button
+   */
   private ToggleButton buildTokenButton(String token) {
     ToggleButton tb = new ToggleButton();
     String imagePath = ResourcePaths.IMAGE_DIR + token.toLowerCase() + "Piece.png";
@@ -206,15 +260,30 @@ public class ChoosePlayerPage implements BoardGameObserver {
     return tb;
   }
 
+  /**
+   * Gets the root view container.
+   *
+   * @return the root VBox container
+   */
   public VBox getView() {
     return root;
   }
 
+  /**
+   * Gets the currently selected token name.
+   *
+   * @return the selected token name, or null if none selected
+   */
   public String getSelectedToken() {
     Toggle t = tokenToggleGroup.getSelectedToggle();
     return t == null ? null : t.getUserData().toString();
   }
 
+  /**
+   * Disables the specified token button to prevent duplicate selection.
+   *
+   * @param token the token name to disable
+   */
   public void disableToken(String token) {
     ToggleButton btn = tokenButtons.get(token);
     if (btn != null) {
@@ -223,6 +292,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
     }
   }
 
+  // Getter methods for UI components
   public Button getAddPlayerButton() {
     return addPlayerButton;
   }

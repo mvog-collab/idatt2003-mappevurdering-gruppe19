@@ -7,10 +7,24 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+/**
+ * Animation service implementation for board-based games.
+ * <p>
+ * Provides smooth token movement animations using coordinate mapping
+ * and threaded animation with JavaFX Platform updates.
+ * </p>
+ */
 public class BoardAnimationService implements AnimationService {
+
   private final Map<Integer, Point2D> tileCoordinates;
   private final Pane tokenPane;
 
+  /**
+   * Constructs a new BoardAnimationService.
+   *
+   * @param tileCoordinates map of tile positions
+   * @param tokenPane       pane containing tokens
+   */
   public BoardAnimationService(Map<Integer, Point2D> tileCoordinates, Pane tokenPane) {
     this.tileCoordinates = tileCoordinates;
     this.tokenPane = tokenPane;
@@ -96,6 +110,12 @@ public class BoardAnimationService implements AnimationService {
         .start();
   }
 
+  /**
+   * Moves a token to the specified tile position.
+   *
+   * @param token  the token to move
+   * @param tileId the target tile identifier
+   */
   private void moveTokenToTile(ImageView token, int tileId) {
     Point2D target = tileCoordinates.get(tileId);
     if (target != null) {
@@ -104,6 +124,12 @@ public class BoardAnimationService implements AnimationService {
     }
   }
 
+  /**
+   * Finds a token by name in the token pane.
+   *
+   * @param tokenName the name of the token to find
+   * @return the token ImageView, or null if not found
+   */
   private ImageView findToken(String tokenName) {
     // Log for debugging
     System.out.println(
@@ -137,6 +163,13 @@ public class BoardAnimationService implements AnimationService {
     return null;
   }
 
+  /**
+   * Finds a specific piece token by name and index.
+   *
+   * @param tokenName  the name of the token
+   * @param pieceIndex the index of the piece
+   * @return the token ImageView, or null if not found
+   */
   private ImageView findTokenWithIndex(String tokenName, int pieceIndex) {
     // For games with multiple pieces per player (like Ludo)
     int count = 0;

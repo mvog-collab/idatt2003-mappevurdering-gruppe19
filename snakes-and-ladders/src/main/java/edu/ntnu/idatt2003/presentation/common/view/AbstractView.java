@@ -19,10 +19,23 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
+/**
+ * Base class for all application views.
+ * <p>
+ * Implements {@link BoardGameObserver} to receive game events,
+ * handles threading concerns, and provides utilities for common
+ * UI components like navigation and help buttons.
+ * </p>
+ */
 public abstract class AbstractView implements BoardGameObserver {
   private static final Logger LOG = Logger.getLogger(AbstractView.class.getName());
   protected CompleteBoardGame gateway;
 
+  /**
+   * Connects this view to the given game gateway and registers as an observer.
+   *
+   * @param gateway the shared {@link CompleteBoardGame} instance
+   */
   public void connectToModel(CompleteBoardGame gateway) {
     this.gateway = gateway;
     if (gateway != null) {
@@ -30,19 +43,40 @@ public abstract class AbstractView implements BoardGameObserver {
     }
   }
 
+  /**
+   * Receives game events and dispatches to {@link #handleEvent(BoardGameEvent)}
+   * on the JavaFX application thread.
+   *
+   * @param event the game event
+   */
   @Override
   public void update(BoardGameEvent event) {
     Platform.runLater(() -> handleEvent(event));
   }
 
+  /**
+   * Handles a single {@link BoardGameEvent}.
+   * <p>
+   * Subclasses must implement to react to specific event types.
+   * </p>
+   *
+   * @param event the event to handle
+   */
   protected abstract void handleEvent(BoardGameEvent event);
 
+  /**
+   * Loads an image resource and returns an {@link ImageView} with standard
+   * sizing.
+   * Uses a placeholder if the image cannot be found.
+   *
+   * @param imagePath the classpath resource path
+   * @param altText   descriptive text for logging if the image is missing
+   * @return an {@link ImageView} sized to 24×24 pixels
+   */
   private ImageView createIcon(String imagePath, String altText) {
     InputStream imageStream = getClass().getResourceAsStream(imagePath);
     if (imageStream == null) {
       LOG.warning("Icon image not found: " + imagePath + ". Using placeholder for " + altText);
-      // Return a placeholder or handle error appropriately. For an icon, a blank
-      // ImageView might be okay.
       ImageView placeholder = new ImageView();
       placeholder.setFitWidth(24);
       placeholder.setFitHeight(24);
@@ -55,79 +89,102 @@ public abstract class AbstractView implements BoardGameObserver {
     return icon;
   }
 
+  /**
+   * Creates a "How to Play" button that shows an informational dialog
+   * with the given title and instructions.
+   *
+   * @param title        the dialog title
+   * @param instructions the content text to display
+   * @return a configured {@link Button} with a question-mark icon
+   */
   protected Button createHowToPlayButton(String title, String instructions) {
     ImageView icon = createIcon("/images/question-sign.png", "How to Play");
     Button howToPlayButton = new Button();
     howToPlayButton.setGraphic(icon);
     howToPlayButton.getStyleClass().add("icon-button");
-    howToPlayButton.setOnAction(
-        e -> {
-          Alert alert = new Alert(Alert.AlertType.INFORMATION);
-          alert.setTitle(title);
-          alert.setHeaderText(null);
-          alert.setContentText(instructions);
-          alert.getDialogPane().getStyleClass().add("how-to-alert");
-          java.net.URL cssUrl = getClass().getResource(ResourcePaths.STYLE_SHEET);
-          if (cssUrl != null) {
-            alert.getDialogPane().getStylesheets().add(cssUrl.toExternalForm());
-          } else {
-            LOG.warning("Stylesheet for 'How to play' alert not found: " + ResourcePaths.STYLE_SHEET);
-          }
-          alert.showAndWait();
-        });
+    howToPlayButton.setOnAction(e -> {
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle(title);
+      alert.setHeaderText(null);
+      alert.setContentText(instructions);
+      alert.getDialogPane().getStyleClass().add("how-to-alert");
+      java.net.URL cssUrl = getClass().getResource(ResourcePaths.STYLE_SHEET);
+      if (cssUrl != null) {
+        alert.getDialogPane().getStylesheets().add(cssUrl.toExternalForm());
+      } else {
+        LOG.warning("Stylesheet for 'How to play' alert not found: " + ResourcePaths.STYLE_SHEET);
+      }
+      alert.showAndWait();
+    });
     return howToPlayButton;
   }
 
-  private Button createGoToHomeButton() {
-    ImageView icon = createIcon("/images/home.png", "Go to Home");
-    Button homeButton = new Button();
-    homeButton.setGraphic(icon);
-    homeButton.getStyleClass().add("icon-button");
-    homeButton.setOnAction(e -> NavigationService.getInstance().navigateToHome());
-    return homeButton;
-  }
-
-  private Button createGoBackToGameSetupButton() {
-    ImageView icon = createIcon("/images/back.png", "Go Back");
-    Button backButton = new Button();
-    backButton.setGraphic(icon);
-    backButton.getStyleClass().add("icon-button");
-    backButton.setOnAction(e -> NavigationService.getInstance().goBackToGameSetupPage());
-    return backButton;
-  }
-
+  /**
+   * Creates the top navigation bar containing Home, optional Back, and Help
+   * buttons.
+   *
+   * @param includeBackButtonToGameSetup whether to include a "Back to Setup"
+   *                                     button
+   * @param helpButtonInstance           an already-configured Help button, or
+   *                                     null
+   * @return an {@link HBox} containing the navigation controls
+   */
   protected HBox createTopBarWithNavigationAndHelp(
       boolean includeBackButtonToGameSetup, Button helpButtonInstance) {
     HBox topBar = new HBox();
     topBar.setPadding(new Insets(10));
     topBar.setAlignment(Pos.CENTER_LEFT);
 
-    HBox leftAlignedButtons = new HBox(10);
-    leftAlignedButtons.setAlignment(Pos.CENTER_LEFT);
-    Button homeButton = createGoToHomeButton();
-    leftAlignedButtons.getChildren().add(homeButton);
-
+    HBox leftAligned = new HBox(10);
+    leftAligned.setAlignment(Pos.CENTER_LEFT);
+    leftAligned.getChildren().add(createGoToHomeButton());
     if (includeBackButtonToGameSetup) {
-      Button backButton = createGoBackToGameSetupButton();
-      leftAlignedButtons.getChildren().add(backButton);
+      leftAligned.getChildren().add(createGoBackToGameSetupButton());
     }
-
-    topBar.getChildren().add(leftAlignedButtons);
+    topBar.getChildren().add(leftAligned);
 
     if (helpButtonInstance != null) {
       Region spacer = new Region();
       HBox.setHgrow(spacer, Priority.ALWAYS);
-      HBox rightAlignedButton = new HBox(helpButtonInstance);
-      rightAlignedButton.setAlignment(Pos.CENTER_RIGHT);
-      topBar.getChildren().addAll(spacer, rightAlignedButton);
+      HBox rightAligned = new HBox(helpButtonInstance);
+      rightAligned.setAlignment(Pos.CENTER_RIGHT);
+      topBar.getChildren().addAll(spacer, rightAligned);
     }
+
     topBar.getStyleClass().add("page-background");
     return topBar;
   }
 
+  /**
+   * Adds the navigation-and-help bar to the top region of the given
+   * {@link BorderPane}.
+   *
+   * @param root                         the layout to receive the top bar
+   * @param includeBackButtonToGameSetup whether to include a "Back" button
+   * @param helpButton                   the Help button instance, or null
+   */
   protected void addNavigationAndHelpToBorderPane(
       BorderPane root, boolean includeBackButtonToGameSetup, Button helpButton) {
-    HBox topBar = createTopBarWithNavigationAndHelp(includeBackButtonToGameSetup, helpButton);
-    root.setTop(topBar);
+    root.setTop(createTopBarWithNavigationAndHelp(includeBackButtonToGameSetup, helpButton));
+  }
+
+  // Private helpers for creating Home and Back buttons:
+
+  private Button createGoToHomeButton() {
+    ImageView icon = createIcon("/images/home.png", "Go to Home");
+    Button home = new Button();
+    home.setGraphic(icon);
+    home.getStyleClass().add("icon-button");
+    home.setOnAction(e -> NavigationService.getInstance().navigateToHome());
+    return home;
+  }
+
+  private Button createGoBackToGameSetupButton() {
+    ImageView icon = createIcon("/images/back.png", "Go Back");
+    Button back = new Button();
+    back.setGraphic(icon);
+    back.getStyleClass().add("icon-button");
+    back.setOnAction(e -> NavigationService.getInstance().goBackToGameSetupPage());
+    return back;
   }
 }

@@ -19,10 +19,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * The application's home page, offering navigation to available games.
+ * <p>
+ * Displays buttons for "Snake & Ladders" and "Ludo", with responsive
+ * sizing and hover effects. Initializes the {@link NavigationService}.
+ * </p>
+ */
 public class HomePage extends Application {
 
     private static final Logger LOG = Logger.getLogger(HomePage.class.getName());
-
     private Label title;
     private ImageView laddersBtn;
     private ImageView ludoBtn;
@@ -50,10 +56,21 @@ public class HomePage extends Application {
         }
     }
 
+    /**
+     * Builds and returns the home page scene.
+     * <p>
+     * Sets up UI elements, binds their sizes to the scene dimensions,
+     * applies stylesheet, and configures responsive layout.
+     * </p>
+     *
+     * @param stageForEventHandlers the stage used for attaching event handlers
+     * @return the fully constructed {@link Scene}
+     */
     public Scene createScene(Stage stageForEventHandlers) {
         LOG.fine("Creating Home Scene...");
         buildUI();
         setupEventHandlers(stageForEventHandlers);
+
         homeScene = new Scene(root, 800, 600);
         try {
             String cssPath = "/styles/style.css";
@@ -64,108 +81,112 @@ public class HomePage extends Application {
             homeScene.getStylesheets().add(cssExternalForm);
         } catch (NullPointerException | ResourceNotFoundException e) {
             LOG.log(Level.WARNING, "Failed to load stylesheet /styles/style.css", e);
-            // Application can continue without stylesheet, but log a warning.
         }
 
-        double imageButtonWidthFactor = 0.22;
-        double imageButtonHeightFactor = 0.30;
-        double minImageWidth = 220;
-        double minImageHeight = 220;
+        double widthFactor = 0.22, heightFactor = 0.30;
+        double minW = 220, minH = 220;
 
         laddersBtn.fitWidthProperty().bind(
                 Bindings.createDoubleBinding(
-                        () -> Math.max(
-                                homeScene.getWidth() * imageButtonWidthFactor,
-                                minImageWidth),
+                        () -> Math.max(homeScene.getWidth() * widthFactor, minW),
                         homeScene.widthProperty()));
         laddersBtn.fitHeightProperty().bind(
                 Bindings.createDoubleBinding(
-                        () -> Math.max(
-                                homeScene.getHeight() * imageButtonHeightFactor,
-                                minImageHeight),
+                        () -> Math.max(homeScene.getHeight() * heightFactor, minH),
                         homeScene.heightProperty()));
 
         ludoBtn.fitWidthProperty().bind(
                 Bindings.createDoubleBinding(
-                        () -> Math.max(
-                                homeScene.getWidth() * imageButtonWidthFactor,
-                                minImageWidth),
+                        () -> Math.max(homeScene.getWidth() * widthFactor, minW),
                         homeScene.widthProperty()));
         ludoBtn.fitHeightProperty().bind(
                 Bindings.createDoubleBinding(
-                        () -> Math.max(
-                                homeScene.getHeight() * imageButtonHeightFactor,
-                                minImageHeight),
+                        () -> Math.max(homeScene.getHeight() * heightFactor, minH),
                         homeScene.heightProperty()));
 
         buttonBox.spacingProperty().bind(homeScene.widthProperty().multiply(0.05));
         root.spacingProperty().bind(homeScene.heightProperty().multiply(0.05));
+        root.paddingProperty().bind(
+                Bindings.createObjectBinding(
+                        () -> new Insets(
+                                homeScene.getHeight() * 0.05,
+                                homeScene.getWidth() * 0.05,
+                                homeScene.getHeight() * 0.05,
+                                homeScene.getWidth() * 0.05),
+                        homeScene.widthProperty(),
+                        homeScene.heightProperty()));
 
-        root.paddingProperty()
-                .bind(
-                        Bindings.createObjectBinding(
-                                () -> new Insets(
-                                        homeScene.heightProperty().doubleValue() * 0.05,
-                                        homeScene.widthProperty().doubleValue() * 0.05,
-                                        homeScene.heightProperty().doubleValue() * 0.05,
-                                        homeScene.widthProperty().doubleValue() * 0.05),
-                                homeScene.widthProperty(),
-                                homeScene.heightProperty()));
         LOG.fine("Home Scene created.");
         return homeScene;
     }
 
+    /**
+     * Constructs the UI nodes for the home page.
+     * <p>
+     * Creates the title label and game buttons, arranges them in a VBox.
+     * </p>
+     */
     private void buildUI() {
         title = new Label("Retro Roll & Rise");
         title.getStyleClass().add("home-page-title");
         title.setWrapText(true);
+
         laddersBtn = createGameButton("SnakeAndLadder.png");
         ludoBtn = createGameButton("Ludo.png");
+
         buttonBox = new HBox(40, laddersBtn, ludoBtn);
         buttonBox.setAlignment(Pos.CENTER);
+
         root = new VBox(40, title, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(40));
         root.getStyleClass().add("page-background");
     }
 
+    /**
+     * Creates a game-selection button with hover animation.
+     *
+     * @param imageName the filename of the game icon in /images/
+     * @return a configured {@link ImageView} acting as a button
+     * @throws ResourceNotFoundException if the image resource is missing
+     */
     private ImageView createGameButton(String imageName) {
-        String imagePath = "/images/" + imageName;
-        InputStream imageStream = getClass().getResourceAsStream(imagePath);
-        if (imageStream == null) {
-            LOG.log(Level.SEVERE, "Game button image not found: " + imagePath);
-            throw new ResourceNotFoundException(imagePath);
+        String path = "/images/" + imageName;
+        InputStream stream = getClass().getResourceAsStream(path);
+        if (stream == null) {
+            LOG.log(Level.SEVERE, "Game button image not found: " + path);
+            throw new ResourceNotFoundException(path);
         }
-        ImageView button = new ImageView(new Image(imageStream));
-        button.setFitWidth(250);
-        button.setFitHeight(250);
-        button.setPickOnBounds(true);
-        button.setPreserveRatio(true);
-        button.getStyleClass().add("menu-button-image");
-        button.setOnMouseEntered(
-                e -> {
-                    button.setScaleX(1.1);
-                    button.setScaleY(1.1);
-                });
-        button.setOnMouseExited(
-                e -> {
-                    button.setScaleX(1.0);
-                    button.setScaleY(1.0);
-                });
-        return button;
+        ImageView iv = new ImageView(new Image(stream));
+        iv.setFitWidth(250);
+        iv.setFitHeight(250);
+        iv.setPickOnBounds(true);
+        iv.setPreserveRatio(true);
+        iv.getStyleClass().add("menu-button-image");
+        iv.setOnMouseEntered(e -> {
+            iv.setScaleX(1.1);
+            iv.setScaleY(1.1);
+        });
+        iv.setOnMouseExited(e -> {
+            iv.setScaleX(1.0);
+            iv.setScaleY(1.0);
+        });
+        return iv;
     }
 
+    /**
+     * Attaches click handlers to the game buttons.
+     *
+     * @param stage the stage for potential context use (unused here)
+     */
     private void setupEventHandlers(Stage stage) {
-        laddersBtn.setOnMouseClicked(
-                (MouseEvent e) -> {
-                    LOG.info("Ladders button clicked.");
-                    NavigationService.getInstance().navigateToSnlPage();
-                });
-
-        ludoBtn.setOnMouseClicked(
-                (MouseEvent e) -> {
-                    LOG.info("Ludo button clicked.");
-                    NavigationService.getInstance().navigateToLudoPage();
-                });
+        laddersBtn.setOnMouseClicked((MouseEvent e) -> {
+            LOG.info("Ladders button clicked.");
+            NavigationService.getInstance().navigateToSnlPage();
+        });
+        ludoBtn.setOnMouseClicked((MouseEvent e) -> {
+            LOG.info("Ludo button clicked.");
+            NavigationService.getInstance().navigateToLudoPage();
+        });
     }
 }
