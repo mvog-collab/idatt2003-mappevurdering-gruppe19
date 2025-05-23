@@ -10,7 +10,7 @@ runs both **Ludo** and **Snakes & Ladders**.
 
 * SOLID‑friendly architecture
 * Domain‑specific exception hierarchy
-* Clean separation: *engine ↔ gateway ↔ UI*
+* Clean separation: *engine ↔ gateway ↔ presentation*
 
 ---
 
@@ -29,8 +29,8 @@ built with Maven.
 | Package                            | Responsibility             | Core classes                                                |
 | ---------------------------------- | -------------------------- | ----------------------------------------------------------- |
 | **`edu.games.engine.*`**           | Pure game / rule logic     | `DefaultGame`, `LinearBoard`, `LudoPath`, exception classes |
-| **`edu.ntnu.idatt2003.gateway.*`** | Bridge between engine & UI | `LudoGateway`, `SnlGateway`, observer events                |
-| **`edu.ntnu.idatt2003.ui.*`**      | JavaFX front‑end           | `LudoBoardController`, `SnakesAndLaddersApp`                |
+| **`edu.ntnu.idatt2003.gateway.*`** | Bridge between engine & presentation | `LudoGateway`, `SnlGateway`, observer events                |
+| **`edu.ntnu.idatt2003.presentation.*`**      | JavaFX front‑end           | `LudoBoardController`, `SnakesAndLaddersApp`                |
 
 ### Test classes (`src/test/java`)
 
