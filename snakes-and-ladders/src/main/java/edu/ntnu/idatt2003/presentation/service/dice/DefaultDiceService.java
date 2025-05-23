@@ -6,14 +6,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+/**
+ * Default dice service implementation for games using two dice.
+ * <p>
+ * Manages dual die display with rotation effects for standard board games.
+ * </p>
+ */
 public class DefaultDiceService implements DiceService {
+
   private static final int DIE_SIDE = 50;
   private ImageView die1Img;
   private ImageView die2Img;
 
   @Override
   public void initializeDice(Pane container) {
-    // Create dice images
     String imgDir = ResourcePaths.IMAGE_DIR;
     die1Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
     die2Img = new ImageView(new Image(getClass().getResourceAsStream(imgDir + "1.png")));
@@ -27,7 +33,6 @@ public class DefaultDiceService implements DiceService {
     die1Img.setRotate(-5);
     die2Img.setRotate(25);
 
-    // Add to container
     container.getChildren().addAll(die1Img, die2Img);
   }
 

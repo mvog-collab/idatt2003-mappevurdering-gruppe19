@@ -16,8 +16,24 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+/**
+ * UI service implementation for Snakes and Ladders player interface components.
+ * Handles creating and updating player display elements like token images,
+ * turn indicators, and player info boxes.
+ */
 public class SnlPlayerUiService implements PlayerUIService {
 
+  /**
+   * Creates a complete player display box showing the player's token, name, and
+   * turn status.
+   * The box includes a dice emoji when it's the player's turn and adds a golden
+   * glow effect
+   * to make the active player stand out.
+   *
+   * @param player  the player to create the display box for
+   * @param hasTurn whether this player currently has the turn
+   * @return a VBox containing all the player's display elements
+   */
   @Override
   public Node createPlayerBox(PlayerView player, boolean hasTurn) {
     VBox box = new VBox();
@@ -29,39 +45,36 @@ public class SnlPlayerUiService implements PlayerUIService {
     box.setMaxWidth(150);
     box.setPrefHeight(50);
 
-    // Store playerToken as user data for lookup
     box.setUserData(player.playerToken());
 
-    // Create playerToken image
     ImageView tokenImg = createTokenImage(player.playerToken());
     tokenImg.setFitWidth(50);
     tokenImg.setFitHeight(50);
 
-    // Create turn indicator
     Label turnLabel = new Label("\uD83C\uDFB2 Your turn!");
     turnLabel.getStyleClass().add("turn-indicator");
     turnLabel.setVisible(hasTurn);
 
-    // Create playerName label
     Label nameLabel = new Label(player.playerName());
     nameLabel.getStyleClass().add("player-playerName");
 
-    // Assemble box
     box.getChildren().addAll(turnLabel, tokenImg, nameLabel);
 
-    // Add styling for current player
     if (hasTurn) {
       box.getStyleClass().add("current-player");
-
-      // Add glow effect to playerToken
-      DropShadow glow = new DropShadow(20, Color.GOLD);
-      glow.setSpread(0.5);
-      tokenImg.setEffect(glow);
     }
 
     return box;
   }
 
+  /**
+   * Creates an ImageView for a player's game token/piece.
+   * Loads the image from resources based on the token name and applies basic
+   * styling.
+   *
+   * @param tokenName the name of the token (e.g., "red", "blue")
+   * @return an ImageView displaying the player's token
+   */
   @Override
   public ImageView createTokenImage(String tokenName) {
     String path = ResourcePaths.IMAGE_DIR + tokenName.toLowerCase() + "Piece.png";
@@ -73,25 +86,30 @@ public class SnlPlayerUiService implements PlayerUIService {
     return iv;
   }
 
+  /**
+   * Updates the visual indicators for whose turn it is.
+   * Shows/hides the turn indicator label and adds/removes the golden glow effect
+   * on the player's token to highlight the active player.
+   *
+   * @param playerBox the player's display box to update
+   * @param hasTurn   whether this player now has the turn
+   */
   @Override
   public void updateTurnIndicator(Node playerBox, boolean hasTurn) {
     if (!(playerBox instanceof VBox box))
       return;
 
-    // Update style class
     if (hasTurn) {
       box.getStyleClass().add("current-player");
     } else {
       box.getStyleClass().remove("current-player");
     }
 
-    // Update turn indicator label
     for (Node node : box.getChildren()) {
       if (node instanceof Label label && label.getStyleClass().contains("turn-indicator")) {
         label.setVisible(hasTurn);
       }
 
-      // Update playerToken glow effect
       if (node instanceof ImageView token) {
         if (hasTurn) {
           DropShadow glow = new DropShadow(20, Color.GOLD);
@@ -104,17 +122,38 @@ public class SnlPlayerUiService implements PlayerUIService {
     }
   }
 
+  /**
+   * Creates multiple game pieces for a player.
+   * Not implemented for Snakes and Ladders since players only have one piece.
+   *
+   * @param player the player to create pieces for
+   * @return null (not applicable for SNL)
+   */
   @Override
   public List<ImageView> createPlayerPieces(PlayerView player) {
-    // Implementation for Ludo with multiple pieces per player
     return null;
   }
 
+  /**
+   * Updates the player display panel.
+   * Currently not implemented for SNL.
+   *
+   * @param container the container to update
+   * @param players   the list of players to display
+   */
   @Override
   public void updatePlayerDisplay(Node container, List<PlayerView> players) {
     // Implementation for updating player panel
   }
 
+  /**
+   * Creates the "current player turn" display box that shows whose turn it is.
+   * This creates a prominent display with the player's token and a message
+   * indicating it's their turn to play.
+   *
+   * @param currentPlayer the player whose turn it is
+   * @return a styled container showing the current player info
+   */
   @Override
   public Node createCurrentPlayerTurnBox(PlayerView currentPlayer) {
     VBox container = new VBox();
@@ -147,13 +186,22 @@ public class SnlPlayerUiService implements PlayerUIService {
     return container;
   }
 
+  /**
+   * Updates the current player turn display with new player info and message.
+   * Changes the token image, updates the turn message, and applies visual effects
+   * to highlight the active player. If no player is provided, shows a waiting
+   * state.
+   *
+   * @param turnBox       the turn display container to update
+   * @param currentPlayer the player whose turn it is (null for waiting state)
+   * @param message       custom message to display (null for default message)
+   */
   @Override
   public void updateCurrentPlayerTurnBox(Node turnBox, PlayerView currentPlayer, String message) {
     try {
       if (!(turnBox instanceof VBox container))
         return;
 
-      // Find the components
       HBox contentBox = null;
       ImageView tokenImg = null;
       Label turnMessageLabel = null;
@@ -175,33 +223,27 @@ public class SnlPlayerUiService implements PlayerUIService {
         return;
 
       if (currentPlayer == null) {
-        // No player has a turn - show default state
         turnMessageLabel.setText("Waiting for game to start...");
         tokenImg.setImage(null);
         tokenImg.setEffect(null);
         container.getStyleClass().remove("active");
       } else {
-        // Player has a turn - update display
         String playerName = currentPlayer.playerName();
         String tokenName = currentPlayer.playerToken();
 
-        // Update the message
         if (message != null && !message.isEmpty()) {
           turnMessageLabel.setText(message);
         } else {
           turnMessageLabel.setText(playerName + "'s turn! Roll the dice 🎲");
         }
 
-        // Update the token image
         String imagePath = "/images/" + tokenName.toLowerCase() + "Piece.png";
         tokenImg.setImage(new Image(getClass().getResourceAsStream(imagePath)));
 
-        // Add a glow effect to the token
         DropShadow glow = new DropShadow(15, Color.GOLD);
         glow.setSpread(0.4);
         tokenImg.setEffect(glow);
 
-        // Add active styling
         if (!container.getStyleClass().contains("active")) {
           container.getStyleClass().add("active");
         }

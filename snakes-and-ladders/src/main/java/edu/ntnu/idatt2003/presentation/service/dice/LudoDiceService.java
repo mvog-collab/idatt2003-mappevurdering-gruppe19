@@ -6,7 +6,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+/**
+ * Dice service implementation for Ludo games.
+ * <p>
+ * Manages single die display with rotation effects for Ludo gameplay.
+ * </p>
+ */
 public class LudoDiceService implements DiceService {
+
   private static final int DIE_SIDE = 50;
   private ImageView dieImg;
 
@@ -37,7 +44,7 @@ public class LudoDiceService implements DiceService {
   public int[] parseDiceRoll(Object diceData) {
     if (diceData instanceof List<?> diceValues && !diceValues.isEmpty()) {
       if (diceValues.get(0) instanceof Integer value) {
-        return new int[] {value};
+        return new int[] { value };
       }
     }
     return new int[0];

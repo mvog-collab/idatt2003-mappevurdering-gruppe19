@@ -17,15 +17,36 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+/**
+ * UI service implementation for Ludo game player interface components.
+ * Handles creating and updating player display elements specific to Ludo,
+ * including multiple game pieces per player and turn indicators.
+ */
 public class LudoPlayerUIService implements PlayerUIService {
   private static final int TOKEN_SIZE = 35;
 
+  /**
+   * Creates a player display box for Ludo.
+   * Currently delegates to the SNL implementation since the basic player box
+   * layout works for both games.
+   *
+   * @param player  the player to create the display box for
+   * @param hasTurn whether this player currently has the turn
+   * @return a Node containing the player's display elements
+   */
   @Override
   public Node createPlayerBox(PlayerView player, boolean hasTurn) {
-    // Similar to SnlPlayerUiService but with Ludo-specific styling if needed
     return new SnlPlayerUiService().createPlayerBox(player, hasTurn);
   }
 
+  /**
+   * Creates an ImageView for a player's game token/piece in Ludo.
+   * Loads the appropriate token image and sets up the basic display properties.
+   *
+   * @param tokenName the name of the token (e.g., "red", "blue", "green",
+   *                  "yellow")
+   * @return an ImageView displaying the player's token
+   */
   @Override
   public ImageView createTokenImage(String tokenName) {
     String path = ResourcePaths.IMAGE_DIR + tokenName.toLowerCase() + "Piece.png";
@@ -36,20 +57,25 @@ public class LudoPlayerUIService implements PlayerUIService {
     return iv;
   }
 
+  /**
+   * Updates the visual indicators for whose turn it is in Ludo.
+   * Shows/hides turn indicators and applies golden glow effects to highlight
+   * the active player, similar to the SNL implementation.
+   *
+   * @param playerBox the player's display box to update
+   * @param hasTurn   whether this player now has the turn
+   */
   @Override
   public void updateTurnIndicator(Node playerBox, boolean hasTurn) {
-    // Similar to DefaultPlayerUIService
     if (!(playerBox instanceof VBox box))
       return;
 
-    // Update style class
     if (hasTurn) {
       box.getStyleClass().add("current-player");
     } else {
       box.getStyleClass().remove("current-player");
     }
 
-    // Update turn indicator and token glow
     for (Node node : box.getChildren()) {
       if (node instanceof Label label && label.getStyleClass().contains("turn-indicator")) {
         label.setVisible(hasTurn);
@@ -67,9 +93,16 @@ public class LudoPlayerUIService implements PlayerUIService {
     }
   }
 
+  /**
+   * Creates all four game pieces for a Ludo player.
+   * Each player in Ludo has 4 pieces that can move around the board.
+   * Highlights the currently active piece with a golden glow effect.
+   *
+   * @param player the player to create pieces for
+   * @return a list of ImageViews representing the player's 4 game pieces
+   */
   @Override
   public List<ImageView> createPlayerPieces(PlayerView player) {
-    // Create 4 pieces for each Ludo player
     List<ImageView> pieces = new ArrayList<>();
     String tokenName = player.playerToken();
 
@@ -81,7 +114,6 @@ public class LudoPlayerUIService implements PlayerUIService {
       iv.setFitHeight(TOKEN_SIZE);
       iv.setUserData(tokenName + "_" + i);
 
-      // Highlight active piece if needed
       if (player.hasTurn() && player.activePieceIndex() == i) {
         DropShadow highlight = new DropShadow(10, Color.GOLD);
         highlight.setSpread(0.8);
@@ -94,12 +126,26 @@ public class LudoPlayerUIService implements PlayerUIService {
     return pieces;
   }
 
+  /**
+   * Updates the player display panel for Ludo.
+   * Currently not implemented - placeholder for future functionality.
+   *
+   * @param container the container to update
+   * @param players   the list of players to display
+   */
   @Override
   public void updatePlayerDisplay(Node container, List<PlayerView> players) {
     // Implementation for updating player display in control panel
   }
 
-  // In LudoPlayerUIService.java AND DefaultPlayerUIService.java
+  /**
+   * Creates the "current player turn" display box for Ludo.
+   * Shows whose turn it is with their token image and a turn message.
+   * The display includes proper spacing and styling for the Ludo interface.
+   *
+   * @param currentPlayer the player whose turn it is
+   * @return a styled container showing the current player info
+   */
   @Override
   public Node createCurrentPlayerTurnBox(PlayerView currentPlayer) {
     VBox container = new VBox();
@@ -132,12 +178,24 @@ public class LudoPlayerUIService implements PlayerUIService {
     return container;
   }
 
+  /**
+   * Updates the current player turn display for Ludo.
+   * Changes the displayed token, updates the turn message, and applies visual
+   * effects.
+   * Shows a waiting message when no player is active, or the current player's
+   * info
+   * with a golden glow effect when someone has the turn.
+   *
+   * @param turnBox       the turn display container to update
+   * @param currentPlayer the player whose turn it is (null for waiting state)
+   * @param message       custom message to display (null uses default "roll the
+   *                      dice" message)
+   */
   @Override
   public void updateCurrentPlayerTurnBox(Node turnBox, PlayerView currentPlayer, String message) {
     if (!(turnBox instanceof VBox container))
       return;
 
-    // Find the components
     HBox contentBox = null;
     ImageView tokenImg = null;
     Label turnMessageLabel = null;
@@ -159,33 +217,27 @@ public class LudoPlayerUIService implements PlayerUIService {
       return;
 
     if (currentPlayer == null) {
-      // No player has a turn - show default state
       turnMessageLabel.setText("Waiting for game to start...");
       tokenImg.setImage(null);
       tokenImg.setEffect(null);
       container.getStyleClass().remove("active");
     } else {
-      // Player has a turn - update display
       String playerName = currentPlayer.playerName();
       String tokenName = currentPlayer.playerToken();
 
-      // Update the message
       if (message != null && !message.isEmpty()) {
         turnMessageLabel.setText(message);
       } else {
         turnMessageLabel.setText(playerName + "'s turn! Roll the dice 🎲");
       }
 
-      // Update the token image
       String imagePath = "/images/" + tokenName.toLowerCase() + "Piece.png";
       tokenImg.setImage(new Image(getClass().getResourceAsStream(imagePath)));
 
-      // Add a glow effect to the token
       DropShadow glow = new DropShadow(15, Color.GOLD);
       glow.setSpread(0.4);
       tokenImg.setEffect(glow);
 
-      // Add active styling
       if (!container.getStyleClass().contains("active")) {
         container.getStyleClass().add("active");
       }

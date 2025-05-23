@@ -13,17 +13,32 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
+/**
+ * Board UI service implementation for Ludo games.
+ * <p>
+ * Manages Ludo-specific board layout, piece positioning, and
+ * visual effects including home area management.
+ * </p>
+ */
 public class LudoBoardUIService implements BoardUIService {
-  private static final String DEFAULT_BOARD_CONFIG = "/boards/ludoBoard.json";
 
+  private static final String DEFAULT_BOARD_CONFIG = "/boards/ludoBoard.json";
   private final int tileSize;
   private final Map<Integer, Point2D> coordinates;
   private final Map<String, List<Point2D>> homePositions;
 
+  /**
+   * Constructs a new LudoBoardUIService with default configuration.
+   */
   public LudoBoardUIService() {
     this(DEFAULT_BOARD_CONFIG);
   }
 
+  /**
+   * Constructs a new LudoBoardUIService with the specified configuration.
+   *
+   * @param boardConfigPath path to the board configuration file
+   */
   public LudoBoardUIService(String boardConfigPath) {
     LudoBoardAdapter.LudoMapData boardData = LudoBoardFactory.loadFromClasspath(boardConfigPath);
     this.tileSize = boardData.tileSize();
@@ -31,12 +46,24 @@ public class LudoBoardUIService implements BoardUIService {
     this.homePositions = boardData.homePositions();
   }
 
+  /**
+   * Constructs a new LudoBoardUIService with the specified board data.
+   *
+   * @param boardData the board configuration data
+   */
   public LudoBoardUIService(LudoBoardAdapter.LudoMapData boardData) {
     this.tileSize = boardData.tileSize();
     this.coordinates = boardData.coordinates();
     this.homePositions = boardData.homePositions();
   }
 
+  /**
+   * Initializes the game board area with background, overlay, and token panes.
+   *
+   * @param gameBoardAreaContainer the container for board elements
+   * @param overlayPane            pane for overlay elements
+   * @param tokenPane              pane for token elements
+   */
   public void initializeGameBoardArea(StackPane gameBoardAreaContainer, Pane overlayPane, Pane tokenPane) {
     double boardActualSize = this.tileSize * 15;
 
@@ -114,6 +141,14 @@ public class LudoBoardUIService implements BoardUIService {
     // This method is less specific for Ludo; use placePieceAtHome.
   }
 
+  /**
+   * Places a piece at its home position.
+   *
+   * @param tokenPane  the pane containing tokens
+   * @param token      the piece to position
+   * @param tokenName  the player token name
+   * @param pieceIndex the index of the piece
+   */
   public void placePieceAtHome(Pane tokenPane, ImageView token, String tokenName, int pieceIndex) {
     if (token == null || tokenName == null || homePositions == null)
       return;
@@ -133,6 +168,14 @@ public class LudoBoardUIService implements BoardUIService {
     token.setLayoutY(position.getY() - token.getFitHeight() / 2);
   }
 
+  /**
+   * Places a piece on the board with offset for multiple pieces per tile.
+   *
+   * @param tokenPane  the pane containing tokens
+   * @param token      the piece to position
+   * @param tileId     the target tile
+   * @param pieceIndex the index of the piece for offset calculation
+   */
   public void placePieceOnBoard(Pane tokenPane, ImageView token, int tileId, int pieceIndex) {
     Point2D target = coordinates.get(tileId);
     if (target == null || token == null)
@@ -149,6 +192,11 @@ public class LudoBoardUIService implements BoardUIService {
     token.setLayoutY(target.getY() + offsetY - token.getFitHeight() / 2);
   }
 
+  /**
+   * Applies highlight effect to indicate an active piece.
+   *
+   * @param piece the piece to highlight
+   */
   public void highlightActivePiece(ImageView piece) {
     if (piece == null)
       return;
@@ -157,6 +205,11 @@ public class LudoBoardUIService implements BoardUIService {
     piece.setEffect(highlight);
   }
 
+  /**
+   * Removes highlight effects from a piece.
+   *
+   * @param piece the piece to remove highlighting from
+   */
   public void removeHighlight(ImageView piece) {
     if (piece == null)
       return;

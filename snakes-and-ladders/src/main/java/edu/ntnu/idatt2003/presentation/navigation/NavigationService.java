@@ -14,18 +14,46 @@ import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Singleton service for managing navigation between different game pages and
+ * scenes.
+ * <p>
+ * This service handles scene transitions, caching, and stage management for the
+ * game application. It provides centralized navigation logic and maintains
+ * references to previously visited scenes for efficient back navigation.
+ * </p>
+ */
 public class NavigationService {
 
+  /** Logger for this service */
   private static final Logger LOG = Logger.getLogger(NavigationService.class.getName());
+
+  /** Singleton instance */
   private static NavigationService instance;
+
+  /** The primary stage for the application */
   private Stage primaryStage;
+
+  /** Cached home scene for performance */
   private Scene homeSceneCache;
+
+  /** Cached previous game setup scene for back navigation */
   private Scene previousGameSetupSceneCache;
+
+  /** Current game type identifier */
   private String currentGameType;
 
+  /**
+   * Private constructor for singleton pattern.
+   */
   private NavigationService() {
   }
 
+  /**
+   * Gets the singleton instance of NavigationService.
+   *
+   * @return the NavigationService instance
+   */
   public static synchronized NavigationService getInstance() {
     if (instance == null) {
       instance = new NavigationService();
@@ -34,6 +62,12 @@ public class NavigationService {
     return instance;
   }
 
+  /**
+   * Initializes the navigation service with the primary stage.
+   *
+   * @param primaryStage the main application stage
+   * @throws IllegalArgumentException if primaryStage is null
+   */
   public void initialize(Stage primaryStage) {
     if (primaryStage == null) {
       LOG.severe("Primary stage cannot be null for NavigationService initialization.");
@@ -43,6 +77,12 @@ public class NavigationService {
     LOG.info("NavigationService initialized with primary stage.");
   }
 
+  /**
+   * Gets the primary stage for the application.
+   *
+   * @return the primary stage
+   * @throws GameInitializationException if service not initialized
+   */
   public Stage getPrimaryStage() {
     if (primaryStage == null) {
       LOG.severe("NavigationService accessed before initialization.");
@@ -51,6 +91,12 @@ public class NavigationService {
     return primaryStage;
   }
 
+  /**
+   * Gets or creates the home scene, using caching for performance.
+   *
+   * @return the home scene
+   * @throws GameInitializationException if service not initialized
+   */
   private Scene getOrCreateHomeScene() {
     if (primaryStage == null) {
       LOG.warning("Attempted to get/create home scene but primaryStage is null.");
@@ -65,6 +111,9 @@ public class NavigationService {
     return homeSceneCache;
   }
 
+  /**
+   * Navigates to the home page and clears navigation history.
+   */
   public void navigateToHome() {
     LOG.info("Navigating to Home page.");
     if (getPrimaryStage() == null) {
@@ -77,6 +126,13 @@ public class NavigationService {
     primaryStage.setTitle("Retro Roll & Rise");
   }
 
+  /**
+   * Navigates to the Ludo game setup page.
+   * <p>
+   * Creates a new Ludo gateway and page instance, then transitions to
+   * the setup scene. Falls back to home page if navigation fails.
+   * </p>
+   */
   public void navigateToLudoPage() {
     LOG.info("Navigating to Ludo setup page.");
     if (getPrimaryStage() == null) {
@@ -104,6 +160,13 @@ public class NavigationService {
     }
   }
 
+  /**
+   * Navigates to the Snakes & Ladders game setup page.
+   * <p>
+   * Creates a new SNL gateway and page instance, then transitions to
+   * the setup scene. Falls back to home page if navigation fails.
+   * </p>
+   */
   public void navigateToSnlPage() {
     LOG.info("Navigating to Snakes & Ladders setup page.");
     if (getPrimaryStage() == null) {
@@ -129,6 +192,12 @@ public class NavigationService {
     }
   }
 
+  /**
+   * Navigates to a game board scene with the specified title.
+   *
+   * @param gameBoardScene the scene containing the game board
+   * @param gameTitle      the title to display for the game window
+   */
   public void navigateToGameScene(Scene gameBoardScene, String gameTitle) {
     LOG.info("Navigating to game scene: " + gameTitle);
     if (getPrimaryStage() == null || gameBoardScene == null) {
@@ -143,6 +212,13 @@ public class NavigationService {
     LOG.info("Successfully navigated to game scene: " + gameTitle);
   }
 
+  /**
+   * Navigates back to the previously visited game setup page.
+   * <p>
+   * Uses cached scene reference for efficient navigation. Falls back
+   * to home page if no previous scene is available.
+   * </p>
+   */
   public void goBackToGameSetupPage() {
     LOG.info("Attempting to navigate back to game setup page for game type: " + currentGameType);
     if (getPrimaryStage() == null) {

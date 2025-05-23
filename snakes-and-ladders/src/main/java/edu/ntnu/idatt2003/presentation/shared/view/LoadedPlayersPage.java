@@ -13,7 +13,15 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * JavaFX view for displaying and selecting from loaded player data.
+ * <p>
+ * Presents a list of players loaded from a CSV file with checkboxes
+ * for selection. Users can choose which players to add to their game.
+ * </p>
+ */
 public class LoadedPlayersPage {
+
   private static final Logger LOG = Logger.getLogger(LoadedPlayersPage.class.getName());
   private final VBox view = new VBox(20);
   private final VBox playersListBox = new VBox(5);
@@ -21,6 +29,12 @@ public class LoadedPlayersPage {
   private final Button addSelectedButton = new Button("Add selected");
   private final Button cancelButton = new Button("Back");
 
+  /**
+   * Constructs a new LoadedPlayersPage with the specified player data.
+   *
+   * @param rows list of string arrays containing player data (name, token,
+   *             birthday)
+   */
   public LoadedPlayersPage(List<String[]> rows) {
     Label title = new Label("Load players");
     title.getStyleClass().add("choose-player-title-label");
@@ -52,18 +66,38 @@ public class LoadedPlayersPage {
     }
   }
 
+  /**
+   * Gets the root view container.
+   *
+   * @return the root VBox container
+   */
   public VBox getView() {
     return view;
   }
 
+  /**
+   * Gets the button for adding selected players.
+   *
+   * @return the add selected button
+   */
   public Button getAddSelectedButton() {
     return addSelectedButton;
   }
 
+  /**
+   * Gets the cancel button.
+   *
+   * @return the cancel button
+   */
   public Button getCancelButton() {
     return cancelButton;
   }
 
+  /**
+   * Gets the data for all currently selected players.
+   *
+   * @return list of string arrays containing selected player data
+   */
   public List<String[]> getSelectedRows() {
     return playerBoxes.stream()
         .filter(CheckBox::isSelected)
