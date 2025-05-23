@@ -12,14 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * DefaultGame manages the lifecycle of a game session.
  * It handles turns, dice rolls, movement, rules, and win conditions.
  */
-public final class DefaultGame implements Game {
+public class DefaultGame implements Game {
 
   private static final Logger LOG = Logger.getLogger(DefaultGame.class.getName());
 
@@ -33,10 +32,10 @@ public final class DefaultGame implements Game {
   /**
    * Constructs a new DefaultGame with the given components.
    *
-   * @param board the game board
-   * @param strategy the game rules and logic
+   * @param board          the game board
+   * @param strategy       the game rules and logic
    * @param initialPlayers the initial list of players
-   * @param dice the dice mechanism
+   * @param dice           the dice mechanism
    */
   public DefaultGame(Board board, GameStrategy strategy, List<Player> initialPlayers, Dice dice) {
     this.board = Objects.requireNonNull(board, "Board cannot be null.");
@@ -58,7 +57,8 @@ public final class DefaultGame implements Game {
 
   /**
    * Plays a turn for the current player.
-   * Rolls the dice, attempts a move, applies special rules, and determines if the player gets another turn.
+   * Rolls the dice, attempts a move, applies special rules, and determines if the
+   * player gets another turn.
    *
    * @return the rolled value
    */
@@ -201,7 +201,7 @@ public final class DefaultGame implements Game {
    *
    * @return the game board
    */
-  public Board board() {
+  public Board getBoard() {
     return board;
   }
 
@@ -210,7 +210,7 @@ public final class DefaultGame implements Game {
    *
    * @return the dice instance
    */
-  public Dice dice() {
+  public Dice getDice() {
     return dice;
   }
 }

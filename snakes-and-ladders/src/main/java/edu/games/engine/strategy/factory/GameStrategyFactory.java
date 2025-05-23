@@ -17,7 +17,8 @@ import edu.ntnu.idatt2003.persistence.BoardAdapter;
 public class GameStrategyFactory {
 
   // Private constructor to prevent instantiation
-  private GameStrategyFactory() {}
+  private GameStrategyFactory() {
+  }
 
   /**
    * Creates a Ludo game strategy based on the given LudoPath.
@@ -26,6 +27,9 @@ public class GameStrategyFactory {
    * @return a GameStrategy implementation for Ludo
    */
   public static GameStrategy createLudoStrategy(LudoPath ludoPath) {
+    if (ludoPath == null) {
+      throw new NullPointerException("LudoPath cannot be null.");
+    }
     RuleEngine ludoRuleEngine = new LudoRuleEngine(ludoPath);
     return new LudoGameStrategy(ludoRuleEngine);
   }
@@ -37,6 +41,9 @@ public class GameStrategyFactory {
    * @return a GameStrategy implementation for Snakes and Ladders
    */
   public static GameStrategy createSnlStrategy(BoardAdapter.MapData mapData) {
+    if (mapData == null) {
+      throw new NullPointerException("Map-data cannot be null.");
+    }
     RuleEngine snlRuleEngine = new SnlRuleEngine(mapData.snakes(), mapData.ladders());
     return new SnlGameStrategy(snlRuleEngine, mapData.snakes(), mapData.ladders());
   }

@@ -48,7 +48,7 @@ public class LudoGameStrategy implements GameStrategy {
    */
   @Override
   public boolean processDiceRoll(Player player, int diceValue, DefaultGame game) {
-    return ruleEngine.grantsExtraTurn(player, game.dice().lastValues(), game);
+    return ruleEngine.grantsExtraTurn(player, game.getDice().lastValues(), game);
   }
 
   /**
@@ -64,14 +64,14 @@ public class LudoGameStrategy implements GameStrategy {
   public Tile movePiece(Player player, int pieceIndex, int diceValue, DefaultGame game) {
     if (player == null
         || game == null
-        || !(game.board() instanceof LudoBoard)
+        || !(game.getBoard() instanceof LudoBoard)
         || pieceIndex < 0
         || pieceIndex >= player.getPieces().size()) {
       throw new ValidationException("pieceIndex out of range: " + pieceIndex);
     }
 
     PlayerPiece piece = player.getPiece(pieceIndex);
-    LudoBoard board = (LudoBoard) game.board();
+    LudoBoard board = (LudoBoard) game.getBoard();
     LudoColor color = LudoColor.valueOf(player.getToken().name());
 
     if (piece.isAtHome()) {

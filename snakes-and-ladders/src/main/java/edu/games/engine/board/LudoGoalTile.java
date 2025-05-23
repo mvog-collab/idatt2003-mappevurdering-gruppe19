@@ -5,9 +5,10 @@ import edu.games.engine.model.LudoColor;
 /**
  * Represents a goal tile in the Ludo board.
  * <p>
- * Goal tiles are color-specific and form a linear path of up to six tiles per player.
+ * Goal tiles are color-specific and form a linear path of up to six tiles per
+ * player.
  */
-public final class LudoGoalTile implements LudoTile {
+public class LudoGoalTile implements LudoTile {
 
   private final int tileId;
   private LudoTile nextTile;

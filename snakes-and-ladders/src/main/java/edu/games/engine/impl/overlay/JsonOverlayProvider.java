@@ -17,16 +17,18 @@ import java.util.logging.Logger;
  * Loads graphical overlay data for game boards from JSON resources.
  * Each overlay describes an image placed on a specific tile.
  */
-public final class JsonOverlayProvider implements OverlayProvider {
+public class JsonOverlayProvider implements OverlayProvider {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private final String baseDir;
   private static final Logger LOG = Logger.getLogger(JsonOverlayProvider.class.getName());
 
   /**
-   * Creates a new overlay provider that looks for overlay files in a given resource folder.
+   * Creates a new overlay provider that looks for overlay files in a given
+   * resource folder.
    *
-   * @param baseResourceDir the base directory in the classpath where overlay files are located
+   * @param baseResourceDir the base directory in the classpath where overlay
+   *                        files are located
    */
   public JsonOverlayProvider(String baseResourceDir) {
     this.baseDir = baseResourceDir.endsWith("/") ? baseResourceDir : baseResourceDir + "/";
