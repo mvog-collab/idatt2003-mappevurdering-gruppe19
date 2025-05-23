@@ -119,8 +119,8 @@ public final class LudoGateway extends AbstractGameGateway {
 
   // Gameplay – internal helpers
   private int performDiceRoll() {
-    final int roll = game.dice().roll();
-    lastDiceValues = game.dice().lastValues();
+    final int roll = game.getDice().roll();
+    lastDiceValues = game.getDice().lastValues();
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.DICE_ROLLED, lastDiceValues));
 
     Log.game().info(() -> "%s rolled %s".formatted(game.currentPlayer().getName(), lastDiceValues));
