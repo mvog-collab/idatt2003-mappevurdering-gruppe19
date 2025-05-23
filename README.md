@@ -14,7 +14,7 @@ runs both **Ludo** and **Snakes & Ladders**.
 
 ---
 
-## Project overview
+## Project overview
 
 The engine handles boards, rules, dice, players and events.  A gateway layer
 adapts the engine to a JavaFX client.  Everything is plain **Java 21** and
@@ -40,8 +40,7 @@ built with Maven.
 
 ---
 
-## How to run the project
-
+## How to run the project
 ```bash
 # 1 clone
 git clone <repo‑url>
@@ -80,7 +79,7 @@ The players can be loaded to, and from CSV files locally on your computer, by us
 
 ---
 
-## Credits / inspiration
+## Credits/ Inspiration
 
 * [https://www.makeareadme.com/](https://www.makeareadme.com/) for quick README tips
 * Oracle Java Docs & JavaFX tutorials
