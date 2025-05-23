@@ -66,7 +66,7 @@ public final class SnlGateway extends AbstractGameGateway {
   public void resetGame() {
     if (game == null)
       return;
-    game.getPlayers().forEach(p -> p.moveTo(game.board().start()));
+    game.getPlayers().forEach(p -> p.moveTo(game.getBoard().start()));
     game.setWinner(null);
     game.setCurrentPlayerIndex(0);
 
@@ -77,7 +77,7 @@ public final class SnlGateway extends AbstractGameGateway {
   public void addPlayer(String playerName, String playerToken, LocalDate birthday) {
     Objects.requireNonNull(game, "call newGame first");
     Player newPlayer = new Player(playerName, mapStringToToken(playerToken), birthday);
-    newPlayer.moveTo(game.board().start()); // Set player on first tile
+    newPlayer.moveTo(game.getBoard().start()); // Set player on first tile
     game.getPlayers().add(newPlayer);
 
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.PLAYER_ADDED, newPlayer));
@@ -94,7 +94,7 @@ public final class SnlGateway extends AbstractGameGateway {
 
     // Use DefaultGame.playTurn() to handle the turn logic
     int rollValue = game.playTurn();
-    lastDiceValues = game.dice().lastValues();
+    lastDiceValues = game.getDice().lastValues();
 
     // Send notifications as needed
     notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.DICE_ROLLED, lastDiceValues));
@@ -125,7 +125,7 @@ public final class SnlGateway extends AbstractGameGateway {
   public int boardSize() {
     if (game == null)
       return 0;
-    LinearBoard linearBoard = (LinearBoard) game.board();
+    LinearBoard linearBoard = (LinearBoard) game.getBoard();
     return ((LinearTile) linearBoard.move(linearBoard.start(), Integer.MAX_VALUE)).tileId();
   }
 

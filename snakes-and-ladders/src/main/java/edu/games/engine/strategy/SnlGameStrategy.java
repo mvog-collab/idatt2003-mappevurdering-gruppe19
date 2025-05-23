@@ -21,7 +21,8 @@ public class SnlGameStrategy implements GameStrategy {
   private final Map<Integer, Integer> ladders;
 
   /**
-   * Constructs a Snakes and Ladders strategy using a rule engine and the game's snakes/ladders map.
+   * Constructs a Snakes and Ladders strategy using a rule engine and the game's
+   * snakes/ladders map.
    *
    * @param ruleEngine the rule engine used to apply game-specific logic
    * @param snakes     map of tile IDs where snakes start and end
@@ -41,9 +42,9 @@ public class SnlGameStrategy implements GameStrategy {
    */
   @Override
   public void initializeGame(DefaultGame game) {
-    if (game != null && game.board() != null) {
+    if (game != null && game.getBoard() != null) {
       for (Player player : game.getPlayers()) {
-        player.moveTo(game.board().start());
+        player.moveTo(game.getBoard().start());
       }
     }
   }
@@ -51,14 +52,14 @@ public class SnlGameStrategy implements GameStrategy {
   /**
    * Checks if the player should get an extra turn based on dice values.
    *
-   * @param player     the player who rolled
-   * @param diceValue  the total dice value (unused directly)
-   * @param game       the current game
+   * @param player    the player who rolled
+   * @param diceValue the total dice value (unused directly)
+   * @param game      the current game
    * @return true if the player should take another turn, false otherwise
    */
   @Override
   public boolean processDiceRoll(Player player, int diceValue, DefaultGame game) {
-    return ruleEngine.grantsExtraTurn(player, game.dice().lastValues(), game);
+    return ruleEngine.grantsExtraTurn(player, game.getDice().lastValues(), game);
   }
 
   /**
@@ -73,13 +74,13 @@ public class SnlGameStrategy implements GameStrategy {
    */
   @Override
   public Tile movePiece(Player player, int pieceIndexIgnored, int diceValue, DefaultGame game) {
-    if (player == null || game == null || player.getCurrentTile() == null || game.board() == null) {
+    if (player == null || game == null || player.getCurrentTile() == null || game.getBoard() == null) {
       return null;
     }
     if (diceValue == 12) {
-      return game.board().move(player.getCurrentTile(), 0);
+      return game.getBoard().move(player.getCurrentTile(), 0);
     }
-    return game.board().move(player.getCurrentTile(), diceValue);
+    return game.getBoard().move(player.getCurrentTile(), diceValue);
   }
 
   /**

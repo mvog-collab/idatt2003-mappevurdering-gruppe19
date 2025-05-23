@@ -11,10 +11,11 @@ import java.util.Map;
 /**
  * Represents the full Ludo movement path.
  * <p>
- * This includes a shared ring of 52 tiles and color-specific goal paths (6 tiles per color).
+ * This includes a shared ring of 52 tiles and color-specific goal paths (6
+ * tiles per color).
  * Responsible for handling piece movement based on color and steps.
  */
-public final class LudoPath implements MovementPath {
+public class LudoPath implements MovementPath {
 
   private final List<LudoRingTile> ring = new ArrayList<>(52);
   private final Map<LudoColor, List<LudoGoalTile>> goals = new EnumMap<>(LudoColor.class);
@@ -25,21 +26,24 @@ public final class LudoPath implements MovementPath {
    * Sets up tile connections and entry points into goal areas.
    */
   public LudoPath() {
-    for (int i = 0; i < 52; i++) ring.add(new LudoRingTile(i + 1));
-    for (int i = 0; i < 52; i++) ring.get(i).setNext(ring.get((i + 1) % 52));
+    for (int i = 0; i < 52; i++)
+      ring.add(new LudoRingTile(i + 1));
+    for (int i = 0; i < 52; i++)
+      ring.get(i).setNext(ring.get((i + 1) % 52));
 
     Map<LudoColor, Integer> goalStartIds = Map.of(
         LudoColor.BLUE, 53,
         LudoColor.RED, 59,
         LudoColor.GREEN, 65,
-        LudoColor.YELLOW, 71
-    );
+        LudoColor.YELLOW, 71);
 
     for (LudoColor c : LudoColor.values()) {
       List<LudoGoalTile> lane = new ArrayList<>(6);
       int startId = goalStartIds.get(c);
-      for (int j = 0; j < 6; j++) lane.add(new LudoGoalTile(startId + j));
-      for (int j = 0; j < 5; j++) lane.get(j).linkNext(lane.get(j + 1));
+      for (int j = 0; j < 6; j++)
+        lane.add(new LudoGoalTile(startId + j));
+      for (int j = 0; j < 5; j++)
+        lane.get(j).linkNext(lane.get(j + 1));
       goals.put(c, lane);
 
       int entryIndex = switch (c) {
@@ -70,9 +74,9 @@ public final class LudoPath implements MovementPath {
    * Returns the result of moving from a tile with a number of steps.
    * Handles transitions from ring to goal path.
    *
-   * @param from   the starting tile
-   * @param steps  number of steps to move
-   * @param owner  the player's color
+   * @param from  the starting tile
+   * @param steps number of steps to move
+   * @param owner the player's color
    * @return the destination tile after movement
    */
   @Override
@@ -101,7 +105,8 @@ public final class LudoPath implements MovementPath {
         return currentTile;
       }
 
-      if (next == null) return currentTile;
+      if (next == null)
+        return currentTile;
       currentTile = next;
     }
 

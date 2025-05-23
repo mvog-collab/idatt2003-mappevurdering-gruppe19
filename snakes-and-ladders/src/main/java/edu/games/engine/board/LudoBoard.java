@@ -34,7 +34,8 @@ public final class LudoBoard implements Board {
    * Checks if the given tile is the final goal tile.
    *
    * @param tile the tile to check
-   * @return {@code true} if the tile is a final goal tile, {@code false} otherwise
+   * @return {@code true} if the tile is a final goal tile, {@code false}
+   *         otherwise
    */
   @Override
   public boolean isEnd(Tile tile) {
@@ -44,7 +45,7 @@ public final class LudoBoard implements Board {
   /**
    * Disabled generic movement. Use {@link #move(Tile, int, LudoColor)} instead.
    *
-   * @param from the starting tile
+   * @param from  the starting tile
    * @param steps number of steps to move
    * @return same tile, unchanged
    */
@@ -56,9 +57,9 @@ public final class LudoBoard implements Board {
   /**
    * Moves a piece a number of steps based on its color-specific path.
    *
-   * @param from starting tile
-   * @param steps number of steps to move
-   * @param color player's color
+   * @param from  Starting tile
+   * @param steps Number of steps to move
+   * @param color Player's color
    * @return the resulting tile after movement
    */
   public Tile move(Tile from, int steps, LudoColor color) {
