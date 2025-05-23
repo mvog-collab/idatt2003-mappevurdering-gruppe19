@@ -14,12 +14,12 @@ public class Main {
   static {
     try (InputStream is = Main.class.getClassLoader().getResourceAsStream("logging.properties")) {
       if (is == null) {
-        System.err.println("Warning: logging.properties not found. Using default logging configuration.");
+        LOG.log(Level.WARNING, "Warning: logging.properties not found. Using default logging configuration.");
       } else {
         LogManager.getLogManager().readConfiguration(is);
       }
     } catch (Exception e) {
-      System.err.println("Error loading logging configuration: " + e.getMessage());
+      LOG.log(Level.WARNING, "Error loading logging configuration: ", e);
       e.printStackTrace();
     }
   }
@@ -33,7 +33,7 @@ public class Main {
         });
 
     try {
-      HomePage.launch(args);
+      javafx.application.Application.launch(HomePage.class, args);
     } catch (Exception e) {
       LOG.log(Level.SEVERE, "Failed to launch application", e);
       Errors.handle("Application failed to launch. Please check logs for details.", e);
