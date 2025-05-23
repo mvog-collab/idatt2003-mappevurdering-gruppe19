@@ -19,6 +19,10 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.Map;
 
+/**
+ * Base gateway handling common game lifecycle, persistence, overlay loading, and observer management.
+ * Concrete subclasses must implement {@link #mapStringToToken(String)} to convert UI tokens into domain tokens.
+ */
 public abstract class AbstractGameGateway implements CompleteBoardGame {
   private final List<BoardGameObserver> observers = new ArrayList<>();
   protected final PlayerStore playerStore;
@@ -29,13 +33,26 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
 
   private static final Logger LOG = Logger.getLogger(AbstractGameGateway.class.getName());
 
+  /**
+   * Constructs the gateway with required persistence and overlay providers.
+   *
+   * @param playerStore     store for saving and loading players
+   * @param overlayProvider provider for board overlay parameters
+   */
   protected AbstractGameGateway(PlayerStore playerStore, OverlayProvider overlayProvider) {
     this.playerStore = playerStore;
     this.overlayProvider = overlayProvider;
-    LOG.info(() -> "AbstractGameGateway initialized with PlayerStore: " + playerStore.getClass().getSimpleName() +
-        " and OverlayProvider: " + overlayProvider.getClass().getSimpleName());
+    LOG.info(() -> "AbstractGameGateway initialized with PlayerStore: "
+        + playerStore.getClass().getSimpleName()
+        + " and OverlayProvider: "
+        + overlayProvider.getClass().getSimpleName());
   }
 
+  /**
+   * Registers an observer to receive game events.
+   *
+   * @param observer the observer to add
+   */
   @Override
   public void addObserver(BoardGameObserver observer) {
     if (observer != null && !observers.contains(observer)) {
@@ -44,6 +61,11 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
     }
   }
 
+  /**
+   * Unregisters a previously added observer.
+   *
+   * @param observer the observer to remove
+   */
   @Override
   public void removeObserver(BoardGameObserver observer) {
     if (observer != null && observers.remove(observer)) {
@@ -51,18 +73,27 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
     }
   }
 
+  /**
+   * Notifies all registered observers of a game event, catching and logging errors per observer.
+   *
+   * @param event the game event to dispatch
+   */
   protected void notifyObservers(BoardGameEvent event) {
     for (BoardGameObserver observer : new ArrayList<>(observers)) {
       try {
         observer.update(event);
       } catch (Exception e) {
         LOG.log(Level.SEVERE,
-            "Error in observer " + observer.getClass().getName() + " during update for event " + event.getTypeOfEvent(),
+            "Error in observer " + observer.getClass().getName()
+                + " during update for event " + event.getTypeOfEvent(),
             e);
       }
     }
   }
 
+  /**
+   * @return {@code true} if the current game has a winner.
+   */
   @Override
   public boolean hasWinner() {
     boolean hasWinner = game != null && game.getWinner().isPresent();
@@ -70,6 +101,9 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
     return hasWinner;
   }
 
+  /**
+   * @return the name of the current player, or empty string if unavailable.
+   */
   @Override
   public String currentPlayerName() {
     if (game != null && game.currentPlayer() != null) {
@@ -79,11 +113,20 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
     return "";
   }
 
+  /**
+   * @return a copy of the last dice values rolled.
+   */
   @Override
   public List<Integer> lastDiceValues() {
-    return List.copyOf(lastDiceValues); // Return a copy
+    return List.copyOf(lastDiceValues);
   }
 
+  /**
+   * Saves the current list of players to the specified file path.
+   * Logs and rethrows storage exceptions, logs engine exceptions.
+   *
+   * @param out the file path to save players to
+   */
   @Override
   public void savePlayers(Path out) {
     LOG.info("Attempting to save players to: " + out);
@@ -96,24 +139,32 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
       }
     } catch (StorageException e) {
       LOG.log(Level.SEVERE, "StorageException while saving players to " + out, e);
-
       throw e;
     } catch (GameEngineException e) {
       LOG.log(Level.WARNING, "GameEngineException during savePlayers: " + e.getMessage(), e);
     }
   }
 
+  /**
+   * Clears all players from the current game and notifies observers of a reset.
+   */
   @Override
   public void clearPlayers() {
     if (game != null && game.getPlayers() != null) {
       LOG.info("Clearing all players from the game.");
       game.getPlayers().clear();
-      notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.GAME_RESET, null)); // Or a more specific event
+      notifyObservers(new BoardGameEvent(BoardGameEvent.EventType.GAME_RESET, null));
     } else {
       LOG.warning("Attempted to clear players, but game or players list is null.");
     }
   }
 
+  /**
+   * Retrieves the overlay parameters for the current board size, using a cache.
+   * If loading fails, logs the error and returns an empty list.
+   *
+   * @return list of {@link OverlayParams} for the board
+   */
   @Override
   public List<OverlayParams> boardOverlays() {
     int size = boardSize();
@@ -127,11 +178,20 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
         return loadOverlays(s);
       } catch (Exception e) {
         LOG.log(Level.SEVERE, "Failed to load overlays for board size " + s, e);
-        return List.of(); // Return empty list on failure
+        return List.of();
       }
     });
   }
 
+  /**
+   * Invokes the overlay provider to load overlay parameters for a given size.
+   * Wraps and rethrows storage or engine exceptions appropriately.
+   *
+   * @param size the board size
+   * @return list of {@link OverlayParams} loaded
+   * @throws StorageException       if loading from provider fails due to I/O or missing resource
+   * @throws GameEngineException    if any other failure occurs
+   */
   protected List<OverlayParams> loadOverlays(int size) {
     LOG.info("Loading overlays from provider for board size: " + size);
     try {
@@ -147,8 +207,20 @@ public abstract class AbstractGameGateway implements CompleteBoardGame {
     }
   }
 
+  /**
+   * Maps a UI token string to the domain {@link Token} enum.
+   *
+   * @param token the token string from the UI
+   * @return the corresponding {@code Token} enum
+   */
   protected abstract Token mapStringToToken(String token);
 
+  /**
+   * Loads players from raw CSV rows, parsing name, token, and birthday.
+   * Skips or logs malformed rows, then notifies observers once all are loaded.
+   *
+   * @param rows list of string arrays, each representing [name, token, birthday]
+   */
   @Override
   public void loadPlayers(List<String[]> rows) {
     LOG.info("Loading " + (rows != null ? rows.size() : 0) + " players from rows data.");
