@@ -33,13 +33,13 @@ public final class SnlRuleEngine implements RuleEngine {
       return;
     }
 
-    LinearBoard board = (LinearBoard) game.board();
+    LinearBoard board = (LinearBoard) game.getBoard();
     Tile destinationTile = applySnakesOrLadders(player, landedTile, board);
     applyBumping(player, destinationTile, board, game);
   }
 
   private boolean isValidState(Player player, Tile tile, DefaultGame game) {
-    return player != null && tile != null && game != null && game.board() instanceof LinearBoard;
+    return player != null && tile != null && game != null && game.getBoard() instanceof LinearBoard;
   }
 
   private Tile applySnakesOrLadders(Player player, Tile tile, LinearBoard board) {
@@ -90,7 +90,7 @@ public final class SnlRuleEngine implements RuleEngine {
     return player != null
         && player.getCurrentTile() != null
         && game != null
-        && game.board() != null
-        && game.board().isEnd(player.getCurrentTile());
+        && game.getBoard() != null
+        && game.getBoard().isEnd(player.getCurrentTile());
   }
 }
