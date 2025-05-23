@@ -11,10 +11,10 @@ import edu.ntnu.idatt2003.ui.service.animation.AnimationService;
 import edu.ntnu.idatt2003.ui.service.board.LudoBoardUIService;
 import edu.ntnu.idatt2003.ui.service.dice.DiceService;
 import edu.ntnu.idatt2003.ui.service.player.PlayerUIService;
-import edu.ntnu.idatt2003.ui.shared.view.ViewServiceFactory;
+import edu.ntnu.idatt2003.ui.service.ViewServiceFactory;
 import edu.ntnu.idatt2003.utils.Dialogs;
 import edu.ntnu.idatt2003.utils.ResourcePaths;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
