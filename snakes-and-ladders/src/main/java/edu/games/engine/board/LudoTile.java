@@ -3,7 +3,7 @@ package edu.games.engine.board;
 import edu.games.engine.model.LudoColor;
 
 /**
- * Represents a single position or square on the a Ludo board.
+ * Represents a single position or square on a Ludo board.
  */
 public interface LudoTile extends Tile {
   /**
