@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.games.engine.exception.StorageException;
-import edu.ntnu.idatt2003.ui.fx.OverlayParams;
+import edu.ntnu.idatt2003.presentation.fx.OverlayParams;
 
 import java.io.IOException;
 import java.io.InputStream;

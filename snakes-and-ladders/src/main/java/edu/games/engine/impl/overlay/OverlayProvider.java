@@ -1,6 +1,6 @@
 package edu.games.engine.impl.overlay;
 
-import edu.ntnu.idatt2003.ui.fx.OverlayParams;
+import edu.ntnu.idatt2003.presentation.fx.OverlayParams;
 import java.util.List;
 
 /**

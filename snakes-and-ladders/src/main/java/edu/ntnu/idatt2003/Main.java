@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2003;
 
-import edu.ntnu.idatt2003.ui.HomePage;
+import edu.ntnu.idatt2003.presentation.HomePage;
 import edu.ntnu.idatt2003.utils.Errors;
 import java.io.InputStream;
 import java.util.logging.Level;
