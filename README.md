@@ -70,7 +70,7 @@ mvn test
 
 ## Repository
 
-[https://github.com/NTNU-IDI/idatt2003-gameengine-gr19](https://github.com/NTNU-IDI/idatt2003-gameengine-gr19)  *(placeholder)*
+[https://github.com/NTNU-IDI/idatt2003-gameengine-gr19](https://github.com/NTNU-IDI/idatt2003-gameengine-gr19)
 
 ---
 
