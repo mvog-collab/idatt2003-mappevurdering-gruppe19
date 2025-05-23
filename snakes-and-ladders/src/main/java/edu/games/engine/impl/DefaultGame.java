@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class DefaultGame implements Game {
+public class DefaultGame implements Game {
 
   private static final Logger LOG = Logger.getLogger(DefaultGame.class.getName());
 
@@ -148,11 +147,11 @@ public final class DefaultGame implements Game {
     return strategy;
   }
 
-  public Board board() {
+  public Board getBoard() {
     return board;
   }
 
-  public Dice dice() {
+  public Dice getDice() {
     return dice;
   }
 }

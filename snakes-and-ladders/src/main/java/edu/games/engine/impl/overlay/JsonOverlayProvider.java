@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class JsonOverlayProvider implements OverlayProvider {
+public class JsonOverlayProvider implements OverlayProvider {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private final String baseDir;
