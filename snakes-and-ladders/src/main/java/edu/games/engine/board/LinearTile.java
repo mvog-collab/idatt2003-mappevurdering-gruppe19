@@ -3,10 +3,12 @@ package edu.games.engine.board;
 /**
  * Represents a tile in a linear board.
  * <p>
- * Each tile has a unique ID and optionally a reference to the next tile in the sequence.
+ * Each tile has a unique ID and optionally a reference to the next tile in the
+ * sequence.
  */
 public class LinearTile implements Tile {
   private final int tileId;
+  // Not private because of usage within engine(package)
   LinearTile nextTile;
 
   /**
@@ -29,7 +31,8 @@ public class LinearTile implements Tile {
   }
 
   /**
-   * Returns the next tile in the sequence, or {@code null} if this is the last tile.
+   * Returns the next tile in the sequence, or {@code null} if this is the last
+   * tile.
    *
    * @return the next {@link LinearTile}, or {@code null} if none
    */

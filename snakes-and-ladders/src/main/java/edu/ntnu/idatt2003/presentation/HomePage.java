@@ -44,8 +44,6 @@ public class HomePage extends Application {
             Errors.handle(
                     "Could not load essential resources for the home page. The application might not work correctly.",
                     e);
-            // Optionally, show a dialog here directly if Errors.handle doesn't, or rethrow
-            // to be caught by main
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "An unexpected error occurred during HomePage startup", e);
             Errors.handle("An unexpected error occurred while starting the application.", e);
