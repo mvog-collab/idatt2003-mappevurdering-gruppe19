@@ -2,6 +2,6 @@ package edu.games.engine.board;
 
 import edu.games.engine.model.LudoColor;
 
-public sealed interface LudoTile extends Tile permits LudoRingTile, LudoGoalTile {
+public interface LudoTile extends Tile {
   LudoTile next(LudoColor player);
 }

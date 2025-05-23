@@ -2,7 +2,7 @@ package edu.games.engine.board;
 
 import edu.games.engine.model.LudoColor;
 
-public final class LudoGoalTile implements LudoTile {
+public class LudoGoalTile implements LudoTile {
   private final int tileId;
   private LudoTile nextTile;
 

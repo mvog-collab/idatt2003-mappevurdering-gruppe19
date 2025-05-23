@@ -32,13 +32,12 @@ public final class LudoRingTile implements LudoTile {
   // Add a new method to check if we should enter the goal path
   public boolean shouldEnterGoalPath(int currentId, LudoColor player) {
     // Check if we're passing the entry point (not just landing on it)
-    int entryPoint =
-        switch (player) {
-          case BLUE -> 1;
-          case RED -> 14;
-          case GREEN -> 27;
-          case YELLOW -> 40;
-        };
+    int entryPoint = switch (player) {
+      case BLUE -> 1;
+      case RED -> 14;
+      case GREEN -> 27;
+      case YELLOW -> 40;
+    };
 
     return tileId() == entryPoint && currentId != entryPoint;
   }

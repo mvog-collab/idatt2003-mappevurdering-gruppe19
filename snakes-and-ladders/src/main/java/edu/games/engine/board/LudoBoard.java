@@ -31,7 +31,7 @@ public final class LudoBoard implements Board {
   /**
    * Properly move a piece based on color and dice roll
    *
-   * @param from Starting tile
+   * @param from  Starting tile
    * @param steps Number of steps to move
    * @param color Player's color
    * @return The destination tile
