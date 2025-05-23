@@ -14,7 +14,7 @@ runs both **Ludo** and **Snakes & Ladders**.
 
 ---
 
-## 📖 Project overview
+## Project overview
 
 The engine handles boards, rules, dice, players and events.  A gateway layer
 adapts the engine to a JavaFX client.  Everything is plain **Java 21** and
@@ -22,7 +22,7 @@ built with Maven.
 
 ---
 
-## 📂 Project structure
+## Project structure
 
 ### Packages (`src/main/java`)
 
@@ -68,7 +68,7 @@ mvn test
 
 ---
 
-## 🔗 Repository
+## Repository
 
 [https://github.com/NTNU-IDI/idatt2003-gameengine-gr19](https://github.com/NTNU-IDI/idatt2003-gameengine-gr19)  *(placeholder)*
 
