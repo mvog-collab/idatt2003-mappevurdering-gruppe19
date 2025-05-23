@@ -21,9 +21,9 @@ public class SnlGameStrategy implements GameStrategy {
 
   @Override
   public void initializeGame(DefaultGame game) {
-    if (game != null && game.board() != null) {
+    if (game != null && game.getBoard() != null) {
       for (Player player : game.getPlayers()) {
-        player.moveTo(game.board().start());
+        player.moveTo(game.getBoard().start());
       }
     }
   }
@@ -31,18 +31,18 @@ public class SnlGameStrategy implements GameStrategy {
   @Override
   public boolean processDiceRoll(Player player, int diceValue, DefaultGame game) {
     // Delegate to RuleEngine
-    return ruleEngine.grantsExtraTurn(player, game.dice().lastValues(), game);
+    return ruleEngine.grantsExtraTurn(player, game.getDice().lastValues(), game);
   }
 
   @Override
   public Tile movePiece(Player player, int pieceIndexIgnored, int diceValue, DefaultGame game) {
-    if (player == null || game == null || player.getCurrentTile() == null || game.board() == null) {
+    if (player == null || game == null || player.getCurrentTile() == null || game.getBoard() == null) {
       return null;
     }
     if (diceValue == 12) {
-      return game.board().move(player.getCurrentTile(), 0);
+      return game.getBoard().move(player.getCurrentTile(), 0);
     }
-    return game.board().move(player.getCurrentTile(), diceValue);
+    return game.getBoard().move(player.getCurrentTile(), diceValue);
   }
 
   @Override
