@@ -33,19 +33,16 @@ public class SnlBoardSizeController extends AbstractPopupController<SnlBoardSize
         .setOnAction(
             e -> {
               gateway.newGame(64);
-              System.out.println("Chose 64");
             });
     view.getNinetyTiles()
         .setOnAction(
             e -> {
               gateway.newGame(90);
-              System.out.println("Chose 90");
             });
     view.getOneTwentyTiles()
         .setOnAction(
             e -> {
               gateway.newGame(120);
-              System.out.println("Chose 120");
             });
     view.getContinueButton().setOnAction(e -> confirm());
     view.getCancelButton().setOnAction(e -> cancel());

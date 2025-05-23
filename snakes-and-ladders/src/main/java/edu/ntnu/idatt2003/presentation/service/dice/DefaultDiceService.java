@@ -40,13 +40,11 @@ public class DefaultDiceService implements DiceService {
   public void showDice(Pane container, int[] values) {
     String imgDir = ResourcePaths.IMAGE_DIR;
 
-    // Update first die
     if (values.length > 0) {
       die1Img.setImage(new Image(getClass().getResourceAsStream(imgDir + values[0] + ".png")));
       die1Img.setRotate(Math.random() * 360);
     }
 
-    // Update second die if available
     if (values.length > 1) {
       die2Img.setImage(new Image(getClass().getResourceAsStream(imgDir + values[1] + ".png")));
       die2Img.setRotate(Math.random() * 360);

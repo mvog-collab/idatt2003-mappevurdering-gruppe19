@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -33,7 +34,7 @@ public class ChoosePlayerPage implements BoardGameObserver {
   private static final Logger LOG = Logger.getLogger(ChoosePlayerPage.class.getName());
   private final VBox root;
   private final Map<String, ToggleButton> tokenButtons = new HashMap<>();
-  private final String[] TOKEN_NAMES;
+  private final String[] tokenNames;
 
   // UI Components
   private TextField nameField;
@@ -44,7 +45,6 @@ public class ChoosePlayerPage implements BoardGameObserver {
   private Button loadPlayersButton;
   private Button continueButton;
   private FlowPane addedPlayersBox;
-  private FlowPane tokenSelectionBox;
   private ToggleGroup tokenToggleGroup;
 
   /** Connected game gateway */
@@ -53,10 +53,10 @@ public class ChoosePlayerPage implements BoardGameObserver {
   /**
    * Constructs a new ChoosePlayerPage with the specified token names.
    *
-   * @param TOKEN_NAMES array of available token names for player selection
+   * @param tokenNames array of available token names for player selection
    */
-  public ChoosePlayerPage(String[] TOKEN_NAMES) {
-    this.TOKEN_NAMES = TOKEN_NAMES;
+  public ChoosePlayerPage(String[] tokenNames) {
+    this.tokenNames = tokenNames;
     this.root = new VBox();
     buildUI();
   }
@@ -185,11 +185,11 @@ public class ChoosePlayerPage implements BoardGameObserver {
     birthdayBox.setAlignment(Pos.CENTER);
 
     tokenToggleGroup = new ToggleGroup();
-    tokenSelectionBox = new FlowPane(10, 10);
+    FlowPane tokenSelectionBox = new FlowPane(10, 10);
     tokenSelectionBox.setAlignment(Pos.CENTER);
     tokenSelectionBox.getStyleClass().add("token-selection-box");
     tokenSelectionBox.setPrefWrapLength(450);
-    for (String token : TOKEN_NAMES) {
+    for (String token : tokenNames) {
       ToggleButton tb = buildTokenButton(token);
       tokenButtons.put(token, tb);
       tokenSelectionBox.getChildren().add(tb);
@@ -246,8 +246,8 @@ public class ChoosePlayerPage implements BoardGameObserver {
     InputStream imageStream = getClass().getResourceAsStream(imagePath);
     ImageView iv;
     if (imageStream == null) {
-      LOG.warning("Token image not found: " + imagePath + ". Using placeholder.");
-      iv = new ImageView(); // Placeholder
+      LOG.log(Level.WARNING, "Token image not found: {0}. Using placeholder.", imagePath);
+      iv = new ImageView();
     } else {
       iv = new ImageView(new Image(imageStream));
     }

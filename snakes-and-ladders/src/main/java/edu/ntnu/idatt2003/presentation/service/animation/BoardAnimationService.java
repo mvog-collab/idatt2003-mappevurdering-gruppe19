@@ -51,7 +51,6 @@ public class BoardAnimationService implements AnimationService {
               try {
                 moveTokenToTile(token, id); // Or other UI update
               } catch (Exception e) {
-                System.err.println("Exception in Platform.runLater in BoardAnimationService:");
                 e.printStackTrace();
               }
             });
@@ -61,7 +60,6 @@ public class BoardAnimationService implements AnimationService {
               try {
                 onFinished.run();
               } catch (Exception e) {
-                System.err.println("Exception in onFinished callback for animation:");
                 e.printStackTrace();
               }
             });
@@ -89,7 +87,6 @@ public class BoardAnimationService implements AnimationService {
                 try {
                   moveTokenToTile(token, id); // Or other UI update
                 } catch (Exception e) {
-                  System.err.println("Exception in Platform.runLater in BoardAnimationService:");
                   e.printStackTrace();
                 }
               });
@@ -101,7 +98,6 @@ public class BoardAnimationService implements AnimationService {
               try {
                 onFinished.run();
               } catch (Exception e) {
-                System.err.println("Exception in onFinished callback for animation:");
                 e.printStackTrace();
               }
             });
@@ -131,9 +127,6 @@ public class BoardAnimationService implements AnimationService {
    * @return the token ImageView, or null if not found
    */
   private ImageView findToken(String tokenName) {
-    // Log for debugging
-    System.out.println(
-        "Finding playerToken: " + tokenName + " among " + tokenPane.getChildren().size() + " children");
 
     // Check ID-based lookup first
     for (javafx.scene.Node node : tokenPane.getChildren()) {
@@ -146,16 +139,10 @@ public class BoardAnimationService implements AnimationService {
         if (node.getId() != null && node.getId().equals(tokenName + "Token")) {
           return imageView;
         }
-
-        if (imageView.getImage() != null) {
-          // Just log that we found an image without userData
-          System.out.println("Found image without userData for playerToken: " + tokenName);
-        }
       }
     }
     for (javafx.scene.Node node : tokenPane.getChildren()) {
       if (node instanceof ImageView) {
-        System.out.println("No match found, using first playerToken as fallback");
         return (ImageView) node;
       }
     }

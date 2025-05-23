@@ -249,7 +249,6 @@ public class SnlPlayerUiService implements PlayerUIService {
         }
       }
     } catch (Exception e) {
-      System.err.println("Error in updateCurrentPlayerTurnBox:");
       e.printStackTrace();
     }
   }

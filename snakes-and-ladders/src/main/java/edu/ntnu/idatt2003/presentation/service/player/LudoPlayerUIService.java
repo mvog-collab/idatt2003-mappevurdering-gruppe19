@@ -169,6 +169,11 @@ public class LudoPlayerUIService implements PlayerUIService {
     contentBox.getChildren().addAll(tokenImg, turnMessageLabel);
     HBox.setHgrow(turnMessageLabel, Priority.ALWAYS);
 
+    turnMessageLabel.maxWidthProperty().bind(
+        contentBox.widthProperty()
+            .subtract(tokenImg.fitWidthProperty())
+            .subtract(contentBox.getSpacing()));
+
     container.getChildren().add(contentBox);
 
     container.setMinHeight(Region.USE_PREF_SIZE);

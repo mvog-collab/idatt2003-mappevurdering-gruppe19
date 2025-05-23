@@ -31,12 +31,12 @@ public final class PlayerCsv {
    * @throws CsvOperationException if an I/O error occurs during writing
    */
   public static void save(List<String[]> rows, Path out) throws CsvOperationException {
-    LOG.info("Saving player data to CSV file: " + out);
+    LOG.log(Level.INFO, "Saving player data to CSV file: {0} ", out);
     try {
       Files.write(out, rows.stream()
           .map(r -> String.join(",", r))
           .toList());
-      LOG.info("Successfully saved player data to: " + out);
+      LOG.log(Level.INFO, "Successfully saved player data to: {0} ", out);
     } catch (IOException e) {
       LOG.log(Level.WARNING,
           "Failed to save player data to CSV: " + out, e);
@@ -53,12 +53,12 @@ public final class PlayerCsv {
    * @throws CsvOperationException if an I/O error occurs during reading
    */
   public static List<String[]> load(Path in) throws CsvOperationException {
-    LOG.info("Loading player data from CSV file: " + in);
+    LOG.log(Level.INFO, "Loading player data from CSV file: {0}", in);
     try {
       List<String[]> data = Files.readAllLines(in).stream()
           .map(line -> line.split(","))
           .toList();
-      LOG.info("Successfully loaded player data from: " + in);
+      LOG.log(Level.INFO, "Successfully loaded player data from: {0} ", in);
       return data;
     } catch (IOException e) {
       LOG.log(Level.WARNING,

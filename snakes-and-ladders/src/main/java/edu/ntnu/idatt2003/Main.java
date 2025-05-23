@@ -53,10 +53,8 @@ public class Main {
   public static void main(String[] args) {
     LOG.info("Application starting...");
 
-    Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-      LOG.log(Level.SEVERE, "Uncaught exception in thread " + t.getName(), e);
-      Errors.handle("An unexpected problem occurred. Please restart the game.", (Exception) e);
-    });
+    Thread.setDefaultUncaughtExceptionHandler(
+        (t, e) -> Errors.handle("An unexpected problem occurred. Please restart the game.", (Exception) e));
 
     try {
       javafx.application.Application.launch(HomePage.class, args);

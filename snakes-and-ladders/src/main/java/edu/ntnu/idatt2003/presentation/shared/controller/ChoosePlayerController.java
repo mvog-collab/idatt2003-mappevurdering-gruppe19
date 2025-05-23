@@ -17,33 +17,16 @@ import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-/**
- * Controller for managing player selection and configuration operations.
- * <p>
- * Handles adding players, saving/loading player data to/from CSV files,
- * and coordinating between the player selection view and game gateway.
- * </p>
- */
 public class ChoosePlayerController extends AbstractPopupController<ChoosePlayerPage> {
 
-  /** Logger for this controller */
   private static final Logger LOG = Logger.getLogger(ChoosePlayerController.class.getName());
 
-  /**
-   * Constructs a new ChoosePlayerController with the specified view and gateway.
-   *
-   * @param view    the player selection view to control
-   * @param gateway the game gateway for player management
-   */
   public ChoosePlayerController(ChoosePlayerPage view, CompleteBoardGame gateway) {
     super(view, gateway);
     LOG.info("ChoosePlayerController initialized.");
     view.updatePlayerDisplay(gateway.players());
   }
 
-  /**
-   * Initializes event handlers for UI interactions.
-   */
   @Override
   protected void initializeEventHandlers() {
     view.getAddPlayerButton().setOnAction(e -> addPlayer());
@@ -53,12 +36,6 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     view.getLoadPlayersButton().setOnAction(e -> loadPlayers());
   }
 
-  /**
-   * Adds a new player based on current form input.
-   * <p>
-   * Validates input fields and adds the player to the gateway if valid.
-   * </p>
-   */
   private void addPlayer() {
     LOG.fine("Attempting to add player.");
     String name = view.getNameField().getText().trim();
@@ -87,9 +64,6 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     }
   }
 
-  /**
-   * Saves current players to a CSV file selected by the user.
-   */
   private void savePlayers() {
     LOG.info("Save players button clicked. Opening file chooser.");
     FileChooser fc = new FileChooser();
@@ -120,9 +94,6 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     }
   }
 
-  /**
-   * Loads players from a CSV file and displays selection dialog.
-   */
   private void loadPlayers() {
     LOG.info("Load players button clicked. Opening file chooser.");
     FileChooser fileChooser = new FileChooser();
@@ -169,18 +140,12 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     }
   }
 
-  /**
-   * Confirms the player selection and closes the dialog.
-   */
   @Override
   public void confirm() {
     LOG.info("ChoosePlayer dialog confirmed.");
     close(view.getContinueButton());
   }
 
-  /**
-   * Cancels player selection, clears all players, and closes the dialog.
-   */
   @Override
   public void cancel() {
     gateway.clearPlayers();
@@ -188,12 +153,6 @@ public class ChoosePlayerController extends AbstractPopupController<ChoosePlayer
     close(view.getCancelButton());
   }
 
-  /**
-   * Displays a warning alert with the specified header and message.
-   *
-   * @param header  the alert header text
-   * @param message the alert message text
-   */
   private static void alert(String header, String message) {
     Dialogs.warn(header, message);
   }

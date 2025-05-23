@@ -19,7 +19,7 @@ public abstract class AbstractController {
    *
    * @param gateway the shared {@link CompleteBoardGame} instance
    */
-  public AbstractController(CompleteBoardGame gateway) {
+  protected AbstractController(CompleteBoardGame gateway) {
     this.gateway = gateway;
   }
 }

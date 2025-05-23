@@ -29,12 +29,10 @@ import javafx.stage.Stage;
 public class HomePage extends Application {
 
     private static final Logger LOG = Logger.getLogger(HomePage.class.getName());
-    private Label title;
     private ImageView laddersBtn;
     private ImageView ludoBtn;
     private HBox buttonBox;
     private VBox root;
-    private Scene homeScene;
 
     @Override
     public void start(Stage stage) {
@@ -71,7 +69,7 @@ public class HomePage extends Application {
         buildUI();
         setupEventHandlers(stageForEventHandlers);
 
-        homeScene = new Scene(root, 800, 600);
+        Scene homeScene = new Scene(root, 800, 600);
         try {
             String cssPath = "/styles/style.css";
             String cssExternalForm = getClass().getResource(cssPath).toExternalForm();
@@ -83,8 +81,10 @@ public class HomePage extends Application {
             LOG.log(Level.WARNING, "Failed to load stylesheet /styles/style.css", e);
         }
 
-        double widthFactor = 0.22, heightFactor = 0.30;
-        double minW = 220, minH = 220;
+        double widthFactor = 0.22;
+        double heightFactor = 0.30;
+        double minW = 220;
+        double minH = 220;
 
         laddersBtn.fitWidthProperty().bind(
                 Bindings.createDoubleBinding(
@@ -127,7 +127,7 @@ public class HomePage extends Application {
      * </p>
      */
     private void buildUI() {
-        title = new Label("Retro Roll & Rise");
+        Label title = new Label("Retro Roll & Rise");
         title.getStyleClass().add("home-page-title");
         title.setWrapText(true);
 
@@ -154,7 +154,7 @@ public class HomePage extends Application {
         String path = "/images/" + imageName;
         InputStream stream = getClass().getResourceAsStream(path);
         if (stream == null) {
-            LOG.log(Level.SEVERE, "Game button image not found: " + path);
+            LOG.log(Level.SEVERE, "Game button image not found: {0} ", path);
             throw new ResourceNotFoundException(path);
         }
         ImageView iv = new ImageView(new Image(stream));

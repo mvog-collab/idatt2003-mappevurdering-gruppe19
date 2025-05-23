@@ -26,12 +26,10 @@ public final class Errors {
    * @param ex          the exception to log
    */
   public static void handle(String userMessage, Exception ex) {
-    // Log full stack trace for developers
     LOG.log(Level.SEVERE,
         userMessage + " (See exception details below)",
         ex);
 
-    // Show user-friendly error dialog on the JavaFX thread
     if (Platform.isFxApplicationThread()) {
       Dialogs.error("Oops… Something Went Wrong", userMessage);
     } else {

@@ -78,13 +78,4 @@ public final class LudoBoard implements Board {
     }
     return null;
   }
-
-  /**
-   * Returns the total number of tiles on the board.
-   *
-   * @return fixed size of the Ludo board (76)
-   */
-  public int size() {
-    return 76;
-  }
 }

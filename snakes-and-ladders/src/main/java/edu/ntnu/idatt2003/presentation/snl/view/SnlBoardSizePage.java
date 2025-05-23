@@ -26,9 +26,10 @@ public class SnlBoardSizePage implements BoardGameObserver {
   private Button cancelButton;
   private Button continueButton;
   private Label statusLabel;
-
-  // Root container for the view
   private VBox root;
+
+  private static final String SELECTED_BOARD_BUTTON = "selected-board-size";
+  private static final String BOARD_SIZE_BUTTON = "board-size-button";
 
   /**
    * Creates a new board size selection page.
@@ -90,19 +91,19 @@ public class SnlBoardSizePage implements BoardGameObserver {
    * @param size the selected board size (64, 90, or 120)
    */
   private void updateSelectedBoardSize(int size) {
-    sixtyFourTiles.getStyleClass().remove("selected-board-size");
-    ninetyTiles.getStyleClass().remove("selected-board-size");
-    oneTwentyTiles.getStyleClass().remove("selected-board-size");
+    sixtyFourTiles.getStyleClass().remove(SELECTED_BOARD_BUTTON);
+    ninetyTiles.getStyleClass().remove(SELECTED_BOARD_BUTTON);
+    oneTwentyTiles.getStyleClass().remove(SELECTED_BOARD_BUTTON);
 
     switch (size) {
       case 64:
-        sixtyFourTiles.getStyleClass().add("selected-board-size");
+        sixtyFourTiles.getStyleClass().add(SELECTED_BOARD_BUTTON);
         break;
       case 90:
-        ninetyTiles.getStyleClass().add("selected-board-size");
+        ninetyTiles.getStyleClass().add(SELECTED_BOARD_BUTTON);
         break;
       case 120:
-        oneTwentyTiles.getStyleClass().add("selected-board-size");
+        oneTwentyTiles.getStyleClass().add(SELECTED_BOARD_BUTTON);
         break;
     }
 
@@ -123,13 +124,13 @@ public class SnlBoardSizePage implements BoardGameObserver {
     titleBox.setAlignment(Pos.CENTER);
 
     sixtyFourTiles = new Button("64 tiles");
-    sixtyFourTiles.getStyleClass().add("board-size-button");
+    sixtyFourTiles.getStyleClass().add(BOARD_SIZE_BUTTON);
 
     ninetyTiles = new Button("90 tiles");
-    ninetyTiles.getStyleClass().add("board-size-button");
+    ninetyTiles.getStyleClass().add(BOARD_SIZE_BUTTON);
 
     oneTwentyTiles = new Button("120 tiles");
-    oneTwentyTiles.getStyleClass().add("board-size-button");
+    oneTwentyTiles.getStyleClass().add(BOARD_SIZE_BUTTON);
 
     cancelButton = new Button("Cancel");
     cancelButton.getStyleClass().add("exit-button");
