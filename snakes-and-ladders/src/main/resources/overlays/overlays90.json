@@ -1,0 +1,60 @@
+{
+    "overlays": [
+      {
+        "startTileId": 28,
+        "imagePath": "/images/LadderUp.png",
+        "offsetX": 35,
+        "offsetY": -20,
+        "fitWidth": 130
+      },
+      {
+        "startTileId": 70,
+        "imagePath": "/images/LadderLeft.png",
+        "offsetX": 6,
+        "offsetY": -60,
+        "fitWidth": 140
+      },
+      {
+        "startTileId": 40,
+        "imagePath": "/images/LadderRight.png",
+        "offsetX": 0,
+        "offsetY": -76,
+        "fitWidth": 140
+      },
+      {
+        "startTileId": 55,
+        "imagePath": "/images/LadderUp.png",
+        "offsetX": -40,
+        "offsetY": -10,
+        "fitWidth": 220
+      },
+      {
+        "startTileId": 60,
+        "imagePath": "/images/SnakeUp.png",
+        "offsetX": -130,
+        "offsetY": -180,
+        "fitWidth": 220
+      },
+      {
+        "startTileId": 20,
+        "imagePath": "/images/SnakeLeft.png",
+        "offsetX": 20,
+        "offsetY": -87,
+        "fitWidth": 120
+      },
+      {
+        "startTileId": 78,
+        "imagePath": "/images/SnakeRight.png",
+        "offsetX": 20,
+        "offsetY": 0,
+        "fitWidth": 120
+      },
+      {
+        "startTileId": 10,
+        "imagePath": "/images/SnakeLeft.png",
+        "offsetX": -40,
+        "offsetY": -130,
+        "fitWidth": 120
+      }
+    ]
+  }

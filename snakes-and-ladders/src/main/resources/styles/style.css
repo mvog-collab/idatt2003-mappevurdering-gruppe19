@@ -1,0 +1,717 @@
+/* Root Scene */
+.root {
+    -fx-background-color: #f4f4f4;
+}
+
+/* Board Styling */
+.board-container {
+    -fx-border-color: #6D6C6A;
+    -fx-border-width: 12px;
+    -fx-border-radius: 5px;
+}
+
+/* Tile Styling */
+.tile-black {
+    -fx-background-color: black;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+.tile-white {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+.tile-ladder {
+    -fx-background-color: #A8E6A1;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+.tile-snake {
+    -fx-background-color: #F4A6A6;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+/* Labels */
+.label {
+    -fx-font-size: 18px;
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+.label, .popup-label, .start-page-title {
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 1, 0.0, 0, 1);
+}
+
+.status-label {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 18px;
+    -fx-wrap-text: true;
+    -fx-max-width: 300px; 
+    -fx-text-fill: #000000;
+    -fx-padding: 10 20;
+    -fx-background-color: rgba(249, 204, 142, 0.707);
+    -fx-background-radius: 6;
+    -fx-border-width: 0 0 3px 0;
+    -fx-border-color: transparent transparent rgba(140, 98, 57, 0.6) transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0.3, 0, 1);
+}
+
+/* Players Box */
+.players-box {
+    -fx-spacing: 5px;
+    -fx-alignment: center;
+    -fx-background-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-spacing: 18;
+}
+
+/* Dice Box */
+.dice-box {
+    -fx-alignment: center;
+    -fx-spacing: 30;
+    -fx-background-color: #AD0000;
+    -fx-background-radius: 50;
+    -fx-border-color: #000000;
+    -fx-border-radius: 40;
+    -fx-border-width: 20;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.2), 20, 2, 10, 10);
+}
+
+.dice-box-container {
+    -fx-alignment: center;
+}
+
+.main-box {
+    -fx-background-color: rgba(133, 88, 43, 0.4);
+    -fx-background-radius: 20;
+    -fx-padding: 20;
+}
+
+/* Button Box */
+.button-box {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+/* Game Control Panel */
+.game-control {
+    -fx-alignment: top-center;
+    -fx-spacing: 20;
+    -fx-padding: 10;
+}
+
+/* Tile Number White */
+.tile-label-white {
+    -fx-text-fill: white ;
+}
+
+/* Tile Number Black */
+.tile-label-black {
+    -fx-text-fill: black ;
+}
+
+/* Button Menu */
+.start-page-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 110;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 40px;
+    -fx-wrap-text: true;
+    -fx-text-fill: black;
+    -fx-border-color: #8C6239;
+    -fx-border-width: 4px;
+    -fx-background-insets: 0;
+
+    -fx-background-color: linear-gradient(to bottom, #F4C17C 0%, #E4A55D 50%, #D18B48 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.4), 10, 0.3, 0, 2);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.start-page-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A 0%, #C98F4B 50%, #AD7F3A 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.6), 15, 0.3, 0, 3);
+}
+
+.choose-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 110;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 30px;
+    -fx-wrap-text: true;
+    -fx-text-fill: black;
+    -fx-border-color: #8C6239;
+    -fx-border-width: 4px;
+    -fx-background-insets: 0;
+
+    -fx-background-color: linear-gradient(to bottom, #F4C17C 0%, #E4A55D 50%, #D18B48 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.4), 10, 0.3, 0, 2);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.choose-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A 0%, #C98F4B 50%, #AD7F3A 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.6), 15, 0.3, 0, 3);
+}
+
+/* Exit/reset button in menu */
+.exit-button {
+    -fx-wrap-text: true;
+    -fx-border-radius: 100;
+    -fx-background-radius: 110;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 30px;
+    -fx-text-fill: #FFF5F5;
+    -fx-border-color: #4E0E25;
+    -fx-border-width: 4px;
+    -fx-background-insets: 0;
+
+    -fx-background-color: linear-gradient(to bottom, #A23E48 0%, #7B1E3A 100%);
+    -fx-effect: dropshadow(gaussian, rgba(125,0,0,0.4), 10, 0.4, 0, 2);
+    -fx-cursor: hand;
+}
+.exit-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #B94C59 0%, #5B1428 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,0,0,0.5), 15, 0.3, 0, 3);
+}
+
+/* Start Page Title*/
+.start-page-title {
+    -fx-font-family: "Comic Sans MS";
+    -fx-padding: 80;
+    -fx-font-size: 50;
+    -fx-text-fill: white;
+    -fx-underline: true;
+}
+
+.ludo-page-title {
+    -fx-font-family: "Comic Sans MS";
+
+    -fx-font-size: 50;
+    -fx-text-fill: white;
+    -fx-underline: true;
+}
+/* Page Background */
+.page-background {
+    -fx-background-image: url("/images/Background.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+/* Popup Windows */
+
+/* Title */
+.popup-title {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 36px;
+    -fx-text-fill: white;
+    -fx-underline: true;
+    -fx-padding: 20;
+    -fx-alignment: center;
+
+    -fx-background-color: linear-gradient(to bottom, #8C6239, #4E342E);
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0.4, 0, 2);
+    -fx-border-color: #E4A55D;
+    -fx-border-width: 2px;
+}
+
+/* Buttons */
+
+.board-size-button {
+    -fx-wrap-text: true;
+    -fx-padding: 10 20;
+    -fx-border-radius: 80;
+    -fx-background-radius: 100;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 25px;
+    -fx-text-fill: black;
+    -fx-border-color: #8C6239;
+    -fx-border-width: 3px;
+
+    -fx-background-color: linear-gradient(to bottom, #E4A55D 0%, #C98F4B 100%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0.3, 0, 2);
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.board-size-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A 0%, #AD7F3A 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255, 165, 0, 0.5), 10, 0.3, 0, 2);
+}
+
+.board-size-button:focused {
+    -fx-background-color: linear-gradient(to bottom, #AD7F3A 0%, #8C6239 100%);
+    -fx-text-fill: white;
+    -fx-border-color: #5A3B1D;
+}
+
+/* Confirm/continue button*/
+.confirm-button {
+    -fx-border-radius: 100;
+    -fx-wrap-text: true;
+    -fx-background-radius: 110;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+    -fx-border-color: #14532d;
+    -fx-border-width: 3px;
+    -fx-background-insets: 0;
+
+    -fx-background-color: linear-gradient(to bottom, #4CAF50 0%, #2E7D32 100%);
+    -fx-effect: dropshadow(gaussian, rgba(0,100,0,0.4), 8, 0.2, 0, 2);
+    -fx-cursor: hand;
+}
+.confirm-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #66BB6A 0%, #1B5E20 100%);
+    -fx-effect: dropshadow(gaussian, rgba(0,150,0,0.5), 15, 0.3, 0, 3);
+}
+
+.add-player-button {
+    -fx-wrap-text: true;
+    -fx-border-radius: 100;
+    -fx-background-radius: 110;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+    -fx-border-color: #131353;
+    -fx-border-width: 3px;
+    -fx-background-insets: 0;
+
+    -fx-background-color: linear-gradient(to bottom, #2196F3 0%, #1E88E5 100%);
+    -fx-effect: dropshadow(gaussian, rgba(30,100,200,0.4), 15, 0.2, 0, 2);
+    -fx-cursor: hand;
+}
+
+.add-player-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #42A5F5 0%, #1565C0 100%);
+    -fx-effect: dropshadow(gaussian, rgba(30,120,200,0.5), 12, 0.3, 0, 3);
+}
+
+/* Popup Background */
+.popup-background {
+    -fx-background-color: #D9D9D9;
+}
+
+/* Labels */
+.popup-label {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 30px;
+    -fx-text-fill: #1a1a1a;
+    -fx-padding: 15 30;
+    -fx-border-radius: 80;
+    -fx-background-radius: 100;
+    -fx-background-size: 180;
+
+    -fx-background-color: linear-gradient(to bottom, #FFD27A, #E4A55D, #C98F4B);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.3, 2, 2);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 3px;
+    -fx-alignment: center;
+    -fx-background-insets: 0;
+}
+
+.choose-player-title-label {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 44px;
+    -fx-text-fill: #fff;
+    -fx-underline: true;
+    -fx-padding: 20;
+    -fx-alignment: center;
+
+    -fx-background-color: linear-gradient(to bottom, #8C6239, #4E342E);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #FFD27A;
+    -fx-border-width: 2px;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0.3, 0, 2);
+}
+
+/* Button Menu */
+.roll-dice-button {
+    -fx-wrap-text: true;
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 40px;
+    -fx-text-fill: black;
+    -fx-padding: 10 30;
+
+    -fx-background-color: linear-gradient(to bottom, #FFD54F, #E4A55D, #C98F4B);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.4), 10, 0.3, 0, 2);
+    -fx-cursor: hand;
+}
+
+.roll-dice-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFEB8C, #E4A55D, #AD7F3A);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.6), 15, 0.3, 0, 3);
+}
+
+@keyframes glow {
+    0% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
+    50% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.9), 20, 0.8, 0, 0); }
+    100% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
+}
+
+.current-player-box {
+    -fx-background-color: linear-gradient(to bottom, #C5E1A5, #A5D6A7, #81C784);
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 4px;
+    -fx-border-radius: 35;
+    -fx-background-radius: 40;
+
+    -fx-effect: dropshadow(gaussian, rgba(76, 175, 80, 0.5), 12, 0.4, 0, 2);
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.current-player-box .turn-message {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.current-player-box.active .turn-message {
+    -fx-text-fill: #0066cc;
+}
+
+.dice-image1 {
+    -fx-rotate: 1323,-120;
+    -fx-border-width: 5;
+    -fx-border-radius: 24;
+    -fx-background-radius: 24;
+}
+
+.player-name {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 18px;
+    -fx-padding: 8 14;
+    -fx-border-radius: 50;
+    -fx-background-radius: 50;
+    -fx-background-insets: 0;
+    -fx-text-fill: #1a1a1a;
+
+    -fx-background-color: linear-gradient(to bottom, #FFE082, #E4A55D, #C98F4B);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2px;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.2, 0, 1);
+    -fx-alignment: center;
+}
+
+.loaded-player {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 18px;
+    -fx-padding: 8 14;
+    -fx-border-radius: 50;
+    -fx-background-radius: 50;
+    -fx-background-insets: 0;
+    -fx-text-fill: #1a1a1a;
+
+    -fx-background-color: linear-gradient(to bottom, #FFE082, #E4A55D, #C98F4B);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2px;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.2, 0, 1);
+    -fx-alignment: center;
+}
+
+.added-players-label {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 25px;
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to bottom, #E4A55D, #C98F4B);
+    -fx-background-radius: 100;
+    -fx-padding: 10 20;
+    -fx-border-color: #8C6239;
+    -fx-border-radius: 100;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0.3, 0, 2);
+}
+
+.date-picker {
+    -fx-background-color: #E4A55D;
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+    -fx-padding: 10;
+}
+
+.date-picker .text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+    -fx-text-fill: black;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 20px;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #C98F4B;
+    -fx-background-radius: 100;
+}
+
+.date-picker .arrow-button:hover {
+    -fx-background-color: #AD7F3A;
+}
+
+.token-selection-box {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
+    -fx-background-radius: 40;
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-border-color: #E4A55D;
+    -fx-border-width: 2px;
+    -fx-border-radius: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0.2, 0, 1);
+}
+
+.token-button {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-width: 3;
+    -fx-border-color: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-padding: 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0.2, 0, 1);
+    -fx-alignment: center;
+}
+
+.token-button:selected {
+    -fx-border-color: #FFD700;
+    -fx-background-color: linear-gradient(to bottom, #FFE082, #C98F4B);
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.5), 12, 0.4, 0, 3);
+}
+
+.token-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-border-color: #777;
+    -fx-background-color: #bbb;
+    -fx-cursor: default;
+}
+
+.token-button:hover:enabled {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A, #E4A55D);
+    -fx-border-color: #E4A55D;
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.4), 8, 0.3, 0, 2);
+}
+
+.name-field-style {
+    -fx-background-color: white;
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-border-color: #C98F4B;
+    -fx-border-width: 3px;
+    -fx-padding: 10 20;
+    -fx-font-size: 20px;
+    -fx-font-family: "Comic Sans MS";
+    -fx-text-fill: black;
+    -fx-prompt-text-fill: rgba(0,0,0,0.4);
+}
+
+.birthday-picker-style {
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+    -fx-padding: 10 20;
+    -fx-font-size: 20px;
+    -fx-font-family: "Comic Sans MS";
+    -fx-border-color: #C98F4B;
+    -fx-border-width: 3px;
+}
+
+.display-player-box {
+    -fx-background-color: linear-gradient(to bottom, rgba(248, 223, 130, 0.7), rgba(228, 165, 93, 0.7));
+    -fx-background-radius: 40;
+    -fx-border-radius: 35;
+    -fx-border-width: 3px;
+    -fx-border-color: #8C6239;
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0.2, 0, 1);
+    -fx-background-insets: 0;
+}
+
+@keyframes glow {
+    0% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
+    50% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.9), 20, 0.8, 0, 0); }
+    100% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 10, 0.5, 0, 0); }
+}
+
+.current-player {
+    -fx-background-color: linear-gradient(to bottom, #C5E1A5, #A5D6A7, #81C784);
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 4px;
+    -fx-border-radius: 35;
+    -fx-background-radius: 40;
+
+    -fx-effect: dropshadow(gaussian, rgba(76, 175, 80, 0.5), 12, 0.4, 0, 2);
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.turn-indicator {
+    -fx-font-size: 18px;
+    -fx-font-family: "Comic Sans MS";
+    -fx-text-fill: #2E7D32;
+    -fx-font-weight: bold;
+}
+
+.icon-button {
+    -fx-background-color: rgba(249, 204, 142, 0.707);
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2;
+    -fx-border-radius: 50;
+    -fx-background-radius: 50;
+    -fx-min-width: 60px;
+    -fx-min-height: 60px;
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.icon-button:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0.1, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.navigation-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+    -fx-padding: 10px 20px;
+    -fx-min-width: 100px;
+    -fx-background-insets: 0;
+    
+    -fx-background-color: linear-gradient(to bottom, #F4C17C 0%, #E4A55D 50%, #D18B48 100%);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0.2, 0, 1);
+    -fx-cursor: hand;
+}
+
+.navigation-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A 0%, #C98F4B 50%, #AD7F3A 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.5), 10, 0.3, 0, 2);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.settings-page {
+    -fx-background-color: #f9f3e7;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 30px;
+    -fx-spacing: 20px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.2, 0, 2);
+    -fx-border-color: #C98F4B;
+    -fx-border-width: 2px;
+}
+
+.settings-title {
+    -fx-font-family: "Segoe Script";
+    -fx-font-size: 30px;
+    -fx-text-fill: #4E342E;
+    -fx-underline: true;
+    -fx-alignment: center;
+    -fx-padding: 5;
+}
+
+.settings-button-box .button {
+    -fx-font-family: "Segoe Script";
+    -fx-font-size: 20px;
+    -fx-padding: 10 18;
+    -fx-background-color: linear-gradient(to bottom, #FFE082, #E4A55D);
+    -fx-text-fill: black;
+    -fx-background-radius: 16px;
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2px;
+    -fx-cursor: hand;
+}
+
+.settings-button-box .button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A, #C98F4B);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.4), 8, 0.2, 0, 1);
+}
+
+.play-again-button {
+    -fx-border-radius: 100;
+    -fx-background-radius: 100;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+    -fx-padding: 10 30;
+    -fx-background-color: linear-gradient(to bottom, #FFD54F, #E4A55D, #C98F4B);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.4), 10, 0.3, 0, 2);
+    -fx-cursor: hand;
+    -fx-background-insets: 0;
+}
+
+.play-again-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFEB8C, #E4A55D, #AD7F3A);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.6), 12, 0.4, 0, 3);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.home-page-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Comic Sans MS";
+}
+
+.how-to-alert {
+-fx-background-color: linear-gradient(to bottom, #FFD27A, #E4A55D 50%, #C98F4B);
+-fx-background-radius: 20;
+-fx-border-color: #8C6239;
+-fx-border-width: 4px;
+}
+
+.how-to-alert .label {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 18px;
+    -fx-text-fill: #1a1a1a;
+}
+
+.how-to-alert .button-bar .button {
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-background-insets: 0;
+    -fx-background-color: linear-gradient(to bottom, #FFE082, #E4A55D);
+    -fx-border-color: #8C6239;
+    -fx-border-width: 2px;
+    -fx-cursor: hand;
+}
+
+.how-to-alert .button-bar .button:hover {
+    -fx-background-color: linear-gradient(to bottom, #FFD27A, #C98F4B);
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.4), 6, 0.3, 0, 1);
+}
+
+.player-age {
+    -fx-text-fill: white;
+}
