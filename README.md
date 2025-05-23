@@ -74,9 +74,9 @@ mvn test
 
 ---
 
-## Licence
+## Game specifications
 
-MIT © 2025 Martha Luise Vogel, Edvard Emmanuel Klavenes & Group 19
+The players can be loaded to, and from CSV files locally on your computer, by using the "Save" and "Load" buttons.
 
 ---
 
