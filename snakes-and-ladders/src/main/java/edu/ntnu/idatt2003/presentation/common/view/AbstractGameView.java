@@ -1,6 +1,10 @@
 package edu.ntnu.idatt2003.presentation.common.view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import edu.games.engine.observer.BoardGameEvent;
+import edu.ntnu.idatt2003.utils.Log;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 
@@ -12,7 +16,7 @@ import javafx.scene.control.Button;
  * </p>
  */
 public abstract class AbstractGameView extends AbstractView implements GameView {
-
+  private static final Logger LOG = Logger.getLogger(AbstractGameView.class.getName());
   protected Button rollButton;
   protected Button playAgainButton;
 
@@ -34,6 +38,8 @@ public abstract class AbstractGameView extends AbstractView implements GameView 
       case TURN_CHANGED:
         handleTurnChanged(event.getData());
         break;
+      default:
+        LOG.log(Level.WARNING, "Unhandled boardgame event: {0}", event.getData());
     }
   }
 

@@ -230,7 +230,6 @@ public class LudoBoardView extends AbstractGameView implements GameView {
       boardUIService.addOverlays(this.overlayPane, overlays);
       updateStatusForCurrentPlayer();
     } catch (Exception e) {
-      System.err.println("Error in LudoBoardView.setPlayers:");
       e.printStackTrace();
     }
   }
@@ -268,7 +267,6 @@ public class LudoBoardView extends AbstractGameView implements GameView {
         }
       }
     } catch (Exception e) {
-      System.err.println("Error in LudoBoardView.setPlayers:");
       e.printStackTrace();
     }
   }

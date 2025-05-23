@@ -109,26 +109,18 @@ public class SnlBoardUIService implements BoardUIService {
    */
   public void applySpecialTileStyling(
       Map<Integer, Integer> snakes, Map<Integer, Integer> ladders, Pane overlayPane) {
-    // Clear any existing overlays first
     overlayPane.getChildren().clear();
 
-    // Apply ladder styling
     for (Map.Entry<Integer, Integer> entry : ladders.entrySet()) {
       int fromId = entry.getKey();
-      int toId = entry.getValue();
-
-      // Style the source tile
       StackPane fromTile = tiles.get(fromId);
       if (fromTile != null) {
         fromTile.getStyleClass().add("tile-ladder");
       }
     }
 
-    // Apply snake styling
     for (Map.Entry<Integer, Integer> entry : snakes.entrySet()) {
       int fromId = entry.getKey();
-
-      // Style the source tile
       StackPane fromTile = tiles.get(fromId);
       if (fromTile != null) {
         fromTile.getStyleClass().add("tile-snake");

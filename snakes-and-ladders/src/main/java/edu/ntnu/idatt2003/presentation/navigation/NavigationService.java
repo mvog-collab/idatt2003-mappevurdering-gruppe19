@@ -24,23 +24,11 @@ import javafx.stage.Stage;
  * </p>
  */
 public class NavigationService {
-
-  /** Logger for this service */
   private static final Logger LOG = Logger.getLogger(NavigationService.class.getName());
-
-  /** Singleton instance */
   private static NavigationService instance;
-
-  /** The primary stage for the application */
   private Stage primaryStage;
-
-  /** Cached home scene for performance */
   private Scene homeSceneCache;
-
-  /** Cached previous game setup scene for back navigation */
   private Scene previousGameSetupSceneCache;
-
-  /** Current game type identifier */
   private String currentGameType;
 
   /**
@@ -154,9 +142,7 @@ public class NavigationService {
       LOG.info("Successfully navigated to Ludo setup page.");
     } catch (Exception e) {
       LOG.log(Level.SEVERE, "Failed to navigate to Ludo page", e);
-      // Potentially show an error dialog to the user or navigate to an error
-      // page/home
-      navigateToHome(); // Fallback
+      navigateToHome();
     }
   }
 
@@ -174,7 +160,7 @@ public class NavigationService {
       return;
     }
     try {
-      CompleteBoardGame snlGateway = (CompleteBoardGame) SnlGatewayFactory.createDefault();
+      CompleteBoardGame snlGateway = SnlGatewayFactory.createDefault();
       SnlFrontPage snlFrontPage = new SnlFrontPage();
       snlFrontPage.connectToModel(snlGateway);
       new SnlPageController(snlFrontPage, snlGateway);
@@ -199,7 +185,7 @@ public class NavigationService {
    * @param gameTitle      the title to display for the game window
    */
   public void navigateToGameScene(Scene gameBoardScene, String gameTitle) {
-    LOG.info("Navigating to game scene: " + gameTitle);
+    LOG.log(Level.INFO, "Navigating to game scene: {0}", gameTitle);
     if (getPrimaryStage() == null || gameBoardScene == null) {
       LOG.warning("Cannot navigate to game scene, primary stage or gameBoardScene is null.");
       if (gameBoardScene == null)
@@ -209,7 +195,7 @@ public class NavigationService {
     gameBoardScene.setUserData("GAME_BOARD_SCENE");
     primaryStage.setScene(gameBoardScene);
     primaryStage.setTitle(gameTitle);
-    LOG.info("Successfully navigated to game scene: " + gameTitle);
+    LOG.log(Level.INFO, "Successfully navigated to game scene: {0} ", gameTitle);
   }
 
   /**
@@ -220,7 +206,7 @@ public class NavigationService {
    * </p>
    */
   public void goBackToGameSetupPage() {
-    LOG.info("Attempting to navigate back to game setup page for game type: " + currentGameType);
+    LOG.log(Level.INFO, "Attempting to navigate back to game setup page for game type: {0} ", currentGameType);
     if (getPrimaryStage() == null) {
       LOG.warning("Cannot go back, primary stage is null.");
       return;
@@ -234,7 +220,7 @@ public class NavigationService {
         title = "Snakes & Ladders - Setup";
       primaryStage.setScene(previousGameSetupSceneCache);
       primaryStage.setTitle(title);
-      LOG.info("Navigated back to previous game setup page: " + title);
+      LOG.log(Level.INFO, "Navigated back to previous game setup page: {0}", title);
     } else {
       LOG.warning("No previous game setup scene cached. Navigating to home.");
       navigateToHome();

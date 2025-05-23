@@ -312,6 +312,20 @@ public class SnlBoardView extends AbstractGameView {
   }
 
   /**
+   * Updates the status message display for the current game state.
+   * <p>
+   * This method updates the player turn indicator with the specified
+   * message, providing feedback about current game conditions.
+   * </p>
+   *
+   * @param message the status message to display
+   */
+  public void showStatusMessage(String message) {
+    PlayerView currentPlayer = getCurrentPlayer();
+    playerUIService.updateCurrentPlayerTurnBox(playerTurnBox, currentPlayer, message);
+  }
+
+  /**
    * Handles player movement events from the game model.
    * Animates the player token moving from one tile to another.
    *

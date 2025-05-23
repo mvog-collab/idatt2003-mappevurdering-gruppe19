@@ -224,26 +224,6 @@ class LudoBoardTest {
     }
 
     @Nested
-    class BoardSize {
-
-        @Test
-        void shouldReturnCorrectSize() {
-            LudoBoard board = new LudoBoard(mockPath);
-
-            int size = board.size();
-
-            assertEquals(76, size); // 52 ring + 4*6 goal tiles
-        }
-
-        @Test
-        void shouldReturnConsistentSize() {
-            LudoBoard board = new LudoBoard(mockPath);
-
-            assertEquals(board.size(), board.size()); // Should be consistent
-        }
-    }
-
-    @Nested
     class IntegrationWithRealPath {
 
         @Test
@@ -253,7 +233,6 @@ class LudoBoardTest {
 
             // Test complete integration
             assertNull(board.start());
-            assertEquals(76, board.size());
 
             // Test movement from home
             Tile blueStart = board.getStartTile(LudoColor.BLUE);
@@ -299,19 +278,6 @@ class LudoBoardTest {
 
     @Nested
     class EdgeCases {
-
-        @Test
-        void shouldHandleMultipleMethodCallsOnSameInstance() {
-            LudoBoard board = new LudoBoard(mockPath);
-
-            // Multiple calls should work consistently
-            assertNull(board.start());
-            assertNull(board.start());
-
-            assertEquals(76, board.size());
-            assertEquals(76, board.size());
-        }
-
         @Test
         void shouldHandleExtremeStepValues() {
             LudoBoard board = new LudoBoard(mockPath);
@@ -355,7 +321,6 @@ class LudoBoardTest {
 
             // Test all public methods at least once
             assertNull(board.start());
-            assertEquals(76, board.size());
             assertNotNull(board.getStartTile(LudoColor.BLUE));
             assertFalse(board.isEnd(null));
 

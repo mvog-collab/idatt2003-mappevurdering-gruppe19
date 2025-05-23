@@ -51,7 +51,7 @@ public class ViewServiceFactory {
       case "LUDO":
         return new LudoBoardUIService();
       default:
-        LOG.log(Level.SEVERE, "Unknown game type for BoardUIService: " + gameType);
+        LOG.log(Level.SEVERE, "Unknown game type for BoardUIService: {0}", gameType);
         throw new IllegalArgumentException("Unknown game type for BoardUIService: " + gameType);
     }
   }
@@ -79,7 +79,7 @@ public class ViewServiceFactory {
       case "LUDO":
         return new BoardAnimationService(coordinates, tokenPane);
       default:
-        LOG.log(Level.SEVERE, "Unknown game type for AnimationService: " + gameType);
+        LOG.log(Level.SEVERE, "Unknown game type for AnimationService: {0}", gameType);
         throw new IllegalArgumentException("Unknown game type for AnimationService: " + gameType);
     }
   }
@@ -100,7 +100,7 @@ public class ViewServiceFactory {
       case "LUDO":
         return new LudoPlayerUIService();
       default:
-        LOG.log(Level.SEVERE, "Unknown game type for PlayerUIService: " + gameType);
+        LOG.log(Level.SEVERE, "Unknown game type for PlayerUIService: {0}", gameType);
         throw new IllegalArgumentException("Unknown game type for PlayerUIService: " + gameType);
     }
   }
@@ -121,7 +121,7 @@ public class ViewServiceFactory {
       case "LUDO":
         return new LudoDiceService();
       default:
-        LOG.log(Level.SEVERE, "Unknown game type for DiceService: " + gameType);
+        LOG.log(Level.SEVERE, "Unknown game type for DiceService: {0}", gameType);
         throw new IllegalArgumentException("Unknown game type for DiceService: " + gameType);
     }
   }

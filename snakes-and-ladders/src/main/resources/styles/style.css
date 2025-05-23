@@ -49,6 +49,8 @@
 .status-label {
     -fx-font-family: "Comic Sans MS";
     -fx-font-size: 18px;
+    -fx-wrap-text: true;
+    -fx-max-width: 300px; 
     -fx-text-fill: #000000;
     -fx-padding: 10 20;
     -fx-background-color: rgba(249, 204, 142, 0.707);
@@ -118,6 +120,7 @@
     -fx-background-radius: 110;
     -fx-font-family: "Comic Sans MS";
     -fx-font-size: 40px;
+    -fx-wrap-text: true;
     -fx-text-fill: black;
     -fx-border-color: #8C6239;
     -fx-border-width: 4px;
@@ -139,6 +142,7 @@
     -fx-background-radius: 110;
     -fx-font-family: "Comic Sans MS";
     -fx-font-size: 30px;
+    -fx-wrap-text: true;
     -fx-text-fill: black;
     -fx-border-color: #8C6239;
     -fx-border-width: 4px;
@@ -157,6 +161,7 @@
 
 /* Exit/reset button in menu */
 .exit-button {
+    -fx-wrap-text: true;
     -fx-border-radius: 100;
     -fx-background-radius: 110;
     -fx-font-family: "Comic Sans MS";
@@ -222,6 +227,7 @@
 /* Buttons */
 
 .board-size-button {
+    -fx-wrap-text: true;
     -fx-padding: 10 20;
     -fx-border-radius: 80;
     -fx-background-radius: 100;
@@ -251,6 +257,7 @@
 /* Confirm/continue button*/
 .confirm-button {
     -fx-border-radius: 100;
+    -fx-wrap-text: true;
     -fx-background-radius: 110;
     -fx-font-family: "Comic Sans MS";
     -fx-font-size: 30px;
@@ -269,6 +276,7 @@
 }
 
 .add-player-button {
+    -fx-wrap-text: true;
     -fx-border-radius: 100;
     -fx-background-radius: 110;
     -fx-font-family: "Comic Sans MS";
@@ -330,6 +338,7 @@
 
 /* Button Menu */
 .roll-dice-button {
+    -fx-wrap-text: true;
     -fx-border-radius: 100;
     -fx-background-radius: 100;
     -fx-font-family: "Comic Sans MS";

@@ -24,7 +24,6 @@ public class LudoPage extends AbstractMenuView {
   private static final Logger LOG = Logger.getLogger(LudoPage.class.getName());
   private final MenuUIService menuUIService;
   private BorderPane rootLayout;
-  private ImageView boardPreview;
   private Scene scene;
 
   /**
@@ -38,6 +37,7 @@ public class LudoPage extends AbstractMenuView {
 
   private void buildUi() {
     Label titleLabel = menuUIService.createTitleLabel("Ludo", "ludo-page-title");
+    ImageView boardPreview = null;
     titleLabel.setWrapText(true);
     try {
       boardPreview = menuUIService.createBoardPreview("/images/ludoBoard.jpg", 400, 400);

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import edu.games.engine.exception.ValidationException;
-import edu.ntnu.idatt2003.exception.ResourceNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -26,7 +26,7 @@ public abstract class AbstractPopupController<V> extends AbstractController {
    * @param view    the UI view for this popup
    * @param gateway the shared {@link CompleteBoardGame} instance
    */
-  public AbstractPopupController(V view, CompleteBoardGame gateway) {
+  protected AbstractPopupController(V view, CompleteBoardGame gateway) {
     super(gateway);
     this.view = view;
 

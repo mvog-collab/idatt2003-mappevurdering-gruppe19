@@ -68,7 +68,8 @@ public final class LudoPageController extends AbstractPageController<LudoPage> {
     LOG.info("Starting Ludo game.");
     try {
       if (gateway.players().size() < 2) {
-        LOG.warning("Attempted to start Ludo game with insufficient players: " + gateway.players().size());
+        LOG.log(Level.WARNING, "Attempted to start Ludo game with insufficient players: {0} ",
+            gateway.players().size());
         Dialogs.warn("Cannot Start Game", "Ludo requires at least 2 players.");
         return;
       }

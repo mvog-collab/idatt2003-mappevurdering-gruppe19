@@ -25,7 +25,7 @@ public abstract class AbstractGameController<V extends GameView> extends Abstrac
    * @param view    the {@link GameView} instance
    * @param gateway the shared {@link CompleteBoardGame} instance
    */
-  public AbstractGameController(V view, CompleteBoardGame gateway) {
+  protected AbstractGameController(V view, CompleteBoardGame gateway) {
     super(gateway);
     this.view = view;
 

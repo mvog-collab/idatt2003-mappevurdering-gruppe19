@@ -30,6 +30,7 @@ import javafx.scene.layout.Region;
 public abstract class AbstractView implements BoardGameObserver {
   private static final Logger LOG = Logger.getLogger(AbstractView.class.getName());
   protected CompleteBoardGame gateway;
+  private static final String iconStyling = "icon-button";
 
   /**
    * Connects this view to the given game gateway and registers as an observer.
@@ -98,10 +99,11 @@ public abstract class AbstractView implements BoardGameObserver {
    * @return a configured {@link Button} with a question-mark icon
    */
   protected Button createHowToPlayButton(String title, String instructions) {
+
     ImageView icon = createIcon("/images/question-sign.png", "How to Play");
     Button howToPlayButton = new Button();
     howToPlayButton.setGraphic(icon);
-    howToPlayButton.getStyleClass().add("icon-button");
+    howToPlayButton.getStyleClass().add(iconStyling);
     howToPlayButton.setOnAction(e -> {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle(title);
@@ -174,7 +176,7 @@ public abstract class AbstractView implements BoardGameObserver {
     ImageView icon = createIcon("/images/home.png", "Go to Home");
     Button home = new Button();
     home.setGraphic(icon);
-    home.getStyleClass().add("icon-button");
+    home.getStyleClass().add(iconStyling);
     home.setOnAction(e -> NavigationService.getInstance().navigateToHome());
     return home;
   }
@@ -183,7 +185,7 @@ public abstract class AbstractView implements BoardGameObserver {
     ImageView icon = createIcon("/images/back.png", "Go Back");
     Button back = new Button();
     back.setGraphic(icon);
-    back.getStyleClass().add("icon-button");
+    back.getStyleClass().add(iconStyling);
     back.setOnAction(e -> NavigationService.getInstance().goBackToGameSetupPage());
     return back;
   }

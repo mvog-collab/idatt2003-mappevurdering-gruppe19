@@ -24,7 +24,6 @@ public class SnlFrontPage extends AbstractMenuView {
   private final Button chooseBoardButton;
   private final MenuUIService menuUIService;
   private BorderPane rootLayout;
-  private ImageView boardPreview;
 
   /**
    * Creates the SNL front page with all UI components and layout.
@@ -49,7 +48,7 @@ public class SnlFrontPage extends AbstractMenuView {
   private void buildUi() {
     Label titleLabel = menuUIService.createTitleLabel("Snakes & Ladders", "start-page-title");
     titleLabel.setWrapText(true);
-    boardPreview = menuUIService.createBoardPreview("/images/snakeAndLadder.png", 350, 350);
+    ImageView boardPreview = menuUIService.createBoardPreview("/images/snakeAndLadder.png", 350, 350);
     boardPreview.setPreserveRatio(true);
 
     startButton = menuUIService.createMenuButton("Start game", "confirm-button");

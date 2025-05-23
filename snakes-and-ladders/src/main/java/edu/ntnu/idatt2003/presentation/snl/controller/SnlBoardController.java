@@ -57,9 +57,11 @@ public class SnlBoardController extends AbstractGameController<SnlBoardView> {
       String token = player.playerToken();
       int startId = player.tileId();
       int pathEndId = Math.min(startId + rolled, gateway.boardSize());
+      view.showStatusMessage(player.playerName() + " rolled " + rolled + "!");
 
       view.animateMove(token, startId, pathEndId, this::refreshTokens);
     } else {
+      view.showStatusMessage(player.playerName() + " rolled " + rolled + " and has to wait a turn!");
       view.enableRollButton();
     }
   }
